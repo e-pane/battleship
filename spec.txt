@@ -1,0 +1,21 @@
+Renderer:
+  - draws UI
+  - attaches event listeners
+  - forwards intent
+
+Controller:
+  - dispatch(action)
+  - routes to engine
+  - returns state
+
+Engine:
+  - applies rules
+  - mutates/returns state
+
+Aircraft Carrier: 5 spaces
+Battleship: 4 spaces
+Submarine: 3 spaces
+Cruiser: 3 spaces
+Destroyer: 2 spaces 
+
+10 x 10 grid

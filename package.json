@@ -1,0 +1,26 @@
+{
+  "name": "battleship",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:ship": "jest tests/ship.test.js",
+    "test:gameboard": "jest tests/gameBoard.test.js",
+    "test:player": "jest tests/player.test.js",
+    "test:engine": "jest tests/engine.test.js",
+    "test:controller": "jest tests/controller.test.js",
+    "test:handlers": "jest tests/handlers.test.js",
+    "test:renderers": "jest tests/renderers.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0"
+  }
+}
