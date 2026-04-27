@@ -1,4 +1,4 @@
-const SHIP_TYPES = {
+export const SHIP_TYPES = {
   destroyer: 2,
   submarine: 3,
   cruiser: 3,
@@ -6,7 +6,7 @@ const SHIP_TYPES = {
   carrier: 5,
 };
 
-function createShip(type) {
+export function createShip(type) {
     let timesHit = 0;
     const length = SHIP_TYPES[type];
 
@@ -22,7 +22,18 @@ function createShip(type) {
   };
 }
 
-function createGameboard() {
+export function createGameboard() {
+
+  function getShipCoords(ship, x, y, orient) {
+    const coords = [];
+
+    for (let i = 0; i < ship.length; i++) {
+      if (orient === "horizontal") coords.push([x + i, y]);
+      else coords.push([x, y + i]);
+    }
+
+    return coords;
+  }
   const gameboard = Object.create(null);
 
   const ships = [];
@@ -31,29 +42,38 @@ function createGameboard() {
 
   gameboard.getShips = () => ships;
 
+  gameboard.canPlaceShip = (ship, x, y, orient) => {
+    if (!Number.isInteger(x) || !Number.isInteger(y)) return false;
+    if (x < 0 || x > 9 || y < 0 || y > 9) return false;
+
+    if (orient === "horizontal" && x + ship.length > 10) return false;
+    if (orient === "vertical" && y + ship.length > 10) return false;
+
+    const coords = getShipCoords(ship, x, y, orient);
+
+    return !coords.some(([cx, cy]) => occupied.has(`${cx},${cy}`));
+  };
+
   gameboard.placeShip = (ship, x, y, orient) => {
-    if (x < 0 || x > 9 || y < 0 || y > 9) return;
+    console.log("SHIP:", ship);
+    console.log("LENGTH:", ship.length);
+    if (!gameboard.canPlaceShip(ship, x, y, orient)) return false;
 
-    if (!Number.isInteger(x) || !Number.isInteger(y)) return;
+    const coords = getShipCoords(ship, x, y, orient);
 
-    if (orient === "hor" && x + ship.length > 10) return;
-    if (orient === "vert" && y + ship.length > 10) return;
-    const coords = [];
-    for (let i = 0; i < ship.length; i++) {
-      if (orient === "hor") {
-        coords.push([x + i, y]);
-      } else if (orient === "vert") {
-        coords.push([x, y + i]);
-      }
-    }
-    const isOccupied = coords.some(([x, y]) => occupied.has(`${x},${y}`));
-    if (isOccupied) return;
+    coords.forEach(([cx, cy]) => occupied.add(`${cx},${cy}`));
 
-    coords.forEach(([x, y]) => occupied.add(`${x},${y}`));
     ships.push({ ship, coords });
+
+    return true;
   };
   // ships = [{ ship: destroyer, coords: [ [2,3], [3,3] ]},
   //          { ship: cruiser, coords: [ [4,5], [4,6], [4,7] ]} ]
+
+  gameboard.hasShipAt = (x, y) => {
+    return occupied.has(`${x},${y}`);
+  }
+
   gameboard.receiveAttack = (x, y) => {
     for (const el of ships) {
       for (const coord of el.coords) {
@@ -74,11 +94,11 @@ function createGameboard() {
   return gameboard;
 }
 
-const createPlayer = (name) => {
+export function createPlayer(name){
     return {
         name,
         gameboard: createGameboard(),
     };
 };
 
-module.exports = { createShip, createGameboard, createPlayer, SHIP_TYPES };
+

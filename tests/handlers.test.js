@@ -1,4 +1,4 @@
-const { createHandlers } = require("../src/handlers");
+import { createHandlers } from "../src/handlers.js";
 
 test('handleStartGame starts game with payload name', () => {
     const mockEngine = {

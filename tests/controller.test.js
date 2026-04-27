@@ -1,4 +1,4 @@
-const { createController  } = require("../src/controller");
+import { createController  } from "../src/controller.js";
 
 test('dispatch routes "startGame" intent to correct handler', () => {
     const handlers = {

@@ -1,4 +1,4 @@
-const { createPlayer } = require("../src/factories");
+import { createPlayer } from "../src/factories.js";
 
 test('player has a working gameboard', () => {
     const player = createPlayer('Harry');

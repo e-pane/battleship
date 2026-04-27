@@ -4,22 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Battleship</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- thin UI layer to mock game flow for testing-->
-    <form class="start-game-form">
-        <input type="text", id="player-name", placeholder="Enter player name">
-        <button class="btn start-game" data-action="startGame">Start Game</button>
-    </form>
-    <button class="place-ship">Place Ship</button>
-    <button class="attack">Attack</button>
-    <button class="start-new-game">Start New Game</button>
-
-    <div id="app">
-        <div id="player-board"></div>
-        <div id="enemy-board"></div>
-        <div id="controls"></div>
-    </div>
+    <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
 </body>
 </html>

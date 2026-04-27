@@ -1,4 +1,4 @@
-function createController(handlers) {
+export function createController(handlers) {
     const controller = Object.create(null);
 
     controller.dispatch = (intent, payload) => {
@@ -18,4 +18,3 @@ function createController(handlers) {
     return controller;
 }
 
-module.exports = { createController }; 

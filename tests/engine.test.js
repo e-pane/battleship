@@ -1,5 +1,4 @@
-const { createEngine } = require("../src/engine");
-
+import { createEngine } from "../src/engine.js";
 
 test("engine is created properly", () => {
     const engine = createEngine();
@@ -27,4 +26,21 @@ test("engine is created properly", () => {
       5,
       'vert',
     );
+});
+
+test("engine converts string coordinates to numbers", () => {
+  const engine = createEngine();
+
+  engine.start("Harry");
+
+  engine.state.player.gameboard.placeShip = jest.fn();
+
+  engine.placeShip("cruiser", "3", "5", "vert");
+
+  expect(engine.state.player.gameboard.placeShip).toHaveBeenCalledWith(
+    expect.any(Object),
+    3,
+    5,
+    "vert",
+  );
 });

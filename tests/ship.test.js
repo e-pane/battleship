@@ -1,4 +1,4 @@
-const { createShip } = require( "../src/factories");
+import { createShip } from "../src/factories.js";
 
 test('ship takes hits and sinks at the right time', () => {
     const ship = createShip(4);

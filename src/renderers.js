@@ -1,4 +1,16 @@
-function initRenderers(controller) {
+export function initRenderers(controller) {
+    let selectedShip = null;
+    const shipButtons = document.querySelectorAll(".ship-btn");
+
+    shipButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            shipButtons.forEach(b => { b.classList.remove('selected') });
+            btn.classList.add('selected');
+
+            selectedShip = btn.dataset.ship;
+        })
+    })
+
     document.addEventListener("click", (e) => {
         const action = e.target.dataset.action;
         if (!action) return;
@@ -7,10 +19,25 @@ function initRenderers(controller) {
             startGame: () => {
                 const nameInput = document.querySelector('#player-name');
                 const playerName = nameInput.value.trim();
+                console.log(playerName);
 
                 controller.dispatch("startGame", { playerName: playerName || 'Guest', });
+
             },
-            //placeShip: 
+            placeShip: () => {
+                if (!selectedShip) {
+                  console.warn("No ship selected");
+                  return;
+                }
+                const xInput = document.querySelector('#ship-x');
+                const x = xInput.value.trim();
+                const yInput = document.querySelector('#ship-y');
+                const y = yInput.value.trim();
+                const orientInput = document.querySelector('input[name=orientation]:checked');
+                const orient = orientInput.value;
+
+                controller.dispatch("placeShip", { shipType:selectedShip, x, y, orient});
+            }
         };
 
         const handler = actions[action];
@@ -20,4 +47,127 @@ function initRenderers(controller) {
     });
 }
 
-module.exports = { initRenderers };
+export function renderGrid(container) {
+  container.innerHTML = "";
+
+  for (let i = 0; i < 100; i++) {
+    const cell = document.createElement("div");
+    cell.classList.add("cell");
+    container.appendChild(cell);
+  }
+}
+
+export function renderStartScreen() {
+  const app = document.querySelector("#app");
+
+  app.innerHTML = `
+        <section class="player-name-container">
+            <form class="start-game-form">
+                <input type="text" id="player-name" placeholder="Enter player name">
+                <button type="button" class="btn start-game" data-action="startGame">
+                    Start Game
+                </button>
+            </form>
+        </section>
+    `;
+}
+
+export function renderShipPlacementScreen() {
+    const app = document.querySelector("#app");
+
+    app.innerHTML = `
+      <section class="place-ship-container">
+  
+        <!-- UI MESSAGES -->
+        <div class="ui-messages">
+          <p class="message">Place your ships</p>
+        </div>
+  
+        <!-- GRID -->
+        <div class="board">
+            <div class="corner"></div>
+
+            <div class="top-labels"></div>
+
+            <div class="left-labels"></div>
+
+            <div class="grid"></div>
+        </div>
+            
+        <!-- CONTROLS -->
+        <div class="controls">
+  
+            <div class="ship-icons">
+
+                <button type="button" class="ship-btn" data-ship="carrier">
+                <img src="/images/carrier.jpeg" alt="Carrier">
+                </button>
+            
+                <button type="button" class="ship-btn" data-ship="battleship">
+                <img src="/images/battleship.jpeg" alt="Battleship">
+                </button>
+            
+                <button type="button" class="ship-btn" data-ship="submarine">
+                <img src="/images/submarine.jpeg" alt="Submarine">
+                </button>
+            
+                <button type="button" class="ship-btn" data-ship="cruiser">
+                <img src="/images/cruiser.jpeg" alt="Cruiser">
+                </button>
+            
+                <button type="button" class="ship-btn" data-ship="destroyer">
+                <img src="/images/destroyer.jpeg" alt="Destroyer">
+                </button>
+        
+            </div>
+    
+            <form class="place-ship-form">
+                <input id="ship-x" placeholder="A">
+                <input id="ship-y" placeholder="1">
+    
+                <label>
+                <input type="radio" name="orientation" value="horizontal" checked>
+                Horizontal
+                </label>
+    
+                <label>
+                <input type="radio" name="orientation" value="vertical">
+                Vertical
+                </label>
+    
+                <button type="button" data-action="placeShip">
+                Place Ship
+                </button>
+            </form>
+  
+        </div>
+  
+      </section>
+    `;
+    const grid = document.querySelector(".grid");
+    renderGrid(grid);
+
+    const top = document.querySelector(".top-labels");
+    const left = document.querySelector(".left-labels");
+
+    top.innerHTML = "";
+    left.innerHTML = "";
+
+    for (let i = 1; i <= 10; i++) {
+        const topCell = document.createElement("div");
+        topCell.textContent = i;
+        top.appendChild(topCell);
+
+        const left = document.querySelector(".left-labels");
+
+        left.innerHTML = "";
+
+        const letters = "ABCDEFGHIJ";
+
+        for (let i = 0; i < 10; i++) {
+          const cell = document.createElement("div");
+          cell.textContent = letters[i];
+          left.appendChild(cell);
+        }
+    }
+}

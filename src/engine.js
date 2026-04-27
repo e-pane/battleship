@@ -1,6 +1,6 @@
-const { createShip, createPlayer } = require("./factories");
+import { createShip, createPlayer } from "./factories.js";
 
-function createEngine() {
+export function createEngine() {
 
     const engine = Object.create(null);
 
@@ -11,15 +11,24 @@ function createEngine() {
             phase: 'shipPlacement',
             turn: 'player',
             gameOver: false,
-        }
+        };
+        console.log(engine.state);
     }
 
     engine.placeShip = (type, x, y, orient) => {
+        x = Number(x);
+        y = Number(y);
+
+        if (!Number.isInteger(x) || !Number.isInteger(y)) {
+          throw new Error("Invalid coordinates passed to engine.placeShip");
+        }
+
         const ship = createShip(type);
-        engine.state.player.gameboard.placeShip(ship, x, y, orient);
+        const success = engine.state.player.gameboard.placeShip(ship, x, y, orient);
+
+        return success;
     };
 
   return engine;
 }
 
-module.exports = { createEngine };

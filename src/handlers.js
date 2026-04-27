@@ -1,13 +1,27 @@
-function createHandlers(engine) {
-  return {
-    startGame: (payload) => handleStartGame(engine, payload),
-    //more registry handlers with engine as a DI
-  };
+import { renderShipPlacementScreen } from "./renderers.js";
+
+export function createHandlers(engine) {
+    return {
+        startGame: (payload) => handleStartGame(engine, payload),
+        placeShip: (payload) => handlePlaceShip(engine, payload)
+    };
 }
 
 function handleStartGame(engine, payload) {
-  engine.start(payload.name);
-  //more start up code
+    console.log(payload.playerName);
+    engine.start(payload.playerName);
+  
+    const state = engine.state;
+    
+    if (state.phase === "shipPlacement") {
+      renderShipPlacementScreen(state);
+    }
 }
 
-module.exports = { createHandlers };
+function handlePlaceShip(engine, payload) {
+    const { shipType, x, y, orient } = payload;
+    const success = engine.placeShip(shipType, x, y, orient);
+    
+    return success;
+}
+

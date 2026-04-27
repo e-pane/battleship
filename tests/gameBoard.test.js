@@ -1,20 +1,20 @@
-const { createGameboard, createShip } = require("../src/factories");
+import { createGameboard, createShip } from "../src/factories.js";
 
 test("ship is placed correctly", () => {
     const gameboard = createGameboard();
-    const destroyer = createShip(2);
-    const aircraftCarrier = createShip(5);
-    const battleship = createShip(4);
-    const submarine = createShip(3);
+    const destroyer = createShip("destroyer");
+    const aircraftCarrier = createShip("carrier");
+    const battleship = createShip("battleship");
+    const submarine = createShip("submarine");
     //successfully place a destroyer and carrier
-    gameboard.placeShip(destroyer, 4, 5, 'hor');
+    gameboard.placeShip(destroyer, 4, 5, 'horizontal');
     
     let result = gameboard.getShips();
     
     expect(result.length).toBe(1);
     expect(result[0].coords).toEqual([[4, 5], [5, 5]]);
 
-    gameboard.placeShip(aircraftCarrier, 0, 0, 'vert');
+    gameboard.placeShip(aircraftCarrier, 0, 0, 'vertical');
     result = gameboard.getShips();
     expect(result.length).toBe(2);
     expect(result[1].coords).toEqual([
@@ -25,27 +25,27 @@ test("ship is placed correctly", () => {
       [0,4],
     ]);
     // battleship off the board
-    gameboard.placeShip(battleship, 7, 0, "hor");
+    gameboard.placeShip(battleship, 7, 0, 'horizontal');
     result = gameboard.getShips();
     expect(result.length).toBe(2);
     // submarine off the board
-    gameboard.placeShip(submarine, 0, 8, "vert");
+    gameboard.placeShip(submarine, 0, 8, 'vertical');
     result = gameboard.getShips();
     expect(result.length).toBe(2);
 
-    gameboard.placeShip(submarine, -2, 4, "hor");
+    gameboard.placeShip(submarine, -2, 4, 'horizontal');
     result = gameboard.getShips();
     expect(result.length).toBe(2);
 
-    gameboard.placeShip(submarine, 2, -4, "hor");
+    gameboard.placeShip(submarine, 2, -4, 'horizontal');
     result = gameboard.getShips();
     expect(result.length).toBe(2);
 
-    gameboard.placeShip(submarine, 2, 3.5, "hor");
+    gameboard.placeShip(submarine, 2, 3.5, 'horizontal');
     result = gameboard.getShips();
     expect(result.length).toBe(2);
     //battleship will land on top of carrier
-    gameboard.placeShip(battleship, 0, 1, "hor");
+    gameboard.placeShip(battleship, 0, 1, 'horizontal');
     result = gameboard.getShips();
     expect(result.length).toBe(2);
 
@@ -58,11 +58,11 @@ test("ship is placed correctly", () => {
 test("all ships sunk", () => {
     const gameboard = createGameboard();
 
-    const destroyer = createShip(2);
-    const carrier = createShip(5);
+    const destroyer = createShip("destroyer");
+    const carrier = createShip("carrier");
 
-    gameboard.placeShip(destroyer, 0, 0, "hor");
-    gameboard.placeShip(carrier, 2, 0, "hor");
+    gameboard.placeShip(destroyer, 0, 0, 'horizontal');
+    gameboard.placeShip(carrier, 2, 0, 'horizontal');
 
     gameboard.receiveAttack(0, 0);
     gameboard.receiveAttack(1, 0);

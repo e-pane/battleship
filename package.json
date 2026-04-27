@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "directories": {
     "test": "tests"
   },
@@ -14,13 +15,17 @@
     "test:engine": "jest tests/engine.test.js",
     "test:controller": "jest tests/controller.test.js",
     "test:handlers": "jest tests/handlers.test.js",
-    "test:renderers": "jest tests/renderers.test.js"
+    "test:renderers": "jest tests/renderers.test.js",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "jest": "^30.3.0",
-    "jest-environment-jsdom": "^30.3.0"
+    "jest-environment-jsdom": "^30.3.0",
+    "vite": "^8.0.10"
   }
 }
