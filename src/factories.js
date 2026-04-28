@@ -24,6 +24,18 @@ export function createShip(type) {
 
 export function createGameboard() {
 
+  function parseCoord(x, y) {
+    // if already numeric, return as-is
+    if (Number.isInteger(x) && Number.isInteger(y)) {
+      return [x, y];
+    }
+
+    // convert "C", "5" → [2, 4]
+    const row = x.toUpperCase().charCodeAt(0) - 65; // A-J
+    const col = Number(y) - 1; // 1-10
+    return [col, row];
+  }
+
   function getShipCoords(ship, x, y, orient) {
     const coords = [];
 
@@ -39,25 +51,48 @@ export function createGameboard() {
   const ships = [];
   const missedAttacks = [];
   const occupied = new Set();
+  const attacked = new Set();
 
   gameboard.getShips = () => ships;
 
-  gameboard.canPlaceShip = (ship, x, y, orient) => {
-    if (!Number.isInteger(x) || !Number.isInteger(y)) return false;
-    if (x < 0 || x > 9 || y < 0 || y > 9) return false;
+  gameboard.hasBeenAttacked = (x, y) => {
+    return attacked.has(`${x},${y}`);
+  };
 
-    if (orient === "horizontal" && x + ship.length > 10) return false;
-    if (orient === "vertical" && y + ship.length > 10) return false;
+  gameboard.canPlaceShip = (ship, x, y, orient) => {
+
+    if (x < 0 || x > 9 || y < 0 || y > 9) {
+      return { ok: false, reason: "INVALID_START" };
+    }
+
+    if (orient === "horizontal" && x + ship.length > 10) {
+      return {
+        ok: false,
+        reason: "OUT_OF_BOUNDS",
+      };
+    }
+    if (orient === "vertical" && y + ship.length > 10) {
+      return {
+        ok: false,
+        reason: "OUT_OF_BOUNDS"
+      };
+    }
 
     const coords = getShipCoords(ship, x, y, orient);
 
-    return !coords.some(([cx, cy]) => occupied.has(`${cx},${cy}`));
+    if (coords.some(([cx, cy]) => occupied.has(`${cx},${cy}`))) {
+      return { ok: false, reason: "OVERLAP" };
+    }
+
+    return { ok: true };
   };
 
   gameboard.placeShip = (ship, x, y, orient) => {
-    console.log("SHIP:", ship);
-    console.log("LENGTH:", ship.length);
-    if (!gameboard.canPlaceShip(ship, x, y, orient)) return false;
+    [x, y] = parseCoord(x, y);
+
+    const result = gameboard.canPlaceShip(ship, x, y, orient);
+
+    if (!result.ok) return result;
 
     const coords = getShipCoords(ship, x, y, orient);
 
@@ -65,7 +100,10 @@ export function createGameboard() {
 
     ships.push({ ship, coords });
 
-    return true;
+    return {
+      ok: true,
+      ship,
+    };
   };
   // ships = [{ ship: destroyer, coords: [ [2,3], [3,3] ]},
   //          { ship: cruiser, coords: [ [4,5], [4,6], [4,7] ]} ]
@@ -75,16 +113,33 @@ export function createGameboard() {
   }
 
   gameboard.receiveAttack = (x, y) => {
+    const key = `${x},${y}`;
+
+    if (attacked.has(key)) {
+      return {
+        ok: false,
+        reason: "ALREADY_ATTACKED",
+      };
+    }
+
+    attacked.add(key);
+
     for (const el of ships) {
       for (const coord of el.coords) {
         if (coord[0] === x && coord[1] === y) {
           el.ship.hit();
-          return "hit";
+          return {
+            ok: true,
+            outcome: "hit",
+          };
         }
       }
     }
     missedAttacks.push([x, y]);
-    return "miss";
+    return {
+      ok: true,
+      outcome: "miss",
+    };
   };
 
   gameboard.allShipsSunk = () => {

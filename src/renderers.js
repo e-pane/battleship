@@ -1,17 +1,19 @@
 export function initRenderers(controller) {
     let selectedShip = null;
-    const shipButtons = document.querySelectorAll(".ship-btn");
-
-    shipButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            shipButtons.forEach(b => { b.classList.remove('selected') });
-            btn.classList.add('selected');
-
-            selectedShip = btn.dataset.ship;
-        })
-    })
 
     document.addEventListener("click", (e) => {
+        const shipBtn = e.target.closest(".ship-btn");
+
+        if (shipBtn) {
+            document.querySelectorAll(".ship-btn").forEach(btn => {
+                btn.classList.remove("selected");
+            });
+    
+            shipBtn.classList.add("selected");
+            selectedShip = shipBtn.dataset.ship;
+            return;
+        }
+    
         const action = e.target.dataset.action;
         if (!action) return;
 
@@ -19,7 +21,6 @@ export function initRenderers(controller) {
             startGame: () => {
                 const nameInput = document.querySelector('#player-name');
                 const playerName = nameInput.value.trim();
-                console.log(playerName);
 
                 controller.dispatch("startGame", { playerName: playerName || 'Guest', });
 
@@ -35,6 +36,7 @@ export function initRenderers(controller) {
                 const y = yInput.value.trim();
                 const orientInput = document.querySelector('input[name=orientation]:checked');
                 const orient = orientInput.value;
+                console.log(selectedShip, x, y, orient);
 
                 controller.dispatch("placeShip", { shipType:selectedShip, x, y, orient});
             }
@@ -82,23 +84,29 @@ export function renderShipPlacementScreen() {
         <div class="ui-messages">
           <p class="message">Place your ships</p>
         </div>
-  
-        <!-- GRID -->
-        <div class="board">
-            <div class="corner"></div>
 
-            <div class="top-labels"></div>
-
-            <div class="left-labels"></div>
-
-            <div class="grid"></div>
+        <div class="placement-main">
+            <div class="placement-help">
+                <p>
+                    Select a ship icon, enter row A–J and column 1–10,
+                    choose horizontal or vertical orientation,
+                    then click PLACE SHIP.  The cell you choose will be the starting cell for that ship.
+                    To reposition any ship, click on the ship inside the grid.  You can also drag and drop
+                    any ship into position.
+                </p>
+            </div>
+            <!-- GRID -->
+            <div class="board">
+                <div class="corner"></div>
+                <div class="top-labels"></div>
+                <div class="left-labels"></div>
+                <div class="grid"></div>
+            </div>
         </div>
             
         <!-- CONTROLS -->
         <div class="controls">
-  
             <div class="ship-icons">
-
                 <button type="button" class="ship-btn" data-ship="carrier">
                 <img src="/images/carrier.jpeg" alt="Carrier">
                 </button>

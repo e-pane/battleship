@@ -1,74 +1,58 @@
+import { jest } from "@jest/globals";
 import { createGameboard, createShip } from "../src/factories.js";
 
-test("ship is placed correctly", () => {
-    const gameboard = createGameboard();
-    const destroyer = createShip("destroyer");
-    const aircraftCarrier = createShip("carrier");
-    const battleship = createShip("battleship");
-    const submarine = createShip("submarine");
-    //successfully place a destroyer and carrier
-    gameboard.placeShip(destroyer, 4, 5, 'horizontal');
-    
-    let result = gameboard.getShips();
-    
-    expect(result.length).toBe(1);
-    expect(result[0].coords).toEqual([[4, 5], [5, 5]]);
+test("placeShip accepts letter coordinates", () => {
+  const gb = createGameboard();
+  const ship1 = createShip("destroyer");
+  const ship2 = createShip("carrier");
+  const ship3 = createShip("battleship");
 
-    gameboard.placeShip(aircraftCarrier, 0, 0, 'vertical');
-    result = gameboard.getShips();
-    expect(result.length).toBe(2);
-    expect(result[1].coords).toEqual([
-      [0,0],
-      [0,1],
-      [0,2],
-      [0,3],
-      [0,4],
-    ]);
-    // battleship off the board
-    gameboard.placeShip(battleship, 7, 0, 'horizontal');
-    result = gameboard.getShips();
-    expect(result.length).toBe(2);
-    // submarine off the board
-    gameboard.placeShip(submarine, 0, 8, 'vertical');
-    result = gameboard.getShips();
-    expect(result.length).toBe(2);
+  gb.placeShip(ship1, "C", 5, "horizontal");
+  gb.placeShip(ship2, "F", 1, "vertical");
+  // place battleship out of bounds
+  const result3 = gb.placeShip(ship3, "B", 9, "horizontal");
+  expect(result3.ok).toBe(false);
+  expect(result3.reason).toBe("OUT_OF_BOUNDS");
+  // start battleship off the grid
+  const result4 = gb.placeShip(ship3, "B", 11, "horizontal");
+  expect(result4.ok).toBe(false);
+  expect(result4.reason).toBe("INVALID_START");
+  // overlap battleship with carrier
+  const result5 = gb.placeShip(ship3, "F", 1, "horizontal");
+  expect(result5.ok).toBe(false);
+  expect(result5.reason).toBe("OVERLAP");
 
-    gameboard.placeShip(submarine, -2, 4, 'horizontal');
-    result = gameboard.getShips();
-    expect(result.length).toBe(2);
+  const result = gb.getShips();
+  expect(result.length).toBe(2);
 
-    gameboard.placeShip(submarine, 2, -4, 'horizontal');
-    result = gameboard.getShips();
-    expect(result.length).toBe(2);
+  expect(gb.hasShipAt(4, 2)).toBe(true);
+  expect(gb.hasShipAt(4, 3)).toBe(false);
+  expect(gb.hasShipAt(5, 2)).toBe(true);
+  expect(gb.hasShipAt(0, 5)).toBe(true);
+  expect(gb.hasShipAt(1, 5)).toBe(false);
+  expect(gb.hasShipAt(0, 6)).toBe(true);
 
-    gameboard.placeShip(submarine, 2, 3.5, 'horizontal');
-    result = gameboard.getShips();
-    expect(result.length).toBe(2);
-    //battleship will land on top of carrier
-    gameboard.placeShip(battleship, 0, 1, 'horizontal');
-    result = gameboard.getShips();
-    expect(result.length).toBe(2);
+  expect(result[0].coords).toEqual([
+    [4, 2],
+    [5, 2],
+  ]);
 
-    expect(result).toEqual([
-      expect.objectContaining({ ship: destroyer }),
-      expect.objectContaining({ ship: aircraftCarrier }),
-    ]);
 });
 
 test("all ships sunk", () => {
-    const gameboard = createGameboard();
+  const gb = createGameboard();
 
-    const destroyer = createShip("destroyer");
-    const carrier = createShip("carrier");
+  const destroyer = createShip("destroyer");
+  const carrier = createShip("carrier");
 
-    gameboard.placeShip(destroyer, 0, 0, 'horizontal');
-    gameboard.placeShip(carrier, 2, 0, 'horizontal');
+  gb.placeShip(destroyer, "A", 1, "horizontal");
+  gb.placeShip(carrier, "B", 1, "horizontal");
 
-    gameboard.receiveAttack(0, 0);
-    gameboard.receiveAttack(1, 0);
+  gb.receiveAttack(0, 0);
+  gb.receiveAttack(1, 0);
 
-    for (let i = 2; i <= 6; i++) {
-        gameboard.receiveAttack(i, 0);
-    }
-    expect(gameboard.allShipsSunk()).toBe(true);
+  for (let i = 0; i <= 4; i++) {
+    gb.receiveAttack(i, 1);
+  }
+  expect(gb.allShipsSunk()).toBe(true);
 });

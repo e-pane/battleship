@@ -16,15 +16,9 @@ export function createEngine() {
     }
 
     engine.placeShip = (type, x, y, orient) => {
-        x = Number(x);
-        y = Number(y);
-
-        if (!Number.isInteger(x) || !Number.isInteger(y)) {
-          throw new Error("Invalid coordinates passed to engine.placeShip");
-        }
-
         const ship = createShip(type);
         const success = engine.state.player.gameboard.placeShip(ship, x, y, orient);
+        console.log(engine.state.player.gameboard.getShips());
 
         return success;
     };

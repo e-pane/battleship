@@ -21,6 +21,7 @@ function handleStartGame(engine, payload) {
 function handlePlaceShip(engine, payload) {
     const { shipType, x, y, orient } = payload;
     const success = engine.placeShip(shipType, x, y, orient);
+    console.log(success);
     
     return success;
 }

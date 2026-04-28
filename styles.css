@@ -106,6 +106,40 @@ body {
     border-radius: 20px;
 }
 
+.placement-main {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.placement-help {
+    width: 280px;
+    min-height: 220px;
+
+    padding: 20px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 40, 20, 0.82);
+    border: 2px solid #00ff66;
+    border-radius: 18px;
+
+    box-shadow:
+        0 0 12px rgba(0,255,102,.22),
+        inset 0 0 12px rgba(0,255,102,.08);
+}
+
+.placement-help p {
+    margin: 0;
+    color: #00ff66;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    text-align: center;
+    font-weight: 700;
+}
+
 .grid-container {
     display: flex;
     justify-content: center;
@@ -173,6 +207,7 @@ body {
     flex-direction: column;
     gap: 15px;
     align-items: center;
+    transform: translateX(175px);
 }
 
 .cell {
@@ -203,14 +238,10 @@ body {
     object-fit: contain;
 }
 
-.ship-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 10px #00ff66;
-}
-
 .ship-btn.selected {
+    transform: scale(1.2);
     box-shadow: 0 0 12px #00ff66;
-    border: 2px solid #00ff66;
+    border: 5px solid #00ff66;
 }
 
 .ship-icons {
