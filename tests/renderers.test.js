@@ -2,7 +2,14 @@
  * @jest-environment jsdom
  */
 import { jest } from "@jest/globals";
-import { initRenderers } from "../src/renderers.js";
+import { initRenderers, renderShipPlacementScreen, renderStartScreen } from "../src/renderers.js";
+
+beforeEach(() => {
+  document.body.innerHTML = `
+    <div id="app"></div>
+    <ul class="ships-placed"></ul>
+  `;
+});
 
 test("clicking start button dispatches startGame with playerName", () => {
   document.body.innerHTML = `
@@ -62,4 +69,52 @@ test("clicking on ship, entering starting x/y/orientation dispatches placeShip w
     y: "3",
     orient: "horizontal",
   });
+});
+
+test("shows ships after placement", () => {
+  const mockShips = [
+    {
+      ship: {
+        type: "destroyer",
+        length: 3,
+        hit: () => {},
+        isSunk: () => false,
+      },
+      coords: [
+        [0, 0],
+        [1, 0],
+        [2, 0],
+      ],
+    },
+    {
+      ship: {
+        type: "submarine",
+        length: 3,
+        hit: () => {},
+        isSunk: () => false,
+      },
+      coords: [
+        [5, 5],
+        [5, 6],
+        [5, 7],
+      ],
+    },
+  ];
+
+  const mockState = {
+    ships: mockShips,
+    phase: "shipPlacement",
+  };
+
+  renderShipPlacementScreen(mockState);
+  const shipList = document.querySelector(".ships-placed");
+  expect(shipList.querySelectorAll("li").length).toBe(2);
+  expect(shipList.textContent).toContain("destroyer");
+  expect(shipList.textContent).toContain("submarine");
+
+  const items = shipList.querySelectorAll("li");
+  expect(items[0].tagName).toBe("LI");
+  expect(items[1].tagName).toBe("LI");
+  expect(items[0].textContent).toBe("destroyer");
+  expect(items[1].textContent).toBe("submarine");
 });

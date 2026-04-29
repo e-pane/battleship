@@ -1,13 +1,16 @@
-import { createShip, createPlayer } from "./factories.js";
+import { createShip, createPlayer, createGameboard } from "./factories.js";
 
 export function createEngine() {
 
     const engine = Object.create(null);
 
     engine.start = (playerName) => {
+        const player = createPlayer(playerName);
+        const computer = createPlayer("computer");
+
         engine.state = {
-            player: createPlayer(playerName),
-            computer: createPlayer('computer'),
+            player,
+            computer,
             phase: 'shipPlacement',
             turn: 'player',
             gameOver: false,
@@ -15,12 +18,12 @@ export function createEngine() {
         console.log(engine.state);
     }
 
-    engine.placeShip = (type, x, y, orient) => {
-        const ship = createShip(type);
-        const success = engine.state.player.gameboard.placeShip(ship, x, y, orient);
+    engine.placeShip = (shipType, x, y, orient) => {
+        const ship = createShip(shipType);
+        const result = engine.state.player.gameboard.placeShip(ship, x, y, orient);
         console.log(engine.state.player.gameboard.getShips());
 
-        return success;
+        return result;
     };
 
   return engine;

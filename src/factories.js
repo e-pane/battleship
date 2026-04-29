@@ -6,12 +6,12 @@ export const SHIP_TYPES = {
   carrier: 5,
 };
 
-export function createShip(type) {
+export function createShip(shipType) {
     let timesHit = 0;
-    const length = SHIP_TYPES[type];
+    const length = SHIP_TYPES[shipType];
 
     return {
-        type,
+        type: shipType,
         length,
         hit() {
         timesHit++;
@@ -105,8 +105,8 @@ export function createGameboard() {
       ship,
     };
   };
-  // ships = [{ ship: destroyer, coords: [ [2,3], [3,3] ]},
-  //          { ship: cruiser, coords: [ [4,5], [4,6], [4,7] ]} ]
+  // ships = [{ type: destroyer, coords: [ [2,3], [3,3] ]},
+  //          { type: cruiser, coords: [ [4,5], [4,6], [4,7] ]} ]
 
   gameboard.hasShipAt = (x, y) => {
     return occupied.has(`${x},${y}`);

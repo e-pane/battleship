@@ -8,9 +8,14 @@ export function initRenderers(controller) {
             document.querySelectorAll(".ship-btn").forEach(btn => {
                 btn.classList.remove("selected");
             });
-    
+            
             shipBtn.classList.add("selected");
-            selectedShip = shipBtn.dataset.ship;
+            selectedShip = shipBtn.dataset.ship
+            controller.dispatch("handlePlacementModal", {
+                shipType: selectedShip,
+                modalOpen: true,
+            });
+            
             return;
         }
     
@@ -38,9 +43,14 @@ export function initRenderers(controller) {
                 const orient = orientInput.value;
                 console.log(selectedShip, x, y, orient);
 
-                controller.dispatch("placeShip", { shipType:selectedShip, x, y, orient});
-            }
-        };
+                controller.dispatch("placeShip", {
+                  shipType: selectedShip,
+                  x,
+                  y,
+                  orient,
+                });
+            } 
+        }
 
         const handler = actions[action];
         if (handler) {
@@ -74,7 +84,7 @@ export function renderStartScreen() {
     `;
 }
 
-export function renderShipPlacementScreen() {
+export function renderShipPlacementScreen(state, uiState) {
     const app = document.querySelector("#app");
 
     app.innerHTML = `
@@ -104,8 +114,9 @@ export function renderShipPlacementScreen() {
             </div>
 
             <!-- WARNING FOR INCORRECT PLACEMENT -->
-            <div class="mis-placement-warning">
-                <p>Placeholder</p>
+            <div class="ui-information-display">
+                <div class="ships-placed">Ships placed</div>
+                <ul></ul>
             </div>
         </div>
             
@@ -182,5 +193,45 @@ export function renderShipPlacementScreen() {
           cell.textContent = letters[i];
           left.appendChild(cell);
         }
+    }
+    const shipList = document.querySelector('.ships-placed');
+    if (state.ships) {
+        console.log(state.ships);
+        state.ships.forEach(ship => {
+            const listedShip = document.createElement('li');
+            listedShip.classList.add('listed-ship');
+            listedShip.innerText = ship.ship.type;
+            shipList.append(listedShip);
+        });
+    }
+
+    if (uiState) {
+        if (modalOpen) {
+            const app = document.querySelector("#app");
+            const oldModals = app.querySelectorAll('.placement-modal');
+            if (oldModals.length > 0) {
+                oldModals.forEach(modal => modal.remove());
+            }
+                
+            const { shipType, shipLength, modalOpen } = uiState;
+
+            const placementModal = document.createElement("div");
+            placementModal.classList.add('placement-modal');
+            
+            const placementModalShipName = document.createElement("p");
+            const placementModalShipLength = document.createElement("p");
+
+            placementModalShipName.classList.add("modal-ship-data");
+            placementModalShipLength.classList.add("modal-ship-data");
+
+            placementModalShipName.innerText = shipType;
+            placementModalShipLength.innerText = `length: ${shipLength}`;
+
+            placementModal.append(placementModalShipName);
+            placementModal.append(placementModalShipLength);
+
+            
+            app.append(placementModal);
+        } 
     }
 }
