@@ -1,13 +1,25 @@
-import { createHandlers } from "../src/handlers.js";
+import { jest } from "@jest/globals";
 
-test('handleStartGame starts game with payload name', () => {
-    const mockEngine = {
-        start: jest.fn(),
-    }
+const mockRenderShipPlacementScreen = jest.fn();
 
-    const handler = createHandlers(mockEngine);
-    handler.startGame({ name: 'Harry' });
+jest.unstable_mockModule("../src/renderers.js", () => ({
+  renderShipPlacementScreen: mockRenderShipPlacementScreen,
+}));
 
-    expect(mockEngine.start).toHaveBeenCalledTimes(1);
-    expect(mockEngine.start).toHaveBeenCalledWith('Harry');
+const { createHandlers } = await import("../src/handlers.js");
+
+test("handleStartGame starts game with payload name", () => {
+  const mockEngine = {
+    start: jest.fn(),
+    state: { phase: "shipPlacement" },
+  };
+
+  const handler = createHandlers(mockEngine);
+  handler.startGame({ playerName: "Harry" });
+
+  expect(mockEngine.start).toHaveBeenCalledTimes(1);
+  expect(mockEngine.start).toHaveBeenCalledWith("Harry");
+
+  expect(mockRenderShipPlacementScreen).toHaveBeenCalledTimes(1);
+  expect(mockRenderShipPlacementScreen).toHaveBeenCalledWith(mockEngine.state);
 });

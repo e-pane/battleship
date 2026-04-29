@@ -102,6 +102,11 @@ export function renderShipPlacementScreen() {
                 <div class="left-labels"></div>
                 <div class="grid"></div>
             </div>
+
+            <!-- WARNING FOR INCORRECT PLACEMENT -->
+            <div class="mis-placement-warning">
+                <p>Placeholder</p>
+            </div>
         </div>
             
         <!-- CONTROLS -->

@@ -207,7 +207,7 @@ body {
     flex-direction: column;
     gap: 15px;
     align-items: center;
-    transform: translateX(175px);
+    transform: translateX(150px);
 }
 
 .cell {
