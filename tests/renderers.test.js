@@ -38,7 +38,7 @@ test("clicking on ship, entering starting x/y/orientation dispatches placeShip w
       <button type="button" class="ship-btn battleship" data-ship="battleship">Battleship</button>
     </div>
 
-    <input id="ship-x" value= "3" />
+    <input id="ship-x" value= "C" />
     <input id="ship-y" value= "3" />
 
     <label>
@@ -65,56 +65,10 @@ test("clicking on ship, entering starting x/y/orientation dispatches placeShip w
   expect(mockController.dispatch).toHaveBeenCalledTimes(1);
   expect(mockController.dispatch).toHaveBeenCalledWith("placeShip", {
     shipType: "carrier",
-    x: "3",
+    x: "C",
     y: "3",
     orient: "horizontal",
   });
 });
 
-test("shows ships after placement", () => {
-  const mockShips = [
-    {
-      ship: {
-        type: "destroyer",
-        length: 3,
-        hit: () => {},
-        isSunk: () => false,
-      },
-      coords: [
-        [0, 0],
-        [1, 0],
-        [2, 0],
-      ],
-    },
-    {
-      ship: {
-        type: "submarine",
-        length: 3,
-        hit: () => {},
-        isSunk: () => false,
-      },
-      coords: [
-        [5, 5],
-        [5, 6],
-        [5, 7],
-      ],
-    },
-  ];
 
-  const mockState = {
-    ships: mockShips,
-    phase: "shipPlacement",
-  };
-
-  renderShipPlacementScreen(mockState);
-  const shipList = document.querySelector(".ships-placed");
-  expect(shipList.querySelectorAll("li").length).toBe(2);
-  expect(shipList.textContent).toContain("destroyer");
-  expect(shipList.textContent).toContain("submarine");
-
-  const items = shipList.querySelectorAll("li");
-  expect(items[0].tagName).toBe("LI");
-  expect(items[1].tagName).toBe("LI");
-  expect(items[0].textContent).toBe("destroyer");
-  expect(items[1].textContent).toBe("submarine");
-});

@@ -102,7 +102,7 @@ body {
     font-size: 1.5rem;
     font-weight: 600;
     text-align: center;
-    padding: 8px;
+    padding: 3px;
     border-radius: 20px;
 }
 
@@ -293,8 +293,19 @@ body {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: nowrap;
+}
+
+.ship-info {
+    color: white;
+    background: rgba(0, 40, 20, 0.85);
+    font-family: Orbitron, sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+    padding: 6px;
+    border: 1px solid white;
+    border-radius: 5px;
 }
 
 #ship-x,
@@ -355,4 +366,16 @@ body {
     transform: scale(1.08);
     box-shadow: 0 0 12px #00ff66;
     background: rgba(0, 0, 0, 0.85);
+}
+/* Paint the grid with ships */
+
+.ship {
+    background-color: #b3002d;
+    color: white;
+    font-weight: 600;
+    font-size: 1.5rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

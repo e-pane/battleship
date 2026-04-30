@@ -5,12 +5,10 @@ export function createHandlers(engine) {
     return {
         startGame: (payload) => handleStartGame(engine, payload),
         placeShip: (payload) => handlePlaceShip(engine, payload),
-        handlePlacementModal: (payload) => handlePlacementModal(engine, payload),
     };
 }
 
 function handleStartGame(engine, payload) {
-    console.log(payload.playerName);
     engine.start(payload.playerName);
   
     const state = engine.state;
@@ -32,11 +30,4 @@ function handlePlaceShip(engine, payload) {
     }
 }
 
-function handlePlacementModal(engine, payload) {
-    const { shipType, modalOpen } = payload
-    const state = engine.state;
-    const shipLength = SHIP_TYPES[shipType];
-    const uiState = { shipType, shipLength, modalOpen };
-    renderShipPlacementScreen({state, uiState});
-}
 

@@ -105,8 +105,6 @@ export function createGameboard() {
       ship,
     };
   };
-  // ships = [{ type: destroyer, coords: [ [2,3], [3,3] ]},
-  //          { type: cruiser, coords: [ [4,5], [4,6], [4,7] ]} ]
 
   gameboard.hasShipAt = (x, y) => {
     return occupied.has(`${x},${y}`);

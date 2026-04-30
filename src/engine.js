@@ -15,13 +15,11 @@ export function createEngine() {
             turn: 'player',
             gameOver: false,
         };
-        console.log(engine.state);
     }
 
     engine.placeShip = (shipType, x, y, orient) => {
         const ship = createShip(shipType);
         const result = engine.state.player.gameboard.placeShip(ship, x, y, orient);
-        console.log(engine.state.player.gameboard.getShips());
 
         return result;
     };
