@@ -124,6 +124,7 @@ export function renderShipPlacementScreen(state, uiState) {
             <!-- WARNING FOR INCORRECT PLACEMENT -->
             <div class="ui-information-display">
                 <div class="ships-placed">Ships placed</div>
+                <div class="ship-error-msg"></div>
                 <ul class="ship-list"></ul>
             </div>
         </div>
@@ -256,5 +257,22 @@ export function renderShipPlacementScreen(state, uiState) {
       listedShip.innerText = ship.ship.type;
       shipList.append(listedShip);
     });
+  }
+    
+  if (uiState?.errorMsg) {
+    const errorBox = document.querySelector(".ship-error-msg");
+
+    const ERROR_TEXT = {
+        OVERLAP: "Ship overlaps another ship.",
+        OUT_OF_BOUNDS: "Ship extends off the board.",
+        INVALID_START: "Invalid starting coordinate.",
+        SHIP_ALREADY_PLACED: "That ship has already been placed",
+    };
+
+    errorBox.innerText = ERROR_TEXT[uiState.errorMsg] || "";
+
+    setTimeout(() => {
+      errorBox.innerText = "";
+    }, 5000);
   }
 }

@@ -60,6 +60,12 @@ export function createGameboard() {
   };
 
   gameboard.canPlaceShip = (ship, x, y, orient) => {
+    if (ships.some(el => el.ship.type === ship.type)) {
+      return {
+        ok: false,
+        reason: "SHIP_ALREADY_PLACED",
+      };
+    }
 
     if (x < 0 || x > 9 || y < 0 || y > 9) {
       return { ok: false, reason: "INVALID_START" };
@@ -105,6 +111,36 @@ export function createGameboard() {
       ship,
     };
   };
+
+  // ships = [
+  //   {
+  //     ship: {
+  //       type: "carrier",
+  //       length: 5,
+  //       hit(),
+  //       isSunk()
+  //     },
+  //     coords: [
+  //       [x, y],
+  //       [x, y],
+  //       [x, y],
+  //       [x, y],
+  //       [x, y]
+  //     ]
+  //   },
+  //   {
+  //     ship: {
+  //       type: "destroyer",
+  //       length: 2,
+  //       hit(),
+  //       isSunk()
+  //     },
+  //     coords: [
+  //       [x, y],
+  //       [x, y]
+  //     ]
+  //   }
+  // ]
 
   gameboard.hasShipAt = (x, y) => {
     return occupied.has(`${x},${y}`);

@@ -22,12 +22,17 @@ function handlePlaceShip(engine, payload) {
     const { shipType, x, y, orient } = payload;
     const result = engine.placeShip(shipType, x, y, orient);
 
-    const state = engine.state;
+    let state = engine.state;
     const ships = state.player.gameboard.getShips();
+    state = {...state, ships}
 
     if (result.ok) {
-        renderShipPlacementScreen({ ...state, ships });
+        renderShipPlacementScreen(state);
+        return;
     }
+    const errorMsg = result.reason;
+    const uiState = { errorMsg };
+    renderShipPlacementScreen(state, uiState);
 }
 
 
