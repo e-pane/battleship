@@ -258,7 +258,7 @@ export function renderShipPlacementScreen(state, uiState) {
       shipList.append(listedShip);
     });
   }
-    
+  // update user with ongoing status of ship placement
   if (uiState?.errorMsg) {
     const errorBox = document.querySelector(".ship-error-msg");
 
@@ -275,4 +275,16 @@ export function renderShipPlacementScreen(state, uiState) {
       errorBox.innerText = "";
     }, 5000);
   }
+    // sync the UI to all ships being successfully placed
+    if (state.ships.length === 5) {
+        const errorBox = document.querySelector('.ship-error-msg');
+        errorBox.innerText = "All ships have been placed!!"
+
+        const uiMessage = document.querySelector('.ui-messages');
+        uiMessage.innerHTML = "";
+        const startAttackBtn = document.createElement('button');
+        startAttackBtn.innerText = "Enter Attack Mode";
+        startAttackBtn.classList.add('start-attack-btn');
+        uiMessage.append(startAttackBtn);
+    }
 }
