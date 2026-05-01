@@ -1,5 +1,27 @@
 import { jest } from "@jest/globals";
-import { createGameboard, createShip } from "../src/factories.js";
+import { createGameboard, createShip, getShipCoords, parseCoord } from "../src/factories.js";
+
+test("getShipCoords does the right math", () => {
+  const mockShip = {
+    type: "carrier",
+    length: 5,
+  }
+
+  const horCoords = getShipCoords(mockShip, 2, 4, 'horizontal');
+  expect(horCoords.length).toBe(5);
+  expect(horCoords[0]).toEqual([2,4]);
+  expect(horCoords[2]).toEqual([4,4]);
+
+  const vertCoords = getShipCoords(mockShip, 2, 4, 'vertical');
+  expect(vertCoords.length).toBe(5);
+  expect(vertCoords[0]).toEqual([2,4]);
+  expect(vertCoords[2]).toEqual([2,6]); 
+});
+
+test("parseCoord parses correctly", () => {
+  const parsedCoord1 = parseCoord("C","5");
+  expect(parsedCoord1).toEqual([4, 2]);
+})
 
 test("placeShip accepts letter coordinates", () => {
   const gb = createGameboard();

@@ -21,31 +21,32 @@ export function createShip(shipType) {
         },
   };
 }
+// gameboard factory helper
+export function getShipCoords(ship, x, y, orient) {
+  const coords = [];
+
+  for (let i = 0; i < ship.length; i++) {
+    if (orient === "horizontal") coords.push([x + i, y]);
+    else coords.push([x, y + i]);
+  }
+
+  return coords;
+}
+// gameboard factory helper
+export function parseCoord(x, y) {
+  // if already numeric, return as-is
+  if (Number.isInteger(x) && Number.isInteger(y)) {
+    return [x, y];
+  }
+
+  // convert "C", "5" → [4, 2]
+  const row = x.toUpperCase().charCodeAt(0) - 65; // A-J
+  const col = Number(y) - 1; // 1-10
+  return [col, row];
+}
 
 export function createGameboard() {
 
-  function parseCoord(x, y) {
-    // if already numeric, return as-is
-    if (Number.isInteger(x) && Number.isInteger(y)) {
-      return [x, y];
-    }
-
-    // convert "C", "5" → [2, 4]
-    const row = x.toUpperCase().charCodeAt(0) - 65; // A-J
-    const col = Number(y) - 1; // 1-10
-    return [col, row];
-  }
-
-  function getShipCoords(ship, x, y, orient) {
-    const coords = [];
-
-    for (let i = 0; i < ship.length; i++) {
-      if (orient === "horizontal") coords.push([x + i, y]);
-      else coords.push([x, y + i]);
-    }
-
-    return coords;
-  }
   const gameboard = Object.create(null);
 
   const ships = [];
