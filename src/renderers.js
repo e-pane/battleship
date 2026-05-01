@@ -17,6 +17,16 @@ export function initRenderers(controller) {
       return;
     }
 
+      const shipCell = e.target.closest(".cell.ship");
+    
+    if (shipCell) {
+        const x = shipCell.dataset.x;
+        const y = shipCell.dataset.y;
+
+        controller.dispatch("removeShip", { x, y });
+        return;
+    }
+
     const action = e.target.dataset.action;
     if (!action) return;
 
@@ -28,7 +38,6 @@ export function initRenderers(controller) {
         controller.dispatch("startGame", { playerName: playerName || "Guest" });
       },
       placeShip: () => {
-        console.log("placeShip called");
         if (!selectedShip) {
           console.warn("No ship selected");
           return;
@@ -41,7 +50,6 @@ export function initRenderers(controller) {
           "input[name=orientation]:checked",
         );
         const orient = orientInput.value;
-        console.log(selectedShip, x, y, orient);
 
         controller.dispatch("placeShip", {
           shipType: selectedShip,
@@ -233,7 +241,6 @@ export function renderShipPlacementScreen(state, uiState) {
         state.ships.forEach((ship) => {
             for (const coord of ship.coords) {
                 const shipName = ship.ship.type;
-                console.log(shipName);
                 const firstLetter = shipName[0].toUpperCase();
                 const [x, y] = coord;
                 const cell = cellMap.get(`${x},${y}`);
@@ -251,7 +258,6 @@ export function renderShipPlacementScreen(state, uiState) {
   shipList.innerHTML = "";
   if (state.ships) {
     state.ships.forEach((ship) => {
-      console.log(JSON.stringify(ship));
       const listedShip = document.createElement("li");
       listedShip.classList.add("listed-ship");
       listedShip.innerText = ship.ship.type;

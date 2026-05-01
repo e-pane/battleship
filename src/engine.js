@@ -24,6 +24,22 @@ export function createEngine() {
         return result;
     };
 
+    engine.removeShipAt = (x, y) => {
+        x = Number(x);
+        y = Number(y);
+
+        const ships = engine.state.player.gameboard.getShips();
+        const ship = ships.find(ship => 
+            ship.coords.some(coord => coord[0] === x && coord[1] === y)
+        );
+
+        if (!ship) return;
+
+        const result = engine.state.player.gameboard.removeShip(ship);
+        
+        return result;
+    };
+
   return engine;
 }
 

@@ -49,8 +49,9 @@ export function createGameboard() {
   const gameboard = Object.create(null);
 
   const ships = [];
-  const missedAttacks = [];
   const occupied = new Set();
+
+  const missedAttacks = [];
   const attacked = new Set();
 
   gameboard.getShips = () => ships;
@@ -111,6 +112,25 @@ export function createGameboard() {
       ship,
     };
   };
+
+  gameboard.removeShip = (ship) => {
+    console.log(ships);
+    console.log(ship);
+    const idx = ships.findIndex(el => el.ship.type === ship.ship.type);
+    console.log(idx);
+
+    if (idx !== -1) {
+      ships[idx].coords.forEach((coord) => {
+        const stringCoord = `${coord[0]},${coord[1]}`;
+        occupied.delete(stringCoord);
+      });
+      ships.splice(idx, 1);
+    };
+
+    return {
+      ok: true
+    };
+  }
 
   // ships = [
   //   {
