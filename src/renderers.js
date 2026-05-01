@@ -237,22 +237,19 @@ export function renderShipPlacementScreen(state, uiState) {
     }
   }
     //paint the grid with each ship
-    if (state.ships) {
-        state.ships.forEach((ship) => {
-            for (const coord of ship.coords) {
-                const shipName = ship.ship.type;
-                const firstLetter = shipName[0].toUpperCase();
-                const [x, y] = coord;
-                const cell = cellMap.get(`${x},${y}`);
+    state.ships.forEach((ship) => {
+        for (const coord of ship.coords) {
+            const shipName = ship.ship.type;
+            const firstLetter = shipName[0].toUpperCase();
+            const [x, y] = coord;
+            const cell = cellMap.get(`${x},${y}`);
 
-                if (cell) {
-                    cell.classList.add("ship");
-                    cell.innerText = `${firstLetter}`;
-                }
+            if (cell) {
+                cell.classList.add("ship");
+                cell.innerText = `${firstLetter}`;
             }
-        });
-    }
-
+        }
+    });
   //populate the placed ships list
   const shipList = document.querySelector(".ship-list");
   shipList.innerHTML = "";
@@ -282,6 +279,7 @@ export function renderShipPlacementScreen(state, uiState) {
     }, 5000);
   }
     // sync the UI to all ships being successfully placed
+    if (!state.ships) return;
     if (state.ships.length === 5) {
         const errorBox = document.querySelector('.ship-error-msg');
         errorBox.innerText = "All ships have been placed!!"

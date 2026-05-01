@@ -114,10 +114,7 @@ export function createGameboard() {
   };
 
   gameboard.removeShip = (ship) => {
-    console.log(ships);
-    console.log(ship);
     const idx = ships.findIndex(el => el.ship.type === ship.ship.type);
-    console.log(idx);
 
     if (idx !== -1) {
       ships[idx].coords.forEach((coord) => {

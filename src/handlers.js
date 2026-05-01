@@ -12,7 +12,9 @@ export function createHandlers(engine) {
 function handleStartGame(engine, payload) {
     engine.start(payload.playerName);
   
-    const state = engine.state;
+    let state = engine.state;
+    const ships = state.player.gameboard.getShips();
+    state = { ...state, ships };
     
     if (state.phase === "shipPlacement") {
       renderShipPlacementScreen(state);
@@ -39,7 +41,7 @@ function handlePlaceShip(engine, payload) {
 function handleRemoveShip(engine, payload) {
     const { x, y } = payload;
     const result = engine.removeShipAt(x, y);
-    
+
 
     if (!result.ok) return;
 
