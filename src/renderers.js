@@ -17,7 +17,7 @@ export function initRenderers(controller) {
       return;
     }
 
-      const shipCell = e.target.closest(".cell.ship");
+    const shipCell = e.target.closest(".cell.ship");
     
     if (shipCell) {
         const x = shipCell.dataset.x;
@@ -42,15 +42,34 @@ export function initRenderers(controller) {
           console.warn("No ship selected");
           return;
         }
-        const xInput = document.querySelector("#ship-x");
-        const x = xInput.value.trim();
-        const yInput = document.querySelector("#ship-y");
-        const y = yInput.value.trim();
-        const orientInput = document.querySelector(
-          "input[name=orientation]:checked",
-        );
-        const orient = orientInput.value;
+          
+        let x;
+        let y;
+          
+        const emptyCell = e.target.closest(".cell");
 
+        if (emptyCell && !emptyCell.classList.contains("ship")) {
+            document.querySelectorAll('.cell.selected').
+                forEach(c => c.classList.remove('selected'));
+        
+            emptyCell.classList.add('selected');
+
+            x = emptyCell.dataset.x;
+            y = emptyCell.dataset.y;
+
+            const xInput = document.querySelector("#ship-x");
+            xInput.value = x;
+            const yInput = document.querySelector("#ship-y");
+            yInput.value = y;
+        } else {
+            x = document.querySelector("#ship-x").value.trim();
+            y = document.querySelector("#ship-y").value.trim();
+        }
+
+        const orientInput = document.querySelector("input[name=orientation]:checked");
+        if (!orientInput) return;
+        const orient = orientInput.value;
+        
         controller.dispatch("placeShip", {
           shipType: selectedShip,
           x,
@@ -116,9 +135,8 @@ export function renderShipPlacementScreen(state, uiState) {
                 <p>
                     Select a ship icon, enter row A–J and column 1–10,
                     choose horizontal or vertical orientation,
-                    then click PLACE SHIP.  The cell you choose will be the starting cell for that ship.
-                    To reposition any ship, click on the ship inside the grid.  You can also drag and drop
-                    any ship into position.
+                    then click PLACE SHIP.  Or select a ship icon and a starting cell for that ship.
+                    To reposition any ship, click on the ship inside the grid.  
                 </p>
             </div>
             <!-- GRID -->
@@ -210,32 +228,29 @@ export function renderShipPlacementScreen(state, uiState) {
   
       </section>
     `;
-  const grid = document.querySelector(".grid");
-  renderGrid(grid);
+    const grid = document.querySelector(".grid");
+    renderGrid(grid);
 
-  const top = document.querySelector(".top-labels");
-  const left = document.querySelector(".left-labels");
-
-  top.innerHTML = "";
-  left.innerHTML = "";
-
-  for (let i = 1; i <= 10; i++) {
-    const topCell = document.createElement("div");
-    topCell.textContent = i;
-    top.appendChild(topCell);
-
+    const top = document.querySelector(".top-labels");
     const left = document.querySelector(".left-labels");
 
+    top.innerHTML = "";
     left.innerHTML = "";
 
     const letters = "ABCDEFGHIJ";
+
+    for (let i = 1; i <= 10; i++) {
+        const topCell = document.createElement("div");
+        topCell.textContent = i;
+        top.appendChild(topCell);
+    }
 
     for (let i = 0; i < 10; i++) {
       const cell = document.createElement("div");
       cell.textContent = letters[i];
       left.appendChild(cell);
     }
-  }
+
     //paint the grid with each ship
     state.ships.forEach((ship) => {
         for (const coord of ship.coords) {
@@ -250,34 +265,34 @@ export function renderShipPlacementScreen(state, uiState) {
             }
         }
     });
-  //populate the placed ships list
-  const shipList = document.querySelector(".ship-list");
-  shipList.innerHTML = "";
-  if (state.ships) {
-    state.ships.forEach((ship) => {
-      const listedShip = document.createElement("li");
-      listedShip.classList.add("listed-ship");
-      listedShip.innerText = ship.ship.type;
-      shipList.append(listedShip);
-    });
-  }
+    //populate the placed ships list
+    const shipList = document.querySelector(".ship-list");
+    shipList.innerHTML = "";
+    if (state.ships) {
+        state.ships.forEach((ship) => {
+        const listedShip = document.createElement("li");
+        listedShip.classList.add("listed-ship");
+        listedShip.innerText = ship.ship.type;
+        shipList.append(listedShip);
+        });
+    }
   // update user with ongoing status of ship placement
-  if (uiState?.errorMsg) {
-    const errorBox = document.querySelector(".ship-error-msg");
+    if (uiState?.errorMsg) {
+        const errorBox = document.querySelector(".ship-error-msg");
 
-    const ERROR_TEXT = {
-        OVERLAP: "Ship overlaps another ship.",
-        OUT_OF_BOUNDS: "Ship extends off the board.",
-        INVALID_START: "Invalid starting coordinate.",
-        SHIP_ALREADY_PLACED: "That ship has already been placed",
-    };
+        const ERROR_TEXT = {
+            OVERLAP: "Ship overlaps another ship.",
+            OUT_OF_BOUNDS: "Ship extends off the board.",
+            INVALID_START: "Invalid starting coordinate.",
+            SHIP_ALREADY_PLACED: "That ship has already been placed",
+        };
 
-    errorBox.innerText = ERROR_TEXT[uiState.errorMsg] || "";
+        errorBox.innerText = ERROR_TEXT[uiState.errorMsg] || "";
 
-    setTimeout(() => {
-      errorBox.innerText = "";
-    }, 5000);
-  }
+        setTimeout(() => {
+        errorBox.innerText = "";
+        }, 5000);
+    }
     // sync the UI to all ships being successfully placed
     if (!state.ships) return;
     if (state.ships.length === 5) {
