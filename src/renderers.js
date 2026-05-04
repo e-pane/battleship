@@ -26,7 +26,21 @@ export function initRenderers(controller) {
         controller.dispatch("removeShip", { x, y });
         return;
     }
+      
+    const emptyCell = e.target.closest(".cell");
 
+    if (emptyCell && !emptyCell.classList.contains("ship")) {
+        document.querySelectorAll('.cell.selected').
+            forEach(c => c.classList.remove('selected'));
+
+        emptyCell.classList.add('selected');
+
+        document.querySelector("#ship-x").value = emptyCell.dataset.x;
+        document.querySelector("#ship-y").value = emptyCell.dataset.y;
+
+        return;
+    }
+      
     const action = e.target.dataset.action;
     if (!action) return;
 
@@ -38,43 +52,19 @@ export function initRenderers(controller) {
         controller.dispatch("startGame", { playerName: playerName || "Guest" });
       },
       placeShip: () => {
-        if (!selectedShip) {
-          console.warn("No ship selected");
-          return;
-        }
-          
-        let x;
-        let y;
-          
-        const emptyCell = e.target.closest(".cell");
-
-        if (emptyCell && !emptyCell.classList.contains("ship")) {
-            document.querySelectorAll('.cell.selected').
-                forEach(c => c.classList.remove('selected'));
+        if (!selectedShip) return;
         
-            emptyCell.classList.add('selected');
-
-            x = emptyCell.dataset.x;
-            y = emptyCell.dataset.y;
-
-            const xInput = document.querySelector("#ship-x");
-            xInput.value = x;
-            const yInput = document.querySelector("#ship-y");
-            yInput.value = y;
-        } else {
-            x = document.querySelector("#ship-x").value.trim();
-            y = document.querySelector("#ship-y").value.trim();
-        }
-
+        const x = document.querySelector("#ship-x").value.trim();
+        const y = document.querySelector("#ship-y").value.trim();
+        
         const orientInput = document.querySelector("input[name=orientation]:checked");
         if (!orientInput) return;
-        const orient = orientInput.value;
         
         controller.dispatch("placeShip", {
           shipType: selectedShip,
           x,
           y,
-          orient,
+          orient: orientInput.value,
         });
       },
     };

@@ -61,6 +61,9 @@ test("clicking on ship, entering starting x/y/orientation dispatches placeShip w
   initRenderers(mockController);
   document.querySelector(".ship-btn.carrier").click();
   document.querySelector('[data-action="placeShip"]').click();
+  expect(
+    document.querySelector(".ship-btn.carrier").classList.contains("selected"),
+  ).toBe(true);
 
   expect(mockController.dispatch).toHaveBeenCalledTimes(1);
   expect(mockController.dispatch).toHaveBeenCalledWith("placeShip", {
@@ -68,6 +71,46 @@ test("clicking on ship, entering starting x/y/orientation dispatches placeShip w
     x: "C",
     y: "3",
     orient: "horizontal",
+  });
+});
+
+test("clicking an empty grid cell updates ship-x and ship-y inputs", () => {
+  document.body.innerHTML = `
+    <div class="cell" data-x="2" data-y="5"></div>
+    <input id="ship-x">
+    <input id="ship-y">
+    <input type="radio" name="orientation" value="horizontal" checked />
+    <button data-action="placeShip">Place Ship</button>
+  `;
+
+  const mockController = {
+    dispatch: jest.fn(),
+  };
+
+  initRenderers(mockController);
+
+  document.querySelector(".cell").click();
+
+  expect(document.querySelector("#ship-x").value).toBe("2");
+  expect(document.querySelector("#ship-y").value).toBe("5");
+});
+
+test("clicking a grid cell with a ship calls sends removeShip intent to dispatch with coord payload", () => {
+  document.body.innerHTML = `
+    <div class="cell ship" data-x="2" data-y="5"></div>
+  `;
+
+  const mockController = {
+    dispatch: jest.fn(),
+  };
+
+  initRenderers(mockController);
+
+  document.querySelector(".cell.ship").click();
+  expect(mockController.dispatch).toHaveBeenCalledTimes(1);
+  expect(mockController.dispatch).toHaveBeenCalledWith("removeShip", {
+    x: "2",
+    y: "5",
   });
 });
 
