@@ -1,4 +1,5 @@
 const cellMap = new Map();
+const letters = "ABCDEFGHIJ";
 
 export function initRenderers(controller) {
   let selectedShip = null;
@@ -26,17 +27,30 @@ export function initRenderers(controller) {
         controller.dispatch("removeShip", { x, y });
         return;
     }
-      
+     
+    
     const emptyCell = e.target.closest(".cell");
-
+    
     if (emptyCell && !emptyCell.classList.contains("ship")) {
+        const inputX = document.querySelector("#ship-x");
+        const inputY = document.querySelector("#ship-y");
+
+        if (inputX) inputX.value = "";
+        if (inputY) inputY.value = "";
+
         document.querySelectorAll('.cell.selected').
             forEach(c => c.classList.remove('selected'));
 
         emptyCell.classList.add('selected');
 
-        document.querySelector("#ship-x").value = emptyCell.dataset.x;
-        document.querySelector("#ship-y").value = emptyCell.dataset.y;
+        const x = Number(emptyCell.dataset.x);
+        const y = Number(emptyCell.dataset.y);
+
+        const uiX = letters[y];
+        const uiY = x + 1;
+
+        inputX.value = uiX;
+        inputY.value = uiY;
 
         return;
     }
@@ -67,6 +81,9 @@ export function initRenderers(controller) {
           orient: orientInput.value,
         });
       },
+      enterAttackMode: () => {
+        controller.dispatch("enterAttackMode");
+      }
     };
 
     const handler = actions[action];
@@ -227,8 +244,6 @@ export function renderShipPlacementScreen(state, uiState) {
     top.innerHTML = "";
     left.innerHTML = "";
 
-    const letters = "ABCDEFGHIJ";
-
     for (let i = 1; i <= 10; i++) {
         const topCell = document.createElement("div");
         topCell.textContent = i;
@@ -251,7 +266,7 @@ export function renderShipPlacementScreen(state, uiState) {
 
             if (cell) {
                 cell.classList.add("ship");
-                cell.innerText = `${firstLetter}`;
+                cell.textContent = `${firstLetter}`;
             }
         }
     });
@@ -277,23 +292,26 @@ export function renderShipPlacementScreen(state, uiState) {
             SHIP_ALREADY_PLACED: "That ship has already been placed",
         };
 
-        errorBox.innerText = ERROR_TEXT[uiState.errorMsg] || "";
+        errorBox.textContent = ERROR_TEXT[uiState.errorMsg] || "";
 
         setTimeout(() => {
-        errorBox.innerText = "";
+        errorBox.textContent = "";
         }, 5000);
     }
     // sync the UI to all ships being successfully placed
-    if (!state.ships) return;
-    if (state.ships.length === 5) {
-        const errorBox = document.querySelector('.ship-error-msg');
-        errorBox.innerText = "All ships have been placed!!"
+        if (!state.ships) return;
+        const placementComplete = state.ships?.length === state.requiredShips;
+        if (placementComplete) {
+            const errorBox = document.querySelector('.ship-error-msg');
+            errorBox.textContent = "All ships have been placed!!"
 
-        const uiMessage = document.querySelector('.ui-messages');
-        uiMessage.innerHTML = "";
-        const startAttackBtn = document.createElement('button');
-        startAttackBtn.innerText = "Enter Attack Mode";
-        startAttackBtn.classList.add('start-attack-btn');
-        uiMessage.append(startAttackBtn);
-    }
+            const uiMessage = document.querySelector('.ui-messages');
+            uiMessage.innerHTML = "";
+            const startAttackBtn = document.createElement('button');
+            startAttackBtn.textContent = "Enter Attack Mode";
+            startAttackBtn.classList.add('start-attack-btn');
+            startAttackBtn.dataset.action = 'enterAttackMode';
+
+            uiMessage.append(startAttackBtn);
+        }
 }

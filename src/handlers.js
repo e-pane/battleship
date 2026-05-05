@@ -6,6 +6,7 @@ export function createHandlers(engine) {
         startGame: (payload) => handleStartGame(engine, payload),
         placeShip: (payload) => handlePlaceShip(engine, payload),
         removeShip: (payload) => handleRemoveShip(engine, payload),
+        enterAttackMode: () => handleEnterAttackMode(engine),
     };
 }
 
@@ -52,4 +53,9 @@ function handleRemoveShip(engine, payload) {
     renderShipPlacementScreen(state);
 }
 
+function handleEnterAttackMode(engine) {
+    engine.enterAttackMode();
+    const state = engine.state;
+    renderAttackScreen(state);
+}
 

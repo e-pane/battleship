@@ -293,6 +293,7 @@ body {
     height: var(--cell-size);
     background: rgba(0, 0, 0, 0.7);
     border: 1px solid #00ff66;
+    cursor: pointer;
 }
 
 .controls {
@@ -329,6 +330,13 @@ body {
     box-shadow: 0 0 12px #00ff66;
     border: 5px solid #00ff66;
 }
+
+.cell.selected {
+    transform: scale(0.9);
+    box-shadow: 0 0 4px #00ff66;
+    outline: 6px solid #00ff66;
+    outline-offset: -2px;
+  }
 
 .ship-icons {
     display: flex;
