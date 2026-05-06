@@ -1,4 +1,3 @@
-const cellMap = new Map();
 const letters = "ABCDEFGHIJ";
 
 export function initRenderers(controller) {
@@ -94,8 +93,8 @@ export function initRenderers(controller) {
 }
 
 export function renderGrid(container) {
+    const cellMap = new Map();
     container.innerHTML = "";
-    cellMap.clear();
 
   for (let i = 0; i < 100; i++) {
     const x = i % 10;
@@ -109,6 +108,7 @@ export function renderGrid(container) {
     cellMap.set(`${x},${y}`, cell);
     container.appendChild(cell);
   }
+  return cellMap;
 }
 
 export function renderStartScreen() {
@@ -236,7 +236,7 @@ export function renderShipPlacementScreen(state, uiState) {
       </section>
     `;
     const grid = document.querySelector(".grid");
-    renderGrid(grid);
+    const cellMap = renderGrid(grid);
 
     const top = document.querySelector(".top-labels");
     const left = document.querySelector(".left-labels");
@@ -315,3 +315,126 @@ export function renderShipPlacementScreen(state, uiState) {
             uiMessage.append(startAttackBtn);
         }
 }
+
+export function renderAttackScreen(gameState, uiState) {
+    const { state, playerShips, computerShips } = gameState;
+    const { turn, playerSunkShips, computerSunkShips } = uiState;
+    const app = document.querySelector("#app");
+
+    app.innerHTML = `
+        <div class="boards">
+            <div class="computer-board">
+                <div class="computer-corner"></div>
+                <div class="computer-top-labels"></div>
+                <div class="computer-left-labels"></div>
+                <div class="grid computer-grid"></div>
+            </div>
+
+            <div class="player-board">
+                <div class="player-corner"></div>
+                <div class="player-top-labels"></div>
+                <div class="player-left-labels"></div>
+                <div class="grid player-grid"></div>
+            </div>
+        </div>
+
+        <div class=game-messaging">
+            <div class="computer-ships-sunk">Ships Sunk</div>
+            <div class="game-message"></div>
+            <div class="player-ships-sunk">Ships Sunk</div>
+        </div>
+        `;
+
+    const computerGrid = document.querySelector(".computer-grid");
+    const playerGrid = document.querySelector(".player-grid");
+
+    const computerCellMap = renderGrid(computerGrid);
+    const playerCellMap = renderGrid(playerGrid);
+
+    const computerTop = document.querySelector(".computer-top-labels");
+    const computerLeft = document.querySelector(".computer=left-labels");
+
+    computerTop.innerHTML = "";
+    computerLeft.innerHTML = "";
+
+    for (let i = 1; i <= 10; i++) {
+        const computerTopCell = document.createElement("div");
+        computerTopCell.textContent = i;
+        computerTop.appendChild(computerTopCell);
+    }
+
+    for (let i = 0; i < 10; i++) {
+        const computerCell = document.createElement("div");
+        computerCell.textContent = letters[i];
+        computerLeft.appendChild(computerCell);
+    }
+
+    const playerTop = document.querySelector(".player-top-labels");
+    const playerLeft = document.querySelector(".player=left-labels");
+
+    playerTop.innerHTML = "";
+    playerLeft.innerHTML = "";
+
+    for (let i = 1; i <= 10; i++) {
+        const playerTopCell = document.createElement("div");
+        playerTopCell.textContent = i;
+        playerTop.appendChild(playerTopCell);
+    }
+
+    for (let i = 0; i < 10; i++) {
+        const playerCell = document.createElement("div");
+        playerCell.textContent = letters[i];
+        playerLeft.appendChild(playerCell);
+    }
+
+    //paint the player's grid ONLY with each ship
+    state.playerShips.forEach((ship) => {
+        for (const coord of ship.coords) {
+        const shipName = ship.ship.type;
+        const firstLetter = shipName[0].toUpperCase();
+        const [x, y] = coord;
+        const cell = cellMap.get(`${x},${y}`);
+
+        if (cell) {
+            cell.classList.add("ship");
+            cell.textContent = `${firstLetter}`;
+        }
+        }
+    });
+        
+    //populate computer's shipsSunk list
+    const compShipsSunk = document.querySelector('.computer-ships-sunk');
+    const sunkList = document.createElement('ul');
+    sunkList.classList.add('sunk-list', 'computer-sunk-list');
+
+    computerSunkShips.forEach(s => {
+        const listItem = document.createElement('li');
+        listItem.textContent = s;
+        sunkList.append(listItem);
+    });
+
+    //populate player's shipsSunk list
+    const playerShipsSunk = document.querySelector(".player-ships-sunk");
+    const sunkList = document.createElement("ul");
+    sunkList.classList.add("sunk-list", "player-sunk-list");
+
+    playerSunkShips.forEach((s) => {
+      const listItem = document.createElement("li");
+      listItem.textContent = s;
+      sunkList.append(listItem);
+    });
+
+    //display who's turn it is
+    const gameMessage = document.querySelector('.game-message');
+
+    if (gameMessage) {
+        gameMessage.innnerHTML = "";
+
+        const turnMessage = document.createElement('p');
+        turnMessage.classList.add('turn-message');
+        turnMessage.textContent = `It's ${turn}'s turn`;
+
+        gameMessage.append(turnMessage);
+    }
+}
+

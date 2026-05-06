@@ -13,12 +13,12 @@ export function createHandlers(engine) {
 function handleStartGame(engine, payload) {
     engine.start(payload.playerName);
   
-    let state = engine.state;
+    const state = engine.state;
     const ships = state.player.gameboard.getShips();
-    state = { ...state, ships };
+    const viewModel = { ...state, ships };
     
     if (state.phase === "shipPlacement") {
-      renderShipPlacementScreen(state);
+      renderShipPlacementScreen(viewModel);
     }
 }
 
@@ -26,17 +26,17 @@ function handlePlaceShip(engine, payload) {
     const { shipType, x, y, orient } = payload;
     const result = engine.placeShip(shipType, x, y, orient);
 
-    let state = engine.state;
+    const state = engine.state;
     const ships = state.player.gameboard.getShips();
-    state = {...state, ships}
+    const viewModel = {...state, ships}
 
     if (result.ok) {
-        renderShipPlacementScreen(state);
+        renderShipPlacementScreen(viewModel);
         return;
     }
     const errorMsg = result.reason;
     const uiState = { errorMsg };
-    renderShipPlacementScreen(state, uiState);
+    renderShipPlacementScreen(viewModel, uiState);
 }
 
 function handleRemoveShip(engine, payload) {
@@ -46,16 +46,30 @@ function handleRemoveShip(engine, payload) {
 
     if (!result.ok) return;
 
-    let state = engine.state;
+    const state = engine.state;
     const ships = state.player.gameboard.getShips();
-    state = { ...state, ships };
+    const viewModel = { ...state, ships };
 
-    renderShipPlacementScreen(state);
+    renderShipPlacementScreen(viewModel);
 }
 
 function handleEnterAttackMode(engine) {
     engine.enterAttackMode();
-    const state = engine.state;
-    renderAttackScreen(state);
+
+    let state = engine.state;
+
+    const viewModel = {
+      ...state,
+      playerShips: state.player.gameboard.getShips(),
+      computerShips: state.computer.gameboard.getShips(),
+    };
+    //derive uiState of ships currently sunk from stateful ships arrays
+    const uiState = {
+        turn: engine.state.turn,
+        playerSunkShips: viewModel.playerShips.filter(s => s.ship.isSunk()).map(s => s.ship.type),
+        computerSunkShips: viewModel.computerShips.filter(s => s.ship.isSunk()).map(s => s.ship.type),
+    }
+
+    renderAttackScreen(viewModel, uiState);
 }
 
