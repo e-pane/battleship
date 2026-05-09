@@ -1,4 +1,4 @@
-import { renderShipPlacementScreen } from "./renderers.js";
+import { renderShipPlacementScreen, renderAttackScreen } from "./renderers.js";
 import { SHIP_TYPES } from "./factories.js";
 
 export function createHandlers(engine) {

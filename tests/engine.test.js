@@ -1,5 +1,5 @@
 import { jest } from "@jest/globals";
-import { createEngine } from "../src/engine.js";
+import { createEngine, generateFleet } from "../src/engine.js";
 import { createGameboard, createShip } from "../src/factories.js";
 
 test("engine.start creates players and default state", () => {
@@ -52,5 +52,50 @@ test("engine.removeShipAt takes coords and calls gameboard.removeShip with corre
     }), 
   );
   expect(result.ok).toBe(true);
+});
+
+test("generateComputerFleet generates a valid fleet", () => {
+  const engine = createEngine();
+  engine.start("Harry");
+
+  generateFleet(engine.state.computer.gameboard);
+
+  const computerShips = engine.state.computer.gameboard.getShips();
+  // assert that 5 ships were made
+  expect(computerShips).toHaveLength(5);
+  // assert no overlappping ships
+  const computerShipCoords = [];
+  computerShips.forEach((s) => {
+    computerShipCoords.push(...s.coords.map(coord => `${coord[0]},${coord[1]}`));
+  })
+
+  const uniqueCoords = new Set(computerShipCoords);
+  expect(uniqueCoords.size).toBe(computerShipCoords.length);
+});
+
+test("enterAttackMode doesn't respond to incomplete player fleet", () => {
+  const engine = createEngine();
+  engine.start("Harry");
+
+  engine.enterAttackMode();
+
+  expect(engine.state.phase).toBe('shipPlacement');
+  expect(engine.state.computer.gameboard.getShips()).toHaveLength(0);
+});
+
+test("enterAttackMode switches to attack mode and generates computer fleet", () => {
+  const engine = createEngine();
+  engine.start("Harry");
+
+  engine.placeShip("carrier", "A", 1, "horizontal");
+  engine.placeShip("battleship", "B", 2, "horizontal");
+  engine.placeShip("cruiser", "C", 3, "horizontal");
+  engine.placeShip("submarine", "D", 4, "horizontal");
+  engine.placeShip("destroyer", "E", 5, "horizontal");
+
+  engine.enterAttackMode();
+
+  expect(engine.state.phase).toBe('attack');
+  expect(engine.state.computer.gameboard.getShips()).toHaveLength(5);
 });
 

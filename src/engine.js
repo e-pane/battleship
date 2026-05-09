@@ -1,36 +1,36 @@
 import { createShip, createPlayer, createGameboard } from "./factories.js";
 
+// helper to creat the computer's fleet of ships
+export function generateFleet(gameboard) {
+  const shipTypes = [
+    "carrier",
+    "battleship",
+    "cruiser",
+    "submarine",
+    "destroyer",
+  ];
+
+  for (const shipType of shipTypes) {
+    let placed = false;
+
+    while (!placed) {
+      const letters = "ABCDEFGHIJ";
+      const x = letters[Math.floor(Math.random() * 10)];
+      const y = Math.floor(Math.random() * 10) + 1;
+      const orient = Math.random() < 0.5 ? "horizontal" : "vertical";
+
+      const result = gameboard.placeShip(createShip(shipType), x, y, orient);
+
+      if (result.ok) {
+        placed = true;
+      }
+    }
+  }
+}
+
 export function createEngine() {
 
     const engine = Object.create(null);
-
-    // helper to creat the computer's fleet of ships
-    function generateComputerFleet() {
-      const shipTypes = [
-        "carrier",
-        "battleship",
-        "cruiser",
-        "submarine",
-        "destroyer",
-      ];
-
-      for (const shipType of shipTypes) {
-        let placed = false;
-
-        while (!placed) {
-          const letters = "ABCDEFGHIJ";
-          const x = letters[Math.floor(Math.random() * 10)];
-          const y = Math.floor(Math.random() * 10) + 1;
-          const orient = Math.random() < 0.5 ? "horizontal" : "vertical";
-
-          const result = engine.state.computer.gameboard.placeShip(createShip(shipType), x, y, orient);
-
-          if (result.ok) {
-            placed = true;
-          }
-        }
-      }
-    }
 
     engine.start = (playerName) => {
         const player = createPlayer(playerName);
@@ -70,9 +70,9 @@ export function createEngine() {
     };
 
     engine.enterAttackMode = () => {
-        if (engine.state.player.gameboard.getShip().length !== engine.state.requiredShips) return;
+        if (engine.state.player.gameboard.getShips().length !== engine.state.requiredShips) return;
 
-        generateComputerFleet();
+        generateFleet(engine.state.computer.gameboard);
 
         engine.state.phase = "attack";
     }

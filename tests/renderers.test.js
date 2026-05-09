@@ -76,7 +76,7 @@ test("clicking on ship, entering starting x/y/orientation dispatches placeShip w
 
 test("clicking an empty grid cell updates ship-x and ship-y inputs", () => {
   document.body.innerHTML = `
-    <div class="cell" data-x="2" data-y="5"></div>
+    <div class="cell" data-x="1" data-y="3"></div>
     <input id="ship-x">
     <input id="ship-y">
     <input type="radio" name="orientation" value="horizontal" checked />
@@ -91,8 +91,8 @@ test("clicking an empty grid cell updates ship-x and ship-y inputs", () => {
 
   document.querySelector(".cell").click();
 
-  expect(document.querySelector("#ship-x").value).toBe("C");
-  expect(document.querySelector("#ship-y").value).toBe("6");
+  expect(document.querySelector("#ship-x").value).toBe("D");
+  expect(document.querySelector("#ship-y").value).toBe("2");
 });
 
 test("clicking a grid cell with a ship calls sends removeShip intent to dispatch with coord payload", () => {

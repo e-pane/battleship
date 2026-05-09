@@ -352,7 +352,7 @@ export function renderAttackScreen(gameState, uiState) {
     const playerCellMap = renderGrid(playerGrid);
 
     const computerTop = document.querySelector(".computer-top-labels");
-    const computerLeft = document.querySelector(".computer=left-labels");
+    const computerLeft = document.querySelector(".computer-left-labels");
 
     computerTop.innerHTML = "";
     computerLeft.innerHTML = "";
@@ -370,7 +370,7 @@ export function renderAttackScreen(gameState, uiState) {
     }
 
     const playerTop = document.querySelector(".player-top-labels");
-    const playerLeft = document.querySelector(".player=left-labels");
+    const playerLeft = document.querySelector(".player-left-labels");
 
     playerTop.innerHTML = "";
     playerLeft.innerHTML = "";
@@ -404,24 +404,24 @@ export function renderAttackScreen(gameState, uiState) {
         
     //populate computer's shipsSunk list
     const compShipsSunk = document.querySelector('.computer-ships-sunk');
-    const sunkList = document.createElement('ul');
-    sunkList.classList.add('sunk-list', 'computer-sunk-list');
+    const compSunkList = document.createElement('ul');
+    compSunkList.classList.add('sunk-list', 'computer-sunk-list');
 
     computerSunkShips.forEach(s => {
         const listItem = document.createElement('li');
         listItem.textContent = s;
-        sunkList.append(listItem);
+        compSunkList.append(listItem);
     });
 
     //populate player's shipsSunk list
     const playerShipsSunk = document.querySelector(".player-ships-sunk");
-    const sunkList = document.createElement("ul");
-    sunkList.classList.add("sunk-list", "player-sunk-list");
+    const playerSunkList = document.createElement("ul");
+    playerSunkList.classList.add("sunk-list", "player-sunk-list");
 
     playerSunkShips.forEach((s) => {
       const listItem = document.createElement("li");
       listItem.textContent = s;
-      sunkList.append(listItem);
+      playerSunkList.append(listItem);
     });
 
     //display who's turn it is
