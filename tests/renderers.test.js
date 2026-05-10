@@ -2,7 +2,13 @@
  * @jest-environment jsdom
  */
 import { jest } from "@jest/globals";
-import { initRenderers, renderGrid, renderShipPlacementScreen, renderStartScreen } from "../src/renderers.js";
+import {
+  initRenderers,
+  renderAttackScreen,
+  renderGrid,
+  renderShipPlacementScreen,
+  renderStartScreen,
+} from "../src/renderers.js";
 
 beforeEach(() => {
   document.body.innerHTML = `
@@ -10,7 +16,7 @@ beforeEach(() => {
     <ul class="ships-placed"></ul>
   `;
 });
-
+// test renderStartScreen
 test("clicking start button dispatches startGame with playerName", () => {
   document.body.innerHTML = `
         <input id="player-name" value="Harry" />
@@ -29,7 +35,7 @@ test("clicking start button dispatches startGame with playerName", () => {
     playerName: "Harry",
   });
 });
-
+// test renderShipPlacementScreen
 test("clicking on ship, entering starting x/y/orientation dispatches placeShip with form data", () => {
   document.body.innerHTML = `
 
@@ -149,7 +155,7 @@ test("placeShip does nothing if no orientation selected", () => {
 
   initRenderers(mockController);
 
-  document.querySelector('.ship-btn.carrier').click()
+  document.querySelector(".ship-btn.carrier").click();
 
   document.querySelector('[data-action="placeShip"]').click();
   expect(mockController.dispatch).not.toHaveBeenCalled();
@@ -163,12 +169,12 @@ test("selecting a ship deselects other ships", () => {
 
   const mockController = { dispatch: jest.fn() };
   initRenderers(mockController);
-  
+
   const carrierBtn = document.querySelector('[data-ship="carrier"]');
   const battleshipBtn = document.querySelector('[data-ship="battleship"]');
 
   carrierBtn.click();
-  expect(carrierBtn.classList.contains('selected')).toBe(true);
+  expect(carrierBtn.classList.contains("selected")).toBe(true);
 
   battleshipBtn.click();
   expect(carrierBtn.classList.contains("selected")).toBe(false);
@@ -177,23 +183,31 @@ test("selecting a ship deselects other ships", () => {
 
 test("renderShipPlacementScreen paints grid on screen", () => {
   const state = {
-    ships: [{ ship: { type: "destroyer" }, coords: [[0, 0], [1, 0]] },],
+    ships: [
+      {
+        ship: { type: "destroyer" },
+        coords: [
+          [0, 0],
+          [1, 0],
+        ],
+      },
+    ],
   };
 
   renderShipPlacementScreen(state, {});
-  
+
   const shipCell = document.querySelector('.cell[data-x="0"][data-y="0"]');
-  expect(shipCell.classList.contains('ship')).toBe(true);
-  expect(shipCell.textContent).toBe('D');
+  expect(shipCell.classList.contains("ship")).toBe(true);
+  expect(shipCell.textContent).toBe("D");
 });
 
 test("renderGrid creates 100 cells with correct zero-indexed coordinates", () => {
-  const container = document.createElement('div');
-  container.innerHTML = '<p>junk</p>';
+  const container = document.createElement("div");
+  container.innerHTML = "<p>junk</p>";
 
   renderGrid(container);
 
-  const cells = container.querySelectorAll('.cell');
+  const cells = container.querySelectorAll(".cell");
 
   expect(cells.length).toBe(100);
 
@@ -205,14 +219,14 @@ test("renderGrid creates 100 cells with correct zero-indexed coordinates", () =>
   expect(cell99).not.toBeNull();
   expect(cell34).not.toBeNull();
 
-  expect(container.innerHTML).not.toContain('junk');
+  expect(container.innerHTML).not.toContain("junk");
 });
 
 test("renderShipPlacementScreen displays error message when uiState.errorMsg is set", () => {
   const state = { ships: [] };
 
   renderShipPlacementScreen(state, { errorMsg: "OVERLAP" });
-  
+
   const errorBox = document.querySelector(".ship-error-msg");
 
   expect(errorBox.textContent).toBe("Ship overlaps another ship.");
@@ -230,4 +244,137 @@ test("error msg cleared after timeout", () => {
   jest.advanceTimersByTime(5000);
 
   expect(errorBox.textContent).toBe("");
+});
+
+test("placementComplete block of renderShipPlacementScreen mutates the DOM correctly", () => {
+  // mock state to meet conditional block requirements
+  const state = {
+    requiredShips: 5,
+    ships: [
+      { ship: { type: "carrier" }, coords: [] },
+      { ship: { type: "battleship" }, coords: [] },
+      { ship: { type: "cruiser" }, coords: [] },
+      { ship: { type: "submarine" }, coords: [] },
+      { ship: { type: "destroyer" }, coords: [] },
+    ],
+  };
+
+  renderShipPlacementScreen(state, {});
+  // get reference to the btn the DOM should display
+  const btn = document.querySelector(".start-attack-btn");
+  expect(btn).not.toBeNull();
+  expect(btn.textContent).toBe("Enter Attack Mode");
+});
+// test renderAttackScreen
+test("renderAttackScreen creates both boards and messaging area", () => {
+  // mock gameState and uiState passed to renderAttackScreen
+  const gameState = {
+    player: {name:"Bob"},
+    playerShips: [],
+    computerShips: [],
+  };
+
+  const uiState = {
+    turnText: `It's ${gameState.player.name} turn`,
+    turnInstruction: "Click on a cell in the computer's grid to attack",
+    playerSunkShips: [],
+    computerSunkShips: [],
+  };
+
+  renderAttackScreen(gameState, uiState);
+  // assert that 2 gameboards with grids and a message area are added to the DOM
+  expect(document.querySelector(".computer-board")).not.toBeNull();
+  expect(document.querySelector(".player-board")).not.toBeNull();
+
+  expect(document.querySelector(".computer-grid")).not.toBeNull();
+  expect(document.querySelector(".player-grid")).not.toBeNull();
+
+  expect(document.querySelector(".game-message")).not.toBeNull();
+
+  const computerTopLabels = document.querySelectorAll(
+    ".computer-top-labels div",
+  );
+
+  const computerLeftLabels = document.querySelectorAll(
+    ".computer-left-labels div",
+  );
+
+  expect(computerTopLabels).toHaveLength(10);
+  expect(computerLeftLabels).toHaveLength(10);
+
+  expect(computerTopLabels[0].textContent).toBe("1");
+  expect(computerTopLabels[9].textContent).toBe("10");
+
+  expect(computerLeftLabels[0].textContent).toBe("A");
+  expect(computerLeftLabels[9].textContent).toBe("J");
+});
+
+test("renderAttackScreen renders sunk ships containers", () => {
+  const gameState = {
+    computer: {},
+    player: {},
+    computerShips: [],
+    playerShips: [],
+  };
+
+  const uiState = {
+    turnLabel: "Bob",
+    playerSunkShips: [],
+    computerSunkShips: [],
+  };
+
+  renderAttackScreen(gameState, uiState);
+
+  const compList = document.querySelector(".computer-ships-sunk ul");
+  const playerList = document.querySelector(".player-ships-sunk ul");
+
+  expect(compList).not.toBeNull();
+  expect(playerList).not.toBeNull();
+});
+
+test("renderAttackScreen populates sunk ship lists", () => {
+  const gameState = {
+    computer: {},
+    player: {},
+    computerShips: [],
+    playerShips: [],
+  };
+
+  const uiState = {
+    turnLabel: "Bob",
+    playerSunkShips: ["carrier", "destroyer"],
+    computerSunkShips: ["submarine"],
+  };
+
+  renderAttackScreen(gameState, uiState);
+
+  const compList = document.querySelector(".computer-ships-sunk ul");
+  const playerList = document.querySelector(".player-ships-sunk ul");
+
+  expect(compList.querySelectorAll("li")).toHaveLength(1);
+  expect(playerList.querySelectorAll("li")).toHaveLength(2);
+});
+
+test("renderAttackScreen renders who's turn it is", () => {
+  const gameState = {
+    computer: {},
+    player: {name: 'Bob'},
+    computerShips: [],
+    playerShips: [],
+  };
+
+  const uiState = {
+    turnText: `It's ${gameState.player.name}'s turn`,
+    turnInstruction: "Click on a cell in the computer's grid to attack",
+    playerSunkShips: [],
+    computerSunkShips: [],
+  };
+
+  renderAttackScreen(gameState, uiState);
+
+  const turnMessage = document.querySelector(".game-message .turn-message");
+
+  expect(turnMessage).not.toBeNull();
+  expect(turnMessage.innerHTML).toContain
+    ("It's Bob's turn. Click on a cell in the computer's grid to attack");
 });

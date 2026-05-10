@@ -174,3 +174,44 @@ test("handleAttackMode calls the engine", () => {
   handlers.enterAttackMode();
   expect(mockEngine.enterAttackMode).toHaveBeenCalledTimes(1);
 });
+
+test("handleAttackMode calls renderAttackScreen with expected data", () => {
+  const playerShips = [
+    {
+      ship: {
+        type: "carrier",
+        isSunk: jest.fn(() => false),
+      },
+      coords: [],
+    },
+  ];
+
+  const computerShips = [
+    {
+      ship: {
+        type: "carrier",
+        isSunk: jest.fn(() => false),
+      },
+      coords: [],
+    },
+  ];
+
+  mockEngine.state.player.gameboard.getShips = jest.fn(() => playerShips);
+  mockEngine.state.computer.gameboard.getShips = jest.fn(() => computerShips);
+
+  handlers.enterAttackMode();
+
+  expect(mockRenderAttackScreen).toHaveBeenCalledWith(
+    expect.objectContaining({
+      playerShips,
+      computerShips,
+    }),
+    expect.objectContaining({
+      turnText: expect.any(String),
+      turnInstruction: expect.any(String),
+      playerSunkShips: [],
+      computerSunkShips: [],
+    }),
+  );
+
+})

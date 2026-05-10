@@ -7,6 +7,8 @@ test("engine.start creates players and default state", () => {
 
   engine.start("Harry");
 
+  console.log("AFTER START:", engine.state.turn);
+
   expect(engine.state.player).toBeDefined();
   expect(engine.state.computer).toBeDefined();
   expect(engine).toHaveProperty("placeShip");

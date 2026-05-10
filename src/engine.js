@@ -33,17 +33,17 @@ export function createEngine() {
     const engine = Object.create(null);
 
     engine.start = (playerName) => {
-        const player = createPlayer(playerName);
-        const computer = createPlayer("computer");
+      const player = createPlayer(playerName);
+      const computer = createPlayer("computer");
 
-        engine.state = {
-            player,
-            computer,
-            phase: 'shipPlacement',
-            turn: 'player',
-            gameOver: false,
-            requiredShips: 5,
-        };
+      engine.state = {
+        player,
+        computer,
+        phase: "shipPlacement",
+        turn: 'player',
+        gameOver: false,
+        requiredShips: 5,
+      };
     }
 
     engine.placeShip = (shipType, x, y, orient) => {

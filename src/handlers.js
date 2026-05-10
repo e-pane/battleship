@@ -64,8 +64,19 @@ function handleEnterAttackMode(engine) {
       computerShips: state.computer.gameboard.getShips(),
     };
     //derive uiState of ships currently sunk from stateful ships arrays
+    const isPlayerTurn = engine.state.turn === 'player';
+
+    const turnText = isPlayerTurn
+        ? `It's ${engine.state.player.name}'s turn`
+        : "The computer is choosing a target";
+    
+    const turnInstruction = isPlayerTurn
+        ? "Click on a cell in the computer's grid to attack"
+        : "";
+    
     const uiState = {
-        turn: engine.state.turn,
+        turnText,
+        turnInstruction,
         playerSunkShips: viewModel.playerShips.filter(s => s.ship.isSunk()).map(s => s.ship.type),
         computerSunkShips: viewModel.computerShips.filter(s => s.ship.isSunk()).map(s => s.ship.type),
     }
