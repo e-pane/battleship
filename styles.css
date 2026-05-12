@@ -350,7 +350,7 @@ body {
     box-shadow: 0 0 4px #00ff66;
     outline: 6px solid #00ff66;
     outline-offset: -2px;
-  }
+}
 
 .ship-icons {
     display: flex;
@@ -558,3 +558,39 @@ body {
     max-width: 210px;
     width: fit-content;
 }
+
+.computer-grid .cell:hover {
+    transform: scale(0.95);
+    outline: 5px solid #00ff66;
+    outline-offset: -2px;
+    cursor: pointer;
+}
+
+.miss {
+    background: linear-gradient(
+      135deg,
+      #08306b 0%,
+      #2171b5 30%,
+      #4292c6 60%,
+      #1c7ed6 100%
+    );
+  
+    box-shadow:
+      inset 0 0 10px rgba(255, 255, 255, 0.12),
+      inset 0 0 14px rgba(0, 0, 50, 0.35);
+}
+
+.hit {
+    background: linear-gradient(
+      135deg,
+      #2b0a0a 0%,
+      #8b1e1e 20%,
+      #d84315 45%,
+      #ff3d00 70%,
+      #ffcc80 100%
+    );
+  
+    box-shadow:
+      inset 0 0 10px rgba(255, 200, 120, 0.18),
+      inset 0 0 14px rgba(80, 0, 0, 0.45);
+  }

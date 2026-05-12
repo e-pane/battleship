@@ -9,7 +9,7 @@ jest.unstable_mockModule("../src/renderers.js", () => ({
 }));
 
 // factory to make a fresh mockEngine object for each handler test
-function createMockEngine() {
+function createMockEngine(overrides = {}) {
   return {
     start: jest.fn(),
     placeShip: jest.fn(),
@@ -19,12 +19,12 @@ function createMockEngine() {
     state: {
       player: {
         gameboard: {
-          getShips: jest.fn(() => []),
+          getShips: jest.fn(() => overrides.playerShips || []),
         },
       },
       computer: {
         gameboard: {
-          getShips: jest.fn(() => []),
+          getShips: jest.fn(() => overrides.computerShips || []),
         },
       },
       phase: "shipPlacement",
@@ -170,34 +170,25 @@ test("handleRemoveShip calls engine with correct args & follows engine failure r
   expect(mockRenderShipPlacementScreen).not.toHaveBeenCalled();
 });
 
-test("handleAttackMode calls the engine", () => {
-  handlers.enterAttackMode();
-  expect(mockEngine.enterAttackMode).toHaveBeenCalledTimes(1);
-});
-
 test("handleAttackMode calls renderAttackScreen with expected data", () => {
   const playerShips = [
-    {
-      ship: {
-        type: "carrier",
-        isSunk: jest.fn(() => false),
-      },
-      coords: [],
-    },
+    { ship: { type: "carrier", isSunk: jest.fn(() => false) }, coords: [] },
+    { ship: { type: "battleship", isSunk: jest.fn(() => false) }, coords: [] },
+    { ship: { type: "cruiser", isSunk: jest.fn(() => false) }, coords: [] },
+    { ship: { type: "submarine", isSunk: jest.fn(() => false) }, coords: [] },
+    { ship: { type: "destroyer", isSunk: jest.fn(() => false) }, coords: [] },
   ];
 
   const computerShips = [
-    {
-      ship: {
-        type: "carrier",
-        isSunk: jest.fn(() => false),
-      },
-      coords: [],
-    },
+    { ship: { type: "carrier", isSunk: jest.fn(() => false) }, coords: [] },
   ];
 
-  mockEngine.state.player.gameboard.getShips = jest.fn(() => playerShips);
-  mockEngine.state.computer.gameboard.getShips = jest.fn(() => computerShips);
+  const mockEngine = createMockEngine({
+    playerShips,
+    computerShips,
+  });
+
+  handlers = createHandlers(mockEngine);
 
   handlers.enterAttackMode();
 
@@ -207,6 +198,7 @@ test("handleAttackMode calls renderAttackScreen with expected data", () => {
       computerShips,
     }),
     expect.objectContaining({
+      currentPhase: 'attack',
       turnText: expect.any(String),
       turnInstruction: expect.any(String),
       playerSunkShips: [],

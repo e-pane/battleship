@@ -1,95 +1,107 @@
 const letters = "ABCDEFGHIJ";
 
 export function initRenderers(controller) {
-  let selectedShip = null;
+    let selectedShip = null;
 
-  document.addEventListener("click", (e) => {
-    const shipBtn = e.target.closest(".ship-btn");
+    document.addEventListener("click", (e) => {
+        if (controller.getPhase() === "attack") {
+            const computerCell = e.target.closest(".computer-grid .cell");
 
-    if (shipBtn) {
-      document.querySelectorAll(".ship-btn").forEach((btn) => {
-        btn.classList.remove("selected");
-      });
+            if (computerCell && document.querySelector(".attack-layout")) {
+                const x = Number(computerCell.dataset.x);
+                const y = Number(computerCell.dataset.y);
 
-      shipBtn.classList.add("selected");
-      selectedShip = shipBtn.dataset.ship;
+                controller.dispatch("playerAttack", { x, y });
+                return;
+            }
+        }    
+        if (controller.getPhase() === "shipPlacement") {
+            const shipBtn = e.target.closest(".ship-btn");
 
-      return;
-    }
+            if (shipBtn) {
+                document.querySelectorAll(".ship-btn").forEach((btn) => {
+                    btn.classList.remove("selected");
+                });
 
-    const shipCell = e.target.closest(".cell.ship");
-    
-    if (shipCell) {
-        const x = shipCell.dataset.x;
-        const y = shipCell.dataset.y;
+                shipBtn.classList.add("selected");
+                selectedShip = shipBtn.dataset.ship;
 
-        controller.dispatch("removeShip", { x, y });
-        return;
-    }
-     
-    
-    const emptyCell = e.target.closest(".cell");
-    
-    if (emptyCell && !emptyCell.classList.contains("ship")) {
-        const inputX = document.querySelector("#ship-x");
-        const inputY = document.querySelector("#ship-y");
+                return;
+            }
 
-        if (inputX) inputX.value = "";
-        if (inputY) inputY.value = "";
-
-        document.querySelectorAll('.cell.selected').
-            forEach(c => c.classList.remove('selected'));
-
-        emptyCell.classList.add('selected');
-
-        const x = Number(emptyCell.dataset.x);
-        const y = Number(emptyCell.dataset.y);
-
-        const uiX = letters[y];
-        const uiY = x + 1;
-
-        inputX.value = uiX;
-        inputY.value = uiY;
-
-        return;
-    }
-      
-    const action = e.target.dataset.action;
-    if (!action) return;
-
-    const actions = {
-      startGame: () => {
-        const nameInput = document.querySelector("#player-name");
-        const playerName = nameInput.value.trim();
-
-        controller.dispatch("startGame", { playerName: playerName || "Guest" });
-      },
-      placeShip: () => {
-        if (!selectedShip) return;
+            const shipCell = e.target.closest(".cell.ship");
         
-        const x = document.querySelector("#ship-x").value.trim();
-        const y = document.querySelector("#ship-y").value.trim();
-        
-        const orientInput = document.querySelector("input[name=orientation]:checked");
-        if (!orientInput) return;
-        
-        controller.dispatch("placeShip", {
-          shipType: selectedShip,
-          x,
-          y,
-          orient: orientInput.value,
-        });
-      },
-      enterAttackMode: () => {
-        controller.dispatch("enterAttackMode");
-      }
-    };
+            if (shipCell) {
+                const x = shipCell.dataset.x;
+                const y = shipCell.dataset.y;
 
-    const handler = actions[action];
-    if (handler) {
-      handler();
-    }
-  });
+                controller.dispatch("removeShip", { x, y });
+                return;
+            }
+        
+            const emptyCell = e.target.closest(".cell");
+        
+            if (emptyCell && !emptyCell.classList.contains("ship")) {
+                const inputX = document.querySelector("#ship-x");
+                const inputY = document.querySelector("#ship-y");
+
+                if (inputX) inputX.value = "";
+                if (inputY) inputY.value = "";
+
+                document.querySelectorAll('.cell.selected').
+                    forEach(c => c.classList.remove('selected'));
+
+                emptyCell.classList.add('selected');
+
+                const x = Number(emptyCell.dataset.x);
+                const y = Number(emptyCell.dataset.y);
+
+                const uiX = letters[y];
+                const uiY = x + 1;
+
+                inputX.value = uiX;
+                inputY.value = uiY;
+
+                return;
+            }
+        }
+        
+        const action = e.target.dataset.action;
+        if (!action) return;
+
+        const actions = {
+        startGame: () => {
+            const nameInput = document.querySelector("#player-name");
+            const playerName = nameInput.value.trim();
+
+            controller.dispatch("startGame", { playerName: playerName || "Guest" });
+        },
+        placeShip: () => {
+            if (!selectedShip) return;
+            
+            const x = document.querySelector("#ship-x").value.trim();
+            const y = document.querySelector("#ship-y").value.trim();
+            
+            const orientInput = document.querySelector("input[name=orientation]:checked");
+            if (!orientInput) return;
+            
+            controller.dispatch("placeShip", {
+            shipType: selectedShip,
+            x,
+            y,
+            orient: orientInput.value,
+            });
+        },
+        enterAttackMode: () => {
+            controller.dispatch("enterAttackMode");
+        }
+        };
+
+        const handler = actions[action];
+        if (handler) {
+        handler();
+        }
+    });
 }
 
 export function renderGrid(container) {
@@ -318,10 +330,19 @@ export function renderShipPlacementScreen(state, uiState) {
 
 export function renderAttackScreen(gameState, uiState) {
     const { computer, player, computerShips, playerShips } = gameState;
-    const { turnText, turnInstruction, playerSunkShips, computerSunkShips } = uiState;
+    const {
+      currentPhase,
+      turnText,
+      turnInstruction,
+      playerSunkShips,
+      computerSunkShips,
+      errorMsg,
+      playerAttack,
+      computerAttack,
+    } = uiState;
+    
     const app = document.querySelector("#app");
 
-    // 
     app.innerHTML = `
     <div class="attack-layout">
 
@@ -445,13 +466,110 @@ export function renderAttackScreen(gameState, uiState) {
     const gameMessage = document.querySelector('.game-message');
 
     if (gameMessage) {
-        gameMessage.innerHTML = "";
-
-        const turnMessage = document.createElement('p');
-        turnMessage.classList.add('turn-message');
-        turnMessage.textContent = turnText + ". " + turnInstruction;
-
-        gameMessage.append(turnMessage);
+        gameMessage.innerHTML = `
+            <p class="turn-message">${turnText}. ${turnInstruction}</p>
+        `;
     }
+
+    if (playerAttack) {
+      gameMessage.textContent = playerAttack.outcome.toUpperCase();
+    }
+    // guard agains attacking the same computer cell
+    if (errorMsg) {
+      const ERROR_TEXT = {
+        ALREADY_ATTACKED: "You've already attacked that cell",
+      };
+        
+      const errorEl = document.createElement("p");
+      errorEl.classList.add("already-attacked-msg");
+      errorEl.textContent = ERROR_TEXT[errorMsg] || "";
+
+      gameMessage.append(errorEl);
+
+      setTimeout(() => errorEl.remove(), 5000);
+    }
+    // paint attacked computer cell according to outcome
+
+    // if (playerAttack?.outcome) {
+    //     const attackedComputerCell = computerCellMap.get(
+    //       `${playerAttack.x},${playerAttack.y}`,
+    //     );
+
+    //     if (attackedComputerCell) {
+    //         const outcomeClass = playerAttack.outcome === "hit" ? "hit" : "miss";
+    //         attackedComputerCell.classList.add(outcomeClass);
+
+    //         const outcomeEl = document.createElement("p");
+    //         outcomeEl.classList.add(outcomeClass);
+    //         outcomeEl.textContent = playerAttack.outcome.toUpperCase();
+
+    //         gameMessage.append(outcomeEl);
+
+    //         setTimeout(() => outcomeEl.remove(), 5000);
+    //     }
+    // }
+
+    for (const key of playerCellMap.keys()) {
+      const cell = playerCellMap.get(key);
+      const [x, y] = key.split(",").map(Number);
+
+      if (player.gameboard.hasBeenAttacked(x, y)) {
+        const isHit = playerShips.some((ship) =>
+          ship.coords.some((c) => c[0] === x && c[1] === y),
+        );
+
+        cell.classList.add(isHit ? "hit" : "miss");
+      }
+    }
+
+    for (const key of computerCellMap.keys()) {
+      const cell = computerCellMap.get(key);
+      const [x, y] = key.split(",").map(Number);
+
+      if (computer.gameboard.hasBeenAttacked(x, y)) {
+        const isHit = computerShips.some((ship) =>
+          ship.coords.some((c) => c[0] === x && c[1] === y),
+        );
+
+        cell.classList.add(isHit ? "hit" : "miss");
+      }
+    }
+
+    // if (computerAttack?.outcome) {
+    //   const attackedPlayerCell = playerCellMap.get(
+    //     `${computerAttack.x},${computerAttack.y}`,
+    //   );
+
+    //   if (attackedPlayerCell) {
+    //     const outcomeClass = computerAttack.outcome === "hit" ? "hit" : "miss";
+    //     attackedPlayerCell.classList.add(outcomeClass);
+
+    //     const outcomeEl = document.createElement("p");
+    //     outcomeEl.classList.add(outcomeClass);
+    //     outcomeEl.textContent = computerAttack.outcome.toUpperCase();
+
+    //     gameMessage.append(outcomeEl);
+
+    //     setTimeout(() => outcomeEl.remove(), 5000);
+    //   }
+    // }
+    
+    
+
+    // uiState = {
+    //   ...existingUI,
+
+    //   playerAttack: {
+    //     x,
+    //     y,
+    //     outcome: "hit" | "miss",
+    //   },
+
+    //   computerAttack: {
+    //     x,
+    //     y,
+    //     outcome: "hit" | "miss",
+    //   },
+    // };
 }
 

@@ -1,4 +1,4 @@
-export function createController(handlers) {
+export function createController(engine, handlers) {
     const controller = Object.create(null);
 
     controller.dispatch = (intent, payload) => {
@@ -14,6 +14,8 @@ export function createController(handlers) {
         
             handler(payload);
     };
+
+    controller.getPhase = () => engine.state.phase;
 
     return controller;
 }

@@ -8,7 +8,7 @@ import { createController } from "./controller";
 
 const engine = createEngine();
 const handlers = createHandlers(engine);
-const controller = createController(handlers);
+const controller = createController(engine, handlers);
 initRenderers(controller);
 
 renderStartScreen();

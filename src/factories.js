@@ -163,7 +163,9 @@ export function createGameboard() {
   gameboard.hasShipAt = (x, y) => {
     return occupied.has(`${x},${y}`);
   }
-
+  // split attack conditionally - if cell already attacked return false/already_attacked, 
+  // if new cell, add it to attacked set, then branch again, if hit, call ship.hit instance method
+  // and return true/hit. if miss, add coord to missedAttacks array and return true/miss
   gameboard.receiveAttack = (x, y) => {
     const key = `${x},${y}`;
 

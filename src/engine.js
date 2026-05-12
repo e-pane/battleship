@@ -31,20 +31,23 @@ export function generateFleet(gameboard) {
 export function createEngine() {
 
     const engine = Object.create(null);
+    
+    engine.state = {
+      player: null,
+      computer: null,
+      phase: "idle",
+      turn: null,
+      gameOver: false,
+      requiredShips: 5,
+    };
 
     engine.start = (playerName) => {
-      const player = createPlayer(playerName);
-      const computer = createPlayer("computer");
-
-      engine.state = {
-        player,
-        computer,
-        phase: "shipPlacement",
-        turn: 'player',
-        gameOver: false,
-        requiredShips: 5,
-      };
-    }
+      engine.state.player = createPlayer(playerName);
+      engine.state.computer = createPlayer("computer");
+    
+      engine.state.phase = "shipPlacement";
+      engine.state.turn = "player";
+    };
 
     engine.placeShip = (shipType, x, y, orient) => {
         const ship = createShip(shipType);
@@ -70,11 +73,42 @@ export function createEngine() {
     };
 
     engine.enterAttackMode = () => {
-        if (engine.state.player.gameboard.getShips().length !== engine.state.requiredShips) return;
+    if (engine.state.player.gameboard.getShips().length !== engine.state.requiredShips) return;
 
-        generateFleet(engine.state.computer.gameboard);
+    generateFleet(engine.state.computer.gameboard);
 
-        engine.state.phase = "attack";
+    engine.state.phase = 'attack';
+    };
+  
+    engine.playerAttack = (x, y) => {
+      if (engine.state.turn !== 'player') return { ok: false, reason: "NOT_YOUR_TURN" };
+
+      const result = engine.state.computer.gameboard.receiveAttack(x, y);
+
+      if (!result.ok) return result;
+
+      engine.state.turn = 'computer';
+      return result;
+    };
+  
+  engine.computerAttack = () => {
+    // make an array of available cells to be attacked using gameboard.hasBeenAttacked
+    const availableCells = [];
+
+    for (let x = 0; x < 10; x++) {
+      for (let y = 0; y < 10; y++) {
+        if (!engine.state.player.gameboard.hasBeenAttacked(x, y)) {
+          availableCells.push([x, y]);
+        }
+      }
+    }
+    // generate x,y coords randomly, based on available options
+    const [x, y] = availableCells[Math.floor(Math.random() * availableCells.length)];
+
+    const result = engine.state.player.gameboard.receiveAttack(x, y);
+
+    engine.state.turn = 'player';
+    return { x, y, ...result };
     }
 
   return engine;
