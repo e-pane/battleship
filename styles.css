@@ -434,7 +434,7 @@ body {
 /* Paint the grid with ships */
 
 .ship {
-    background-color: #b3002d;
+    background-color: #c68a2d;
     color: white;
     font-weight: 600;
     font-size: 1.5rem;
@@ -486,15 +486,6 @@ body {
     color: #00ff66;
 }
 
-.game-messaging {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    color: #00ff66;
-}
-
 .top-labels,
 .left-labels,
 .computer-top-labels,
@@ -532,7 +523,7 @@ body {
     text-align: center;
 }
 
-.game-messaging {
+.game-messaging{
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -594,3 +585,43 @@ body {
       inset 0 0 10px rgba(255, 200, 120, 0.18),
       inset 0 0 14px rgba(80, 0, 0, 0.45);
   }
+
+.attack-outcome-overlay {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    color: #00ccff;
+    font-size: 1.5rem;
+
+    padding: 12px;
+
+    background: rgba(0, 0, 0, 0.82);
+
+    border: 4px solid #00ccff;
+    border-radius: 40px;
+
+    box-shadow:
+        0 0 12px rgba(0, 200, 255, 0.8),
+        0 0 28px rgba(0, 200, 255, 0.45),
+        inset 0 0 18px rgba(0, 200, 255, 0.18);
+
+    max-width: 210px;
+    width: fit-content;
+}
+
+.computer-ships-sunk {
+    position: relative;
+    min-height: 120px;
+}
+
+.player-ships-sunk {
+    position: relative;
+    min-height: 120px;
+}

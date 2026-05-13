@@ -329,21 +329,21 @@ export function renderShipPlacementScreen(state, uiState) {
 }
 
 export function renderAttackScreen(gameState, uiState) {
-    const { computer, player, computerShips, playerShips } = gameState;
-    const {
-      currentPhase,
-      turnText,
-      turnInstruction,
-      playerSunkShips,
-      computerSunkShips,
-      errorMsg,
-      playerAttack,
-      computerAttack,
-    } = uiState;
-    
-    const app = document.querySelector("#app");
+  const { computer, player, computerShips, playerShips } = gameState;
+  const {
+    currentPhase,
+    turnText,
+    turnInstruction,
+    playerSunkShips,
+    computerSunkShips,
+    errorMsg,
+    playerAttack,
+    computerAttack,
+  } = uiState;
 
-    app.innerHTML = `
+  const app = document.querySelector("#app");
+
+  app.innerHTML = `
     <div class="attack-layout">
 
         <div class="computer-side">
@@ -379,197 +379,181 @@ export function renderAttackScreen(gameState, uiState) {
     </div>
     `;
 
-    const computerGrid = document.querySelector(".computer-grid");
-    const playerGrid = document.querySelector(".player-grid");
+  const computerGrid = document.querySelector(".computer-grid");
+  const playerGrid = document.querySelector(".player-grid");
 
-    const computerCellMap = renderGrid(computerGrid);
-    const playerCellMap = renderGrid(playerGrid);
+  const computerCellMap = renderGrid(computerGrid);
+  const playerCellMap = renderGrid(playerGrid);
 
-    const computerTop = document.querySelector(".computer-top-labels");
-    const computerLeft = document.querySelector(".computer-left-labels");
+  const computerTop = document.querySelector(".computer-top-labels");
+  const computerLeft = document.querySelector(".computer-left-labels");
 
-    computerTop.innerHTML = "";
-    computerLeft.innerHTML = "";
+  computerTop.innerHTML = "";
+  computerLeft.innerHTML = "";
 
-    for (let i = 1; i <= 10; i++) {
-        const computerTopCell = document.createElement("div");
-        computerTopCell.textContent = i;
-        computerTop.appendChild(computerTopCell);
+  for (let i = 1; i <= 10; i++) {
+    const computerTopCell = document.createElement("div");
+    computerTopCell.textContent = i;
+    computerTop.appendChild(computerTopCell);
+  }
+
+  for (let i = 0; i < 10; i++) {
+    const computerCell = document.createElement("div");
+    computerCell.textContent = letters[i];
+    computerLeft.appendChild(computerCell);
+  }
+
+  const playerTop = document.querySelector(".player-top-labels");
+  const playerLeft = document.querySelector(".player-left-labels");
+
+  playerTop.innerHTML = "";
+  playerLeft.innerHTML = "";
+
+  for (let i = 1; i <= 10; i++) {
+    const playerTopCell = document.createElement("div");
+    playerTopCell.textContent = i;
+    playerTop.appendChild(playerTopCell);
+  }
+
+  for (let i = 0; i < 10; i++) {
+    const playerCell = document.createElement("div");
+    playerCell.textContent = letters[i];
+    playerLeft.appendChild(playerCell);
+  }
+
+  //paint the player's grid ONLY with each ship
+  playerShips.forEach((ship) => {
+    for (const coord of ship.coords) {
+      const shipName = ship.ship.type;
+      const firstLetter = shipName[0].toUpperCase();
+      const [x, y] = coord;
+      const cell = playerCellMap.get(`${x},${y}`);
+
+      if (cell) {
+        cell.classList.add("ship");
+        cell.textContent = `${firstLetter}`;
+      }
     }
+  });
 
-    for (let i = 0; i < 10; i++) {
-        const computerCell = document.createElement("div");
-        computerCell.textContent = letters[i];
-        computerLeft.appendChild(computerCell);
-    }
+  //populate computer's shipsSunk list
+  const compShipsSunk = document.querySelector(".computer-ships-sunk");
+  const compSunkList = document.createElement("ul");
+  compSunkList.classList.add("sunk-list", "computer-sunk-list");
 
-    const playerTop = document.querySelector(".player-top-labels");
-    const playerLeft = document.querySelector(".player-left-labels");
+  computerSunkShips.forEach((s) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = s;
+    compSunkList.append(listItem);
+  });
 
-    playerTop.innerHTML = "";
-    playerLeft.innerHTML = "";
+  compShipsSunk.append(compSunkList);
 
-    for (let i = 1; i <= 10; i++) {
-        const playerTopCell = document.createElement("div");
-        playerTopCell.textContent = i;
-        playerTop.appendChild(playerTopCell);
-    }
+  //populate player's shipsSunk list
+  const playerShipsSunk = document.querySelector(".player-ships-sunk");
+  const playerSunkList = document.createElement("ul");
+  playerSunkList.classList.add("sunk-list", "player-sunk-list");
 
-    for (let i = 0; i < 10; i++) {
-        const playerCell = document.createElement("div");
-        playerCell.textContent = letters[i];
-        playerLeft.appendChild(playerCell);
-    }
+  playerSunkShips.forEach((s) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = s;
+    playerSunkList.append(listItem);
+  });
 
-    //paint the player's grid ONLY with each ship
-    playerShips.forEach((ship) => {
-        for (const coord of ship.coords) {
-        const shipName = ship.ship.type;
-        const firstLetter = shipName[0].toUpperCase();
-        const [x, y] = coord;
-        const cell = playerCellMap.get(`${x},${y}`);
+  playerShipsSunk.append(playerSunkList);
 
-        if (cell) {
-            cell.classList.add("ship");
-            cell.textContent = `${firstLetter}`;
-        }
-        }
-    });
-        
-    //populate computer's shipsSunk list
-    const compShipsSunk = document.querySelector('.computer-ships-sunk');
-    const compSunkList = document.createElement('ul');
-    compSunkList.classList.add('sunk-list', 'computer-sunk-list');
+  //display who's turn it is
+  const gameMessage = document.querySelector(".game-message");
 
-    computerSunkShips.forEach(s => {
-        const listItem = document.createElement('li');
-        listItem.textContent = s;
-        compSunkList.append(listItem);
-    });
-
-    compShipsSunk.append(compSunkList);
-    
-    //populate player's shipsSunk list
-    const playerShipsSunk = document.querySelector(".player-ships-sunk");
-    const playerSunkList = document.createElement("ul");
-    playerSunkList.classList.add("sunk-list", "player-sunk-list");
-
-    playerSunkShips.forEach((s) => {
-      const listItem = document.createElement("li");
-      listItem.textContent = s;
-      playerSunkList.append(listItem);
-    });
-
-    playerShipsSunk.append(playerSunkList);
-
-    //display who's turn it is
-    const gameMessage = document.querySelector('.game-message');
-
-    if (gameMessage) {
-        gameMessage.innerHTML = `
+  if (gameMessage) {
+    gameMessage.innerHTML = `
             <p class="turn-message">${turnText}. ${turnInstruction}</p>
         `;
+  }
+
+  // guard agains attacking the same computer cell
+  if (errorMsg) {
+    const ERROR_TEXT = {
+      ALREADY_ATTACKED: "You've already attacked that cell",
+    };
+
+    const errorEl = document.createElement("p");
+    errorEl.classList.add("attack-outcome-overlay");
+    errorEl.textContent = ERROR_TEXT[errorMsg] || "";
+
+    compShipsSunk.append(errorEl);
+
+    setTimeout(() => errorEl.remove(), 2500);
+  }
+  // paint player and computer grids
+  for (const key of playerCellMap.keys()) {
+    const cell = playerCellMap.get(key);
+    const [x, y] = key.split(",").map(Number);
+
+    if (player.gameboard.hasBeenAttacked(x, y)) {
+      const isHit = playerShips.some((ship) =>
+        ship.coords.some((c) => c[0] === x && c[1] === y),
+      );
+
+      cell.classList.add(isHit ? "hit" : "miss");
     }
+  }
 
-    if (playerAttack) {
-      gameMessage.textContent = playerAttack.outcome.toUpperCase();
-    }
-    // guard agains attacking the same computer cell
-    if (errorMsg) {
-      const ERROR_TEXT = {
-        ALREADY_ATTACKED: "You've already attacked that cell",
-      };
-        
-      const errorEl = document.createElement("p");
-      errorEl.classList.add("already-attacked-msg");
-      errorEl.textContent = ERROR_TEXT[errorMsg] || "";
+  for (const key of computerCellMap.keys()) {
+    const cell = computerCellMap.get(key);
+    const [x, y] = key.split(",").map(Number);
 
-      gameMessage.append(errorEl);
-
-      setTimeout(() => errorEl.remove(), 5000);
-    }
-    // paint attacked computer cell according to outcome
-
-    // if (playerAttack?.outcome) {
-    //     const attackedComputerCell = computerCellMap.get(
-    //       `${playerAttack.x},${playerAttack.y}`,
-    //     );
-
-    //     if (attackedComputerCell) {
-    //         const outcomeClass = playerAttack.outcome === "hit" ? "hit" : "miss";
-    //         attackedComputerCell.classList.add(outcomeClass);
-
-    //         const outcomeEl = document.createElement("p");
-    //         outcomeEl.classList.add(outcomeClass);
-    //         outcomeEl.textContent = playerAttack.outcome.toUpperCase();
-
-    //         gameMessage.append(outcomeEl);
-
-    //         setTimeout(() => outcomeEl.remove(), 5000);
-    //     }
-    // }
-
-    for (const key of playerCellMap.keys()) {
-      const cell = playerCellMap.get(key);
-      const [x, y] = key.split(",").map(Number);
-
-      if (player.gameboard.hasBeenAttacked(x, y)) {
-        const isHit = playerShips.some((ship) =>
-          ship.coords.some((c) => c[0] === x && c[1] === y),
-        );
-
-        cell.classList.add(isHit ? "hit" : "miss");
-      }
-    }
-
-    for (const key of computerCellMap.keys()) {
-      const cell = computerCellMap.get(key);
-      const [x, y] = key.split(",").map(Number);
-
-      if (computer.gameboard.hasBeenAttacked(x, y)) {
+    if (computer.gameboard.hasBeenAttacked(x, y)) {
         const isHit = computerShips.some((ship) =>
-          ship.coords.some((c) => c[0] === x && c[1] === y),
+            ship.coords.some((c) => c[0] === x && c[1] === y),
         );
-
         cell.classList.add(isHit ? "hit" : "miss");
-      }
+
+        if (isHit) {
+            const shipName = computerShips.find((ship) =>
+              ship.coords.some((c) => c[0] === x && c[1] === y),
+            ).ship.type;
+            cell.classList.add("ship");
+            cell.textContent = shipName[0].toUpperCase();  
+        }
     }
+  }
 
-    // if (computerAttack?.outcome) {
-    //   const attackedPlayerCell = playerCellMap.get(
-    //     `${computerAttack.x},${computerAttack.y}`,
-    //   );
+  // add 2 sec outcome message to the area under each grid
+  if (playerAttack && playerAttack.outcome) {
+    const attackOutcomeMsg = document.createElement("div");
+    attackOutcomeMsg.classList.add("attack-outcome-overlay");
+    attackOutcomeMsg.innerText = playerAttack.outcome.toUpperCase();
 
-    //   if (attackedPlayerCell) {
-    //     const outcomeClass = computerAttack.outcome === "hit" ? "hit" : "miss";
-    //     attackedPlayerCell.classList.add(outcomeClass);
+    compShipsSunk.append(attackOutcomeMsg);
 
-    //     const outcomeEl = document.createElement("p");
-    //     outcomeEl.classList.add(outcomeClass);
-    //     outcomeEl.textContent = computerAttack.outcome.toUpperCase();
-
-    //     gameMessage.append(outcomeEl);
-
-    //     setTimeout(() => outcomeEl.remove(), 5000);
-    //   }
-    // }
+    setTimeout(() => attackOutcomeMsg.remove(), 2000);
+  }
     
-    
+  if (computerAttack && computerAttack.outcome) {
+    const attackOutcomeMsg = document.createElement("div");
+    attackOutcomeMsg.classList.add("attack-outcome-overlay");
+    attackOutcomeMsg.innerText = computerAttack.outcome.toUpperCase();
 
-    // uiState = {
-    //   ...existingUI,
+    playerShipsSunk.append(attackOutcomeMsg);
 
-    //   playerAttack: {
-    //     x,
-    //     y,
-    //     outcome: "hit" | "miss",
-    //   },
+    setTimeout(() => attackOutcomeMsg.remove(), 2000);
+  }
 
-    //   computerAttack: {
-    //     x,
-    //     y,
-    //     outcome: "hit" | "miss",
-    //   },
-    // };
+  // uiState = {
+  //   ...existingUI,
+
+  //   playerAttack: {
+  //     x,
+  //     y,
+  //     outcome: "hit" | "miss",
+  //   },
+
+  //   computerAttack: {
+  //     x,
+  //     y,
+  //     outcome: "hit" | "miss",
+  //   },
+  // };
 }
 
