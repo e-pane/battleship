@@ -70,36 +70,38 @@ export function initRenderers(controller) {
         if (!action) return;
 
         const actions = {
-        startGame: () => {
-            const nameInput = document.querySelector("#player-name");
-            const playerName = nameInput.value.trim();
+            startGame: () => {
+                const nameInput = document.querySelector("#player-name");
+                const playerName = nameInput.value.trim();
 
-            controller.dispatch("startGame", { playerName: playerName || "Guest" });
-        },
-        placeShip: () => {
-            if (!selectedShip) return;
+                controller.dispatch("startGame", { playerName: playerName || "Guest" });
+            },
+            placeShip: () => {
+                if (!selectedShip) return;
             
-            const x = document.querySelector("#ship-x").value.trim();
-            const y = document.querySelector("#ship-y").value.trim();
+                const x = document.querySelector("#ship-x").value.trim();
+                const y = document.querySelector("#ship-y").value.trim();
             
-            const orientInput = document.querySelector("input[name=orientation]:checked");
-            if (!orientInput) return;
+                const orientInput = document.querySelector("input[name=orientation]:checked");
+                if (!orientInput) return;
             
-            controller.dispatch("placeShip", {
-            shipType: selectedShip,
-            x,
-            y,
-            orient: orientInput.value,
-            });
-        },
-        enterAttackMode: () => {
-            controller.dispatch("enterAttackMode");
-        }
+                controller.dispatch("placeShip", {
+                    shipType: selectedShip,
+                    x,
+                    y,
+                    orient: orientInput.value,
+                });
+            },
+            enterAttackMode: () => {
+                controller.dispatch("enterAttackMode");
+            },
+            startNewGame: () => {
+                renderStartScreen();
+            }
         };
-
         const handler = actions[action];
         if (handler) {
-        handler();
+            handler();
         }
     });
 }
@@ -334,6 +336,8 @@ export function renderAttackScreen(gameState, uiState) {
     currentPhase,
     turnText,
     turnInstruction,
+    playerAttackMap,
+    computerAttackMap,
     playerSunkShips,
     computerSunkShips,
     errorMsg,
@@ -485,39 +489,29 @@ export function renderAttackScreen(gameState, uiState) {
 
     setTimeout(() => errorEl.remove(), 2500);
   }
-  // paint player and computer grids
-  for (const key of playerCellMap.keys()) {
-    const cell = playerCellMap.get(key);
-    const [x, y] = key.split(",").map(Number);
+    // paint player and computer grids with hits and misses
+    for (const key of playerCellMap.keys()) {
+        const cell = playerCellMap.get(key);
+        const attackData = playerAttackMap.get(key);
 
-    if (player.gameboard.hasBeenAttacked(x, y)) {
-      const isHit = playerShips.some((ship) =>
-        ship.coords.some((c) => c[0] === x && c[1] === y),
-      );
-
-      cell.classList.add(isHit ? "hit" : "miss");
-    }
-  }
-
-  for (const key of computerCellMap.keys()) {
-    const cell = computerCellMap.get(key);
-    const [x, y] = key.split(",").map(Number);
-
-    if (computer.gameboard.hasBeenAttacked(x, y)) {
-        const isHit = computerShips.some((ship) =>
-            ship.coords.some((c) => c[0] === x && c[1] === y),
-        );
-        cell.classList.add(isHit ? "hit" : "miss");
-
-        if (isHit) {
-            const shipName = computerShips.find((ship) =>
-              ship.coords.some((c) => c[0] === x && c[1] === y),
-            ).ship.type;
-            cell.classList.add("ship");
-            cell.textContent = shipName[0].toUpperCase();  
+        if (attackData) {
+            cell.classList.add(attackData.outcome);
         }
     }
-  }
+
+    for (const key of computerCellMap.keys()) {
+        const cell = computerCellMap.get(key);
+        const attackData = computerAttackMap.get(key);
+
+        if (attackData) {
+            cell.classList.add(attackData.outcome);
+
+            if (attackData.shipName) {
+                cell.classList.add("ship");
+                cell.textContent = attackData.shipName[0].toUpperCase();
+            }
+        }
+    }
 
   // add 2 sec outcome message to the area under each grid
   if (playerAttack && playerAttack.outcome) {
@@ -539,21 +533,17 @@ export function renderAttackScreen(gameState, uiState) {
 
     setTimeout(() => attackOutcomeMsg.remove(), 2000);
   }
+    
+    if (playerSunkShips.length === 5 || computerSunkShips.length === 5) {
+        const winnerName = computerSunkShips.length === 5 ? `${player.name}` : 'The computer';
+        gameMessage.innerHTML = `${winnerName} Wins the Game!!!"`;
 
-  // uiState = {
-  //   ...existingUI,
+        const newGameBtn = document.createElement('button');
+        newGameBtn.textContent = "New Game";
+        newGameBtn.classList.add('new-game-btn');
+        newGameBtn.dataset.action = 'startNewGame';
 
-  //   playerAttack: {
-  //     x,
-  //     y,
-  //     outcome: "hit" | "miss",
-  //   },
-
-  //   computerAttack: {
-  //     x,
-  //     y,
-  //     outcome: "hit" | "miss",
-  //   },
-  // };
+        gameMessage.append(newGameBtn);
+    }
 }
 

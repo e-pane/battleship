@@ -16,6 +16,7 @@
     "test:controller": "jest tests/controller.test.js",
     "test:handlers": "jest tests/handlers.test.js",
     "test:renderers": "jest tests/renderers.test.js",
+    "test:buildAttackMap": "jest tests/buildAttackMap.test.js",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"

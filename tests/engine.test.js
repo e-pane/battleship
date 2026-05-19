@@ -101,3 +101,88 @@ test("enterAttackMode switches to attack mode and generates computer fleet", () 
   expect(engine.state.computer.gameboard.getShips()).toHaveLength(5);
 });
 
+test("playerAttack is not called if it's not player's turn", () => {
+  const engine = createEngine();
+  engine.start("Harry");
+
+  engine.state.turn = 'computer';
+
+  const result = engine.playerAttack(3, 4);
+
+  expect(result).toEqual({
+    ok: false,
+    reason: "NOT_YOUR_TURN",
+  });
+});
+
+test("playerAttack receives and handles failure from gameboard.receiveAttack call", () => {
+  const engine = createEngine();
+  engine.start("Harry");
+  engine.state.computer.gameboard.receiveAttack =
+    jest.fn().mockReturnValue({ ok: false, reason: "ALREADY_ATTACKED" });
+    
+  const result = engine.playerAttack(3, 4);
+
+  expect(result.ok).toBe(false);
+  expect(result.reason).toBe('ALREADY_ATTACKED');
+  expect(engine.state.turn).toBe('player');
+});
+
+test("playerAttack toggles turn to 'computer' after successful receiveAttack call", () => {
+  const engine = createEngine();
+  engine.start("Harry");
+  engine.state.computer.gameboard.receiveAttack = jest
+    .fn()
+    .mockReturnValue({ ok: true, outcome: "miss" });
+  
+  const result = engine.playerAttack(3, 4);
+
+  expect(engine.state.turn).toBe('computer');
+});
+
+test("computerAttack tracks available cells correctly", () => {
+  const engine = createEngine();
+  engine.start("Harry");
+  // computerAttack should first generate a random x,y coord, check if it's in attacked Set and return 
+  // false if it isn't and add it to an availableCells array.  
+  engine.state.player.gameboard.hasBeenAttacked =
+    jest.fn((x, y) => { return (x === 0 && y === 0) || (x === 1 && y === 1) });
+
+  engine.state.player.gameboard.receiveAttack = jest
+    .fn().mockReturnValue({ ok: true, outcome: "miss" });
+  
+  jest.spyOn(Math, "random").mockReturnValue(0);
+
+  const result = engine.computerAttack();
+
+  expect(engine.state.player.gameboard.receiveAttack).not.toHaveBeenCalledWith(0, 0);
+  expect(engine.state.player.gameboard.receiveAttack).not.toHaveBeenCalledWith(1, 1);
+  const [x, y] = engine.state.player.gameboard.receiveAttack.mock.calls[0];
+  expect(x >= 0 && x < 10).toBe(true);
+  expect(y >= 0 && y < 10).toBe(true);
+  expect((x === 0 && y === 0) || (x === 1 && y === 1)).toBe(false);
+});
+
+test("computerAttack calls receiveAttack with x,y coords and handles return data properly", () => {
+  const engine = createEngine();
+  engine.start("Harry");
+  engine.state.player.gameboard.receiveAttack = jest
+    .fn()
+    .mockReturnValue({ ok: true, outcome: "miss" });
+
+  engine.computerAttack();
+
+  expect(engine.state.player.gameboard.receiveAttack).toHaveBeenCalledTimes(1);
+});
+
+test("computerAttack toggles turn to 'player' after successful receiveAttack call", () => {
+  const engine = createEngine();
+  engine.start("Harry");
+  engine.state.player.gameboard.receiveAttack = jest
+    .fn()
+    .mockReturnValue({ ok: true, outcome: "miss" });
+
+  engine.computerAttack();
+
+  expect(engine.state.turn).toBe("player");
+});

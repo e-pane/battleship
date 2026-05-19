@@ -1,4 +1,5 @@
 import { renderShipPlacementScreen, renderAttackScreen } from "./renderers.js";
+import { buildAttackMap } from "./utils.js";
 import { SHIP_TYPES } from "./factories.js";
 
 export function createHandlers(engine) {
@@ -95,6 +96,16 @@ function handlePlayerAttack(engine, payload) {
     const playerResult = engine.playerAttack(x, y);
 
     let state = engine.state;
+  
+    const playerAttackMap = buildAttackMap(
+      state.player.gameboard.getAttacks(),
+      state.player.gameboard.getShips(),
+    );
+  
+    const computerAttackMap = buildAttackMap(
+      state.computer.gameboard.getAttacks(),
+      state.computer.gameboard.getShips(),
+    );
 
     const currentPhase = state.phase;
 
@@ -118,6 +129,8 @@ function handlePlayerAttack(engine, payload) {
       currentPhase,
       turnText,
       turnInstruction,
+      playerAttackMap,
+      computerAttackMap,
       playerSunkShips: viewModel.playerShips
         .filter((s) => s.ship.isSunk())
         .map((s) => s.ship.type),

@@ -61,6 +61,10 @@ export function createGameboard() {
     return attacked.has(`${x},${y}`);
   };
 
+  gameboard.getAttacks = () => {
+    return Array.from(attacked);
+  }
+
   gameboard.canPlaceShip = (ship, x, y, orient) => {
     if (ships.some(el => el.ship.type === ship.type)) {
       return {

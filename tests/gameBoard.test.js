@@ -115,3 +115,78 @@ test("allShipsSunk returns false when any ship remains afloat", () => {
   }
   expect(gb.allShipsSunk()).toBe(false);
 });
+test("receiveAttack registers a hit, updates attacked and calls ship.hit()", () => {
+  const gb = createGameboard();
+
+  const destroyer = createShip("destroyer");
+
+  destroyer.hit = jest.fn();
+
+  gb.placeShip(destroyer, "A", 1, "horizontal");
+
+  const hitResult = gb.receiveAttack(0, 0);
+
+  expect(hitResult.ok).toBe(true);
+  expect(hitResult.outcome).toBe('hit');
+  
+  const attacked = gb.hasBeenAttacked(0, 0);
+  expect(attacked).toBe(true);
+  expect(destroyer.hit).toHaveBeenCalledTimes(1);
+});
+
+test("receiveAttack registers a miss and updates attacked", () => {
+  const gb = createGameboard();
+
+  const destroyer = createShip("destroyer");
+
+  gb.placeShip(destroyer, "A", 1, "horizontal");
+
+  const missResult = gb.receiveAttack(9, 9);
+  expect(missResult.ok).toBe(true);
+  expect(missResult.outcome).toBe("miss");
+
+  const attacked = gb.hasBeenAttacked(9,9);
+  expect(attacked).toBe(true);
+});
+test("receiveAttack prevents attacking same cell twice", () => {
+  const gb = createGameboard();
+
+  const destroyer = createShip("destroyer");
+
+  gb.placeShip(destroyer, "A", 1, "horizontal");
+
+  const missResult1 = gb.receiveAttack(9, 9);
+  const missResult2 = gb.receiveAttack(9, 9);
+  expect(missResult2.ok).toBe(false);
+  expect(missResult2.reason).toBe("ALREADY_ATTACKED");
+});
+test("hasBeenAttacked reflects attack state", () => {
+  const gb = createGameboard();
+
+  const destroyer = createShip("destroyer");
+
+  gb.placeShip(destroyer, "A", 1, "horizontal");
+
+  const notAttackedYet = gb.hasBeenAttacked(9, 9);
+  expect(notAttackedYet).toBe(false);
+  gb.receiveAttack(9, 9);
+  
+  const nowAttacked = gb.hasBeenAttacked(9, 9);
+  expect(nowAttacked).toBe(true);
+});
+test("getAttacks returns all attacked coordinates", () => {
+  const gb = createGameboard();
+
+  const destroyer = createShip("destroyer");
+
+  gb.placeShip(destroyer, "A", 1, "horizontal");
+
+  const hitResult = gb.receiveAttack(0,0);
+  const missResult = gb.receiveAttack(9, 9);
+  
+  const attackedArray = gb.getAttacks();
+  expect(attackedArray).toBeInstanceOf(Array);
+  expect(attackedArray.length).toEqual(2);
+  expect(attackedArray[0]).toBe("0,0");
+  expect(attackedArray[1]).toBe("9,9");
+});
