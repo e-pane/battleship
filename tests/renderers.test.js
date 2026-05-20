@@ -10,11 +10,18 @@ import {
   renderStartScreen,
 } from "../src/renderers.js";
 
+let cleanup;
+
 beforeEach(() => {
-  document.body.innerHTML = `
-    <div id="app"></div>
-    <ul class="ships-placed"></ul>
-  `;
+  document.body.innerHTML = `<div id="app"></div>`;
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+  if (cleanup) {
+    cleanup();
+    cleanup = undefined;
+  }
 });
 // test renderStartScreen
 test("clicking start button dispatches startGame with playerName", () => {
@@ -25,6 +32,7 @@ test("clicking start button dispatches startGame with playerName", () => {
 
   const mockController = {
     dispatch: jest.fn(),
+    getPhase: jest.fn(),
   };
 
   initRenderers(mockController);
@@ -62,9 +70,11 @@ test("clicking on ship, entering starting x/y/orientation dispatches placeShip w
 
   const mockController = {
     dispatch: jest.fn(),
+    getPhase: jest.fn(() => 'shipPlacement'),
   };
 
-  initRenderers(mockController);
+  cleanup = initRenderers(mockController);
+
   document.querySelector(".ship-btn.carrier").click();
   document.querySelector('[data-action="placeShip"]').click();
   expect(
@@ -91,9 +101,10 @@ test("clicking an empty grid cell updates ship-x and ship-y inputs", () => {
 
   const mockController = {
     dispatch: jest.fn(),
+    getPhase: jest.fn(() => "shipPlacement"),
   };
 
-  initRenderers(mockController);
+  const cleanup = initRenderers(mockController);
 
   document.querySelector(".cell").click();
 
@@ -108,9 +119,10 @@ test("clicking a grid cell with a ship calls sends removeShip intent to dispatch
 
   const mockController = {
     dispatch: jest.fn(),
+    getPhase: jest.fn(() => "shipPlacement"),
   };
 
-  initRenderers(mockController);
+  const cleanup = initRenderers(mockController);
 
   document.querySelector(".cell.ship").click();
   expect(mockController.dispatch).toHaveBeenCalledTimes(1);
@@ -130,9 +142,10 @@ test("placeShip does nothing if no ship selected", () => {
 
   const mockController = {
     dispatch: jest.fn(),
+    getPhase: jest.fn(() => "shipPlacement"),
   };
 
-  initRenderers(mockController);
+  const cleanup = initRenderers(mockController);
 
   document.querySelector('[data-action="placeShip"]').click();
   expect(mockController.dispatch).not.toHaveBeenCalled();
@@ -151,9 +164,10 @@ test("placeShip does nothing if no orientation selected", () => {
 
   const mockController = {
     dispatch: jest.fn(),
+    getPhase: jest.fn(() => "shipPlacement"),
   };
 
-  initRenderers(mockController);
+  const cleanup = initRenderers(mockController);
 
   document.querySelector(".ship-btn.carrier").click();
 
@@ -167,8 +181,12 @@ test("selecting a ship deselects other ships", () => {
     <button class="ship-btn" data-ship="battleship"></button>
   `;
 
-  const mockController = { dispatch: jest.fn() };
-  initRenderers(mockController);
+  const mockController = {
+    dispatch: jest.fn(),
+    getPhase: jest.fn(() => "shipPlacement"),
+  };
+
+  const cleanup = initRenderers(mockController);
 
   const carrierBtn = document.querySelector('[data-ship="carrier"]');
   const battleshipBtn = document.querySelector('[data-ship="battleship"]');
@@ -269,16 +287,23 @@ test("placementComplete block of renderShipPlacementScreen mutates the DOM corre
 test("renderAttackScreen creates both boards and messaging area", () => {
   // mock gameState and uiState passed to renderAttackScreen
   const gameState = {
-    player: {name:"Bob"},
+    player: { name: "TestPlayer" },
+    computer: {},
     playerShips: [],
     computerShips: [],
   };
 
   const uiState = {
-    turnText: `It's ${gameState.player.name} turn`,
-    turnInstruction: "Click on a cell in the computer's grid to attack",
+    currentPhase: "attack",
+    turnText: "Player Turn",
+    turnInstruction: "Attack",
+    playerAttackMap: new Map(),
+    computerAttackMap: new Map(),
     playerSunkShips: [],
     computerSunkShips: [],
+    errorMsg: null,
+    playerAttack: null,
+    computerAttack: null,
   };
 
   renderAttackScreen(gameState, uiState);
@@ -290,14 +315,33 @@ test("renderAttackScreen creates both boards and messaging area", () => {
   expect(document.querySelector(".player-grid")).not.toBeNull();
 
   expect(document.querySelector(".game-message")).not.toBeNull();
+});
+test("renders computer grid labels 1–10 and A–J", () => {
+  // mock gameState and uiState passed to renderAttackScreen
+  const gameState = {
+    player: { name: "TestPlayer" },
+    computer: {},
+    playerShips: [],
+    computerShips: [],
+  };
 
-  const computerTopLabels = document.querySelectorAll(
-    ".computer-top-labels div",
-  );
+  const uiState = {
+    currentPhase: "attack",
+    turnText: "Player Turn",
+    turnInstruction: "Attack",
+    playerAttackMap: new Map(),
+    computerAttackMap: new Map(),
+    playerSunkShips: [],
+    computerSunkShips: [],
+    errorMsg: null,
+    playerAttack: null,
+    computerAttack: null,
+  };
 
-  const computerLeftLabels = document.querySelectorAll(
-    ".computer-left-labels div",
-  );
+  renderAttackScreen(gameState, uiState);
+
+  const computerTopLabels = document.querySelectorAll(".computer-top-labels div");
+  const computerLeftLabels = document.querySelectorAll(".computer-left-labels div");
 
   expect(computerTopLabels).toHaveLength(10);
   expect(computerLeftLabels).toHaveLength(10);
@@ -311,16 +355,23 @@ test("renderAttackScreen creates both boards and messaging area", () => {
 
 test("renderAttackScreen renders sunk ships containers", () => {
   const gameState = {
+    player: { name: "TestPlayer" },
     computer: {},
-    player: {},
-    computerShips: [],
     playerShips: [],
+    computerShips: [],
   };
 
   const uiState = {
-    turnLabel: "Bob",
+    currentPhase: "attack",
+    turnText: "Player Turn",
+    turnInstruction: "Attack",
+    playerAttackMap: new Map(),
+    computerAttackMap: new Map(),
     playerSunkShips: [],
     computerSunkShips: [],
+    errorMsg: null,
+    playerAttack: null,
+    computerAttack: null,
   };
 
   renderAttackScreen(gameState, uiState);
@@ -334,16 +385,23 @@ test("renderAttackScreen renders sunk ships containers", () => {
 
 test("renderAttackScreen populates sunk ship lists", () => {
   const gameState = {
+    player: { name: "TestPlayer" },
     computer: {},
-    player: {},
-    computerShips: [],
     playerShips: [],
+    computerShips: [],
   };
 
   const uiState = {
-    turnLabel: "Bob",
-    playerSunkShips: ["carrier", "destroyer"],
-    computerSunkShips: ["submarine"],
+    currentPhase: "attack",
+    turnText: "Player Turn",
+    turnInstruction: "Attack",
+    playerAttackMap: new Map(),
+    computerAttackMap: new Map(),
+    playerSunkShips: ["destroyer"],
+    computerSunkShips: ["carrier", "submarine"],
+    errorMsg: null,
+    playerAttack: null,
+    computerAttack: null,
   };
 
   renderAttackScreen(gameState, uiState);
@@ -351,8 +409,16 @@ test("renderAttackScreen populates sunk ship lists", () => {
   const compList = document.querySelector(".computer-ships-sunk ul");
   const playerList = document.querySelector(".player-ships-sunk ul");
 
-  expect(compList.querySelectorAll("li")).toHaveLength(1);
-  expect(playerList.querySelectorAll("li")).toHaveLength(2);
+  const compItems = compList.querySelectorAll("li");
+  const playerItems = playerList.querySelectorAll("li");
+
+  expect(compItems).toHaveLength(2);
+  expect(playerItems).toHaveLength(1);
+
+  expect(compItems[0].textContent).toBe("carrier");
+  expect(compItems[1].textContent).toBe("submarine");
+
+  expect(playerItems[0].textContent).toBe("destroyer");
 });
 
 test("renderAttackScreen renders who's turn it is", () => {
@@ -362,12 +428,17 @@ test("renderAttackScreen renders who's turn it is", () => {
     computerShips: [],
     playerShips: [],
   };
-
   const uiState = {
+    currentPhase: "attack",
     turnText: `It's ${gameState.player.name}'s turn`,
     turnInstruction: "Click on a cell in the computer's grid to attack",
-    playerSunkShips: [],
-    computerSunkShips: [],
+    playerAttackMap: new Map(),
+    computerAttackMap: new Map(),
+    playerSunkShips: ["destroyer"],
+    computerSunkShips: ["carrier", "submarine"],
+    errorMsg: null,
+    playerAttack: null,
+    computerAttack: null,
   };
 
   renderAttackScreen(gameState, uiState);

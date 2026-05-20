@@ -3,7 +3,7 @@ const letters = "ABCDEFGHIJ";
 export function initRenderers(controller) {
     let selectedShip = null;
 
-    document.addEventListener("click", (e) => {
+    const clickHandler = (e) => {
         if (controller.getPhase() === "attack") {
             const computerCell = e.target.closest(".computer-grid .cell");
 
@@ -103,7 +103,12 @@ export function initRenderers(controller) {
         if (handler) {
             handler();
         }
-    });
+    };
+    document.addEventListener("click", clickHandler);
+
+    return () => {
+      document.removeEventListener("click", clickHandler);
+    };
 }
 
 export function renderGrid(container) {
@@ -139,7 +144,6 @@ export function renderStartScreen() {
         </section>
     `;
 }
-
 export function renderShipPlacementScreen(state, uiState) {
   const app = document.querySelector("#app");
 
@@ -329,7 +333,6 @@ export function renderShipPlacementScreen(state, uiState) {
             uiMessage.append(startAttackBtn);
         }
 }
-
 export function renderAttackScreen(gameState, uiState) {
   const { computer, player, computerShips, playerShips } = gameState;
   const {
