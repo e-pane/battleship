@@ -29,87 +29,108 @@ export function generateFleet(gameboard) {
 }
 
 export function createEngine() {
+  const engine = Object.create(null);
 
-    const engine = Object.create(null);
-    
-    engine.state = {
-      player: null,
-      computer: null,
-      phase: "idle",
-      turn: null,
-      gameOver: false,
-      requiredShips: 5,
-    };
+  engine.state = {
+    player: null,
+    computer: null,
+    phase: "idle",
+    turn: null,
+    gameOver: false,
+    winner: null,
+    requiredShips: 5,
+  };
 
-    engine.start = (playerName) => {
-      engine.state.player = createPlayer(playerName);
-      engine.state.computer = createPlayer("computer");
-    
-      engine.state.phase = "shipPlacement";
-      engine.state.turn = "player";
-    };
+  engine.start = (playerName) => {
+    engine.state.player = createPlayer(playerName);
+    engine.state.computer = createPlayer("computer");
 
-    engine.placeShip = (shipType, x, y, orient) => {
-        const ship = createShip(shipType);
-        const result = engine.state.player.gameboard.placeShip(ship, x, y, orient);
+    engine.state.phase = "shipPlacement";
+    engine.state.turn = "player";
+  };
 
-        return result;
-    };
+  // helper to check if game is over
+  engine.checkGameOver = () => {
+    if (engine.state.player.gameboard.allShipsSunk()) {
+      engine.state.winner = 'computer';
+      engine.state.phase = "gameOver";
+    } else if (engine.state.computer.gameboard.allShipsSunk()) {
+      engine.state.winner = 'player';
+      engine.state.phase = "gameOver";
+    } 
+  }
 
-    engine.removeShipAt = (x, y) => {
-        x = Number(x);
-        y = Number(y);
+  engine.placeShip = (shipType, x, y, orient) => {
+    const ship = createShip(shipType);
+    const result = engine.state.player.gameboard.placeShip(ship, x, y, orient);
 
-        const ships = engine.state.player.gameboard.getShips();
-        const ship = ships.find(ship => 
-            ship.coords.some(coord => coord[0] === x && coord[1] === y)
-        );
+    return result;
+  };
 
-        if (!ship) return;
+  engine.removeShipAt = (x, y) => {
+    x = Number(x);
+    y = Number(y);
 
-        const result = engine.state.player.gameboard.removeShip(ship);
-        
-        return result;
-    };
+    const ships = engine.state.player.gameboard.getShips();
+    const ship = ships.find((ship) =>
+      ship.coords.some((coord) => coord[0] === x && coord[1] === y),
+    );
 
-    engine.enterAttackMode = () => {
-      if (engine.state.player.gameboard.getShips().length !== engine.state.requiredShips) return;
+    if (!ship) return;
 
-      generateFleet(engine.state.computer.gameboard);
+    const result = engine.state.player.gameboard.removeShip(ship);
 
-      engine.state.phase = 'attack';
-    };
-  
-    engine.playerAttack = (x, y) => {
-      if (engine.state.turn !== 'player') return { ok: false, reason: "NOT_YOUR_TURN" };
+    return result;
+  };
 
-      const result = engine.state.computer.gameboard.receiveAttack(x, y);
+  engine.enterAttackMode = () => {
+    if (
+      engine.state.player.gameboard.getShips().length !==
+      engine.state.requiredShips
+    )
+      return;
 
-      if (!result.ok) return result;
+    generateFleet(engine.state.computer.gameboard);
 
-      engine.state.turn = 'computer';
-      return result;
-    };
-  
-    engine.computerAttack = () => {
+    engine.state.phase = "attack";
+  };
+
+  engine.playerAttack = (x, y) => {
+    if (engine.state.turn !== "player")
+      return { ok: false, reason: "NOT_YOUR_TURN" };
+
+    const result = engine.state.computer.gameboard.receiveAttack(x, y);
+
+    if (!result.ok) return result;
+
+    engine.checkGameOver();
+
+    engine.state.turn = "computer";
+    return result;
+  };
+
+  engine.computerAttack = () => {
     // make an array of available cells to be attacked using gameboard.hasBeenAttacked
-      const availableCells = [];
+    const availableCells = [];
 
-      for (let x = 0; x < 10; x++) {
-        for (let y = 0; y < 10; y++) {
-          if (!engine.state.player.gameboard.hasBeenAttacked(x, y)) {
-            availableCells.push([x, y]);
-          }
+    for (let x = 0; x < 10; x++) {
+      for (let y = 0; y < 10; y++) {
+        if (!engine.state.player.gameboard.hasBeenAttacked(x, y)) {
+          availableCells.push([x, y]);
         }
       }
-    // generate x,y coords randomly, based on available options
-      const [x, y] = availableCells[Math.floor(Math.random() * availableCells.length)];
-
-      const result = engine.state.player.gameboard.receiveAttack(x, y);
-
-      engine.state.turn = 'player';
-      return { x, y, ...result };
     }
+    // generate x,y coords randomly, based on available options
+    const [x, y] =
+      availableCells[Math.floor(Math.random() * availableCells.length)];
+
+    const result = engine.state.player.gameboard.receiveAttack(x, y);
+
+    engine.checkGameOver();
+
+    engine.state.turn = "player";
+    return { x, y, ...result };
+  };
 
   return engine;
 }

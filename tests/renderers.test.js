@@ -316,7 +316,7 @@ test("renderAttackScreen creates both boards and messaging area", () => {
 
   expect(document.querySelector(".game-message")).not.toBeNull();
 });
-test("renders computer grid labels 1–10 and A–J", () => {
+test("renderAttackScreen renders computer grid labels 1–10 and A–J", () => {
   // mock gameState and uiState passed to renderAttackScreen
   const gameState = {
     player: { name: "TestPlayer" },
@@ -352,7 +352,6 @@ test("renders computer grid labels 1–10 and A–J", () => {
   expect(computerLeftLabels[0].textContent).toBe("A");
   expect(computerLeftLabels[9].textContent).toBe("J");
 });
-
 test("renderAttackScreen renders sunk ships containers", () => {
   const gameState = {
     player: { name: "TestPlayer" },
@@ -382,7 +381,6 @@ test("renderAttackScreen renders sunk ships containers", () => {
   expect(compList).not.toBeNull();
   expect(playerList).not.toBeNull();
 });
-
 test("renderAttackScreen populates sunk ship lists", () => {
   const gameState = {
     player: { name: "TestPlayer" },
@@ -420,7 +418,6 @@ test("renderAttackScreen populates sunk ship lists", () => {
 
   expect(playerItems[0].textContent).toBe("destroyer");
 });
-
 test("renderAttackScreen renders who's turn it is", () => {
   const gameState = {
     computer: {},
@@ -448,4 +445,7 @@ test("renderAttackScreen renders who's turn it is", () => {
   expect(turnMessage).not.toBeNull();
   expect(turnMessage.innerHTML).toContain
     ("It's Bob's turn. Click on a cell in the computer's grid to attack");
+});
+test("renderAttackScreen renders winner message and new game button when game is over", () => {
+  
 });

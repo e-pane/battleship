@@ -76,12 +76,24 @@ function handleEnterAttackMode(engine) {
     
     const turnInstruction = isPlayerTurn
         ? "Click on a cell in the computer's grid to attack"
-        : "";
+      : "";
+
+    const playerAttackMap = buildAttackMap(
+      state.player.gameboard.getAttacks(),
+      state.player.gameboard.getShips(),
+    );
+
+    const computerAttackMap = buildAttackMap(
+      state.computer.gameboard.getAttacks(),
+      state.computer.gameboard.getShips(),
+    );
     
     const uiState = {
         currentPhase,
         turnText,
         turnInstruction,
+        playerAttackMap,
+        computerAttackMap,
         playerSunkShips: viewModel.playerShips.filter(s => s.ship.isSunk()).map(s => s.ship.type),
         computerSunkShips: viewModel.computerShips.filter(s => s.ship.isSunk()).map(s => s.ship.type),
     }
@@ -108,7 +120,42 @@ function handlePlayerAttack(engine, payload) {
     );
 
     const currentPhase = state.phase;
+  
+    if (currentPhase === "gameOver") {
+      const viewModel = {
+        ...state,
+        playerShips: state.player.gameboard.getShips(),
+        computerShips: state.computer.gameboard.getShips(),
+      };
 
+      const playerAttackMap = buildAttackMap(
+        state.player.gameboard.getAttacks(),
+        state.player.gameboard.getShips(),
+      );
+
+      const computerAttackMap = buildAttackMap(
+        state.computer.gameboard.getAttacks(),
+        state.computer.gameboard.getShips(),
+      );
+
+      const uiState = {
+        currentPhase,
+        turnText: null,
+        turnInstruction: null,
+        playerAttackMap,
+        computerAttackMap,
+        playerSunkShips: viewModel.playerShips
+          .filter((s) => s.ship.isSunk())
+          .map((s) => s.ship.type),
+        computerSunkShips: viewModel.computerShips
+          .filter((s) => s.ship.isSunk())
+          .map((s) => s.ship.type),
+        winner: state.winner,
+      };
+      renderAttackScreen(viewModel, uiState);
+      return;
+    }
+  
     const viewModel = {
       ...state,
       playerShips: state.player.gameboard.getShips(),
@@ -154,10 +201,45 @@ function handlePlayerAttack(engine, payload) {
     });
 
     setTimeout(() => {
-        const computerResult = engine.computerAttack();
+      const computerResult = engine.computerAttack();
 
-        let state = engine.state;
-        const currentPhase = state.phase;
+      let state = engine.state;
+      const currentPhase = state.phase;
+      
+      if (currentPhase === "gameOver") {
+        const viewModel = {
+          ...state,
+          playerShips: state.player.gameboard.getShips(),
+          computerShips: state.computer.gameboard.getShips(),
+        };
+
+        const playerAttackMap = buildAttackMap(
+          state.player.gameboard.getAttacks(),
+          state.player.gameboard.getShips(),
+        );
+
+        const computerAttackMap = buildAttackMap(
+          state.computer.gameboard.getAttacks(),
+          state.computer.gameboard.getShips(),
+        );
+
+        const uiState = {
+          currentPhase,
+          turnText: null,
+          turnInstruction: null,
+          playerAttackMap,
+          computerAttackMap,
+          playerSunkShips: viewModel.playerShips
+            .filter((s) => s.ship.isSunk())
+            .map((s) => s.ship.type),
+          computerSunkShips: viewModel.computerShips
+            .filter((s) => s.ship.isSunk())
+            .map((s) => s.ship.type),
+          winner: state.winner,
+        };
+        renderAttackScreen(viewModel, uiState);
+        return;
+      }
         const viewModel = {
             ...state,
             playerShips: state.player.gameboard.getShips(),
@@ -173,11 +255,23 @@ function handlePlayerAttack(engine, payload) {
         const turnInstruction = isPlayerTurn
           ? "Click on a cell in the computer's grid to attack"
           : "";
+      
+          const playerAttackMap = buildAttackMap(
+            state.player.gameboard.getAttacks(),
+            state.player.gameboard.getShips(),
+          );
+
+          const computerAttackMap = buildAttackMap(
+            state.computer.gameboard.getAttacks(),
+            state.computer.gameboard.getShips(),
+          );
 
         const uiState = {
           currentPhase,
           turnText,
           turnInstruction,
+          playerAttackMap,
+          computerAttackMap,
           playerSunkShips: viewModel.playerShips
             .filter((s) => s.ship.isSunk())
             .map((s) => s.ship.type),
