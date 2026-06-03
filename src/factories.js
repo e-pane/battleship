@@ -54,6 +54,8 @@ export function createGameboard() {
 
   const missedAttacks = [];
   const attacked = new Set();
+  const lastHitCoords = null;
+  
 
   gameboard.getShips = () => ships;
 
@@ -64,6 +66,10 @@ export function createGameboard() {
   gameboard.getAttacks = () => {
     return Array.from(attacked);
   }
+
+  gameboard.getMissedAttacks = () => {
+    return missedAttacks;
+  };
 
   gameboard.canPlaceShip = (ship, x, y, orient) => {
     if (ships.some(el => el.ship.type === ship.type)) {
@@ -189,6 +195,7 @@ export function createGameboard() {
           return {
             ok: true,
             outcome: "hit",
+            lastHitCoords: { x, y },
           };
         }
       }

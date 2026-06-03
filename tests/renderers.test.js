@@ -89,7 +89,6 @@ test("clicking on ship, entering starting x/y/orientation dispatches placeShip w
     orient: "horizontal",
   });
 });
-
 test("clicking an empty grid cell updates ship-x and ship-y inputs", () => {
   document.body.innerHTML = `
     <div class="cell" data-x="1" data-y="3"></div>
@@ -111,7 +110,6 @@ test("clicking an empty grid cell updates ship-x and ship-y inputs", () => {
   expect(document.querySelector("#ship-x").value).toBe("D");
   expect(document.querySelector("#ship-y").value).toBe("2");
 });
-
 test("clicking a grid cell with a ship calls sends removeShip intent to dispatch with coord payload", () => {
   document.body.innerHTML = `
     <div class="cell ship" data-x="2" data-y="5"></div>
@@ -131,7 +129,6 @@ test("clicking a grid cell with a ship calls sends removeShip intent to dispatch
     y: "5",
   });
 });
-
 test("placeShip does nothing if no ship selected", () => {
   document.body.innerHTML = `
     <input id="ship-x" value="A">
@@ -150,7 +147,6 @@ test("placeShip does nothing if no ship selected", () => {
   document.querySelector('[data-action="placeShip"]').click();
   expect(mockController.dispatch).not.toHaveBeenCalled();
 });
-
 test("placeShip does nothing if no orientation selected", () => {
   document.body.innerHTML = `
     <div class="ship-icons">
@@ -174,7 +170,6 @@ test("placeShip does nothing if no orientation selected", () => {
   document.querySelector('[data-action="placeShip"]').click();
   expect(mockController.dispatch).not.toHaveBeenCalled();
 });
-
 test("selecting a ship deselects other ships", () => {
   document.body.innerHTML = `
     <button class="ship-btn" data-ship="carrier"></button>
@@ -198,7 +193,6 @@ test("selecting a ship deselects other ships", () => {
   expect(carrierBtn.classList.contains("selected")).toBe(false);
   expect(battleshipBtn.classList.contains("selected")).toBe(true);
 });
-
 test("renderShipPlacementScreen paints grid on screen", () => {
   const state = {
     ships: [
@@ -218,7 +212,6 @@ test("renderShipPlacementScreen paints grid on screen", () => {
   expect(shipCell.classList.contains("ship")).toBe(true);
   expect(shipCell.textContent).toBe("D");
 });
-
 test("renderGrid creates 100 cells with correct zero-indexed coordinates", () => {
   const container = document.createElement("div");
   container.innerHTML = "<p>junk</p>";
@@ -239,7 +232,6 @@ test("renderGrid creates 100 cells with correct zero-indexed coordinates", () =>
 
   expect(container.innerHTML).not.toContain("junk");
 });
-
 test("renderShipPlacementScreen displays error message when uiState.errorMsg is set", () => {
   const state = { ships: [] };
 
@@ -249,7 +241,6 @@ test("renderShipPlacementScreen displays error message when uiState.errorMsg is 
 
   expect(errorBox.textContent).toBe("Ship overlaps another ship.");
 });
-
 test("error msg cleared after timeout", () => {
   jest.useFakeTimers();
 
@@ -263,7 +254,6 @@ test("error msg cleared after timeout", () => {
 
   expect(errorBox.textContent).toBe("");
 });
-
 test("placementComplete block of renderShipPlacementScreen mutates the DOM correctly", () => {
   // mock state to meet conditional block requirements
   const state = {
@@ -446,6 +436,253 @@ test("renderAttackScreen renders who's turn it is", () => {
   expect(turnMessage.innerHTML).toContain
     ("It's Bob's turn. Click on a cell in the computer's grid to attack");
 });
+test("renderAttackScreen paints hit and miss cells", () => {
+  const gameState = {
+    computer: { name: "computer" },
+    player: { name: "Bob" },
+    computerShips: [],
+    playerShips: [],
+  };
+  const uiState = {
+    currentPhase: "attack",
+    turnText: null,
+    turnInstruction: null,
+    playerSunkShips: [],
+    computerSunkShips: [],
+    errorMsg: null,
+    playerAttack: null,
+    computerAttack: null,
+    winner: "null",
+  };
+
+  const playerAttackMap = new Map();
+  playerAttackMap.set("0,0", { outcome: "hit" });
+
+  const computerAttackMap = new Map();
+  computerAttackMap.set("1,1", { outcome: "miss" });
+
+  renderAttackScreen(gameState, { ...uiState, playerAttackMap, computerAttackMap });
+
+  const playerCell = document.querySelector('.player-grid .cell[data-x="0"][data-y="0"]');
+
+  const computerCell = document.querySelector('.computer-grid .cell[data-x="1"][data-y="1"]');
+
+  expect(playerCell.classList.contains("hit")).toBe(true);
+  expect(computerCell.classList.contains("miss")).toBe(true);
+});
+test("renderAttackScreen paints player ships", () => {
+  const gameState = {
+    player: { name: "Bob" },
+    computer: {},
+    playerShips: [
+      {
+        ship: { type: "destroyer" },
+        coords: [
+          [0, 0],
+          [1, 0],
+        ],
+      },
+    ],
+    computerShips: [],
+  };
+
+  const uiState = {
+    currentPhase: "attack",
+    turnText: null,
+    turnInstruction: null,
+    playerAttackMap: new Map(),
+    computerAttackMap: new Map(),
+    playerSunkShips: [],
+    computerSunkShips: [],
+    errorMsg: null,
+    playerAttack: null,
+    computerAttack: null,
+    winner: null,
+  };
+
+  renderAttackScreen(gameState, uiState);
+
+  const cell = document.querySelector(
+    '.player-grid .cell[data-x="0"][data-y="0"]',
+  );
+
+  expect(cell.classList.contains("ship")).toBe(true);
+  expect(cell.textContent).toBe("D");
+});
+test("renderAttackScreen displays player attack outcome overlay", () => {
+  const gameState = {
+    player: { name: "Bob" },
+    computer: {},
+    playerShips: [
+      {
+        ship: { type: "destroyer" },
+        coords: [
+          [0, 0],
+          [1, 0],
+        ],
+      },
+    ],
+    computerShips: [],
+  };
+
+  const uiState = {
+    currentPhase: "attack",
+    turnText: null,
+    turnInstruction: null,
+    playerAttackMap: new Map(),
+    computerAttackMap: new Map(),
+    playerSunkShips: [],
+    computerSunkShips: [],
+    errorMsg: null,
+    computerAttack: null,
+    winner: null,
+  };
+
+  renderAttackScreen(gameState, {
+    ...uiState,
+    playerAttack: {
+      x: 1,
+      y: 1,
+      outcome: "hit",
+    },
+  });
+
+  const overlay = document.querySelector(".attack-outcome-overlay");
+
+  expect(overlay).not.toBeNull();
+  expect(overlay.textContent).toBe("HIT");
+});
+test("renderAttackScreen displays already attacked error", () => {
+  const gameState = {
+    player: { name: "Bob" },
+    computer: {},
+    playerShips: [],
+    computerShips: [],
+  };
+
+  const uiState = {
+    currentPhase: "attack",
+    turnText: null,
+    turnInstruction: null,
+    playerAttackMap: new Map(),
+    computerAttackMap: new Map(),
+    playerSunkShips: [],
+    computerSunkShips: [],
+    computerAttack: null,
+    winner: null,
+  };
+  renderAttackScreen(gameState, {
+    ...uiState,
+    errorMsg: "ALREADY_ATTACKED",
+  });
+
+  const error = document.querySelector(".attack-outcome-overlay");
+
+  expect(error.textContent).toBe("You've already attacked that cell");
+});
+test("renderAttackScreen reveals computer ship letter after hit", () => {
+  const gameState = {
+    player: { name: "Bob" },
+    computer: {},
+    playerShips: [],
+    computerShips: [],
+  };
+  let computerAttackMap = new Map();
+
+  const uiState = {
+    currentPhase: "attack",
+    turnText: null,
+    turnInstruction: null,
+    playerAttackMap: new Map(),
+    playerSunkShips: [],
+    computerSunkShips: [],
+    computerAttack: null,
+    winner: null,
+  };
+
+  computerAttackMap.set("2,2", {
+    outcome: "hit",
+    shipName: "carrier",
+  });
+  renderAttackScreen(gameState, {
+    ...uiState,
+    computerAttackMap
+  });
+
+  const cell = document.querySelector('.computer-grid .cell[data-x="2"][data-y="2"]');
+
+  expect(cell.classList.contains("ship")).toBe(true);
+  expect(cell.textContent).toBe("C");
+});
+test("attack result cleared after timeout", () => {
+  jest.useFakeTimers();
+
+  const gameState = {
+    player: { name: "Bob" },
+    computer: {},
+    playerShips: [],
+    computerShips: [],
+  };
+
+  const uiState = {
+    currentPhase: "attack",
+    turnText: null,
+    turnInstruction: null,
+    playerAttackMap: new Map(),
+    computerAttackMap: new Map(),
+    playerSunkShips: [],
+    computerSunkShips: [],
+    playerAttack: null,
+    winner: null,
+  };
+
+  renderAttackScreen(gameState, {
+    ...uiState,
+    computerAttack: {
+      x: 2,
+      y: 2,
+      outcome: "hit",
+    },
+  });
+
+  const overlayBefore = document.querySelector(".attack-outcome-overlay");
+  expect(overlayBefore).not.toBeNull();
+  expect(overlayBefore.textContent).toBe("HIT");
+
+  jest.advanceTimersByTime(5000);
+
+  const overlayAfter = document.querySelector(".attack-outcome-overlay");
+  expect(overlayAfter).toBeNull();
+});
 test("renderAttackScreen renders winner message and new game button when game is over", () => {
-  
+  const gameState = {
+    computer: { name: "computer"},
+    player: { name: "Bob" },
+    computerShips: [],
+    playerShips: [],
+  };
+  const uiState = {
+    currentPhase: "gameOver",
+    turnText: null,
+    turnInstruction: null,
+    playerAttackMap: new Map(),
+    computerAttackMap: new Map(),
+    playerSunkShips: [],
+    computerSunkShips: [],
+    errorMsg: null,
+    playerAttack: null,
+    computerAttack: null,
+    winner: 'player',
+  };
+
+  renderAttackScreen(gameState, uiState);
+
+  const gameMessage = document.querySelector(".game-message");
+
+  expect(gameMessage).not.toBeNull();
+  expect(gameMessage.innerHTML).toContain(`${gameState.player.name} Wins the Game!!!`);
+
+  const newGameBtn = document.querySelector(".new-game-btn");
+  expect(newGameBtn).not.toBeNull();
+  expect(newGameBtn.textContent).toContain('New Game');
 });

@@ -110,7 +110,6 @@ export function initRenderers(controller) {
       document.removeEventListener("click", clickHandler);
     };
 }
-
 export function renderGrid(container) {
     const cellMap = new Map();
     container.innerHTML = "";
@@ -129,7 +128,6 @@ export function renderGrid(container) {
   }
   return cellMap;
 }
-
 export function renderStartScreen() {
   const app = document.querySelector("#app");
 
@@ -349,14 +347,6 @@ export function renderAttackScreen(gameState, uiState) {
     winner,
   } = uiState;
 
-    console.log(playerAttackMap);
-    console.log(currentPhase);
-    console.log(turnText);
-    console.log(computerAttackMap);
-    console.log(playerSunkShips);
-    console.log(playerAttack);
-    console.log(winner);
-
   const app = document.querySelector("#app");
 
   app.innerHTML = `
@@ -531,7 +521,7 @@ export function renderAttackScreen(gameState, uiState) {
     if (playerAttack && playerAttack.outcome) {
         const attackOutcomeMsg = document.createElement("div");
         attackOutcomeMsg.classList.add("attack-outcome-overlay");
-        attackOutcomeMsg.innerText = playerAttack.outcome.toUpperCase();
+        attackOutcomeMsg.textContent = playerAttack.outcome.toUpperCase();
 
         compShipsSunk.append(attackOutcomeMsg);
 
@@ -541,7 +531,7 @@ export function renderAttackScreen(gameState, uiState) {
     if (computerAttack && computerAttack.outcome) {
         const attackOutcomeMsg = document.createElement("div");
         attackOutcomeMsg.classList.add("attack-outcome-overlay");
-        attackOutcomeMsg.innerText = computerAttack.outcome.toUpperCase();
+        attackOutcomeMsg.textContent = computerAttack.outcome.toUpperCase();
 
         playerShipsSunk.append(attackOutcomeMsg);
 

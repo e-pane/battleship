@@ -1,4 +1,5 @@
 import { createShip, createPlayer, createGameboard } from "./factories.js";
+import { chooseComputerAttackCoords, getRandomCandidate } from "./ai.js";
 
 // helper to creat the computer's fleet of ships
 export function generateFleet(gameboard) {
@@ -36,6 +37,8 @@ export function createEngine() {
     computer: null,
     phase: "idle",
     turn: null,
+    lastHitCoords: null,
+    lastAttackHit: false,
     gameOver: false,
     winner: null,
     requiredShips: 5,
@@ -110,26 +113,36 @@ export function createEngine() {
   };
 
   engine.computerAttack = () => {
-    // make an array of available cells to be attacked using gameboard.hasBeenAttacked
-    const availableCells = [];
+    let computerMove = chooseComputerAttackCoords(engine.state);
 
-    for (let x = 0; x < 10; x++) {
-      for (let y = 0; y < 10; y++) {
-        if (!engine.state.player.gameboard.hasBeenAttacked(x, y)) {
-          availableCells.push([x, y]);
-        }
-      }
+    if (!computerMove) {
+      computerMove = getRandomCandidate(engine.state.player.gameboard);
     }
-    // generate x,y coords randomly, based on available options
-    const [x, y] =
-      availableCells[Math.floor(Math.random() * availableCells.length)];
+
+    if (
+      !Array.isArray(computerMove) ||
+      computerMove.length !== 2 ||
+      computerMove.some((coord) => coord === undefined)
+    ) {
+      console.error("BAD COMPUTER MOVE", computerMove);
+    }
+
+    if (!computerMove) return;
+
+    const [x, y] = computerMove;
 
     const result = engine.state.player.gameboard.receiveAttack(x, y);
 
     engine.checkGameOver();
 
+    if (result.outcome === "hit") {
+      engine.state.lastAttackHit = result.lastHitCoords;
+    }
+    else { engine.state.lastAttackHit = null };
+    
     engine.state.turn = "player";
-    return { x, y, ...result };
+
+    return { ...result, x, y, };
   };
 
   return engine;
