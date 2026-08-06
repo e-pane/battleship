@@ -135,6 +135,22 @@ export function renderStartScreen() {
         <section class="player-name-container">
             <form class="start-game-form">
                 <input type="text" id="player-name" placeholder="Enter player name">
+
+                <label>
+                    <input type="radio" name="level" value="1">
+                        Level 1 
+                </label>
+
+                <label>
+                    <input type="radio" name="level" value="2">
+                        Level 2
+                </label>
+
+                <label>
+                    <input type="radio" name="level" value="3">
+                        Level 3 
+                </label>
+
                 <button type="button" class="btn start-game" data-action="startGame">
                     Start Game
                 </button>
