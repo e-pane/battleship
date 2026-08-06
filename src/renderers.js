@@ -137,17 +137,20 @@ export function renderStartScreen() {
                 <input type="text" id="player-name" placeholder="Enter player name">
 
                 <label>
-                    <input type="radio" name="level" value="1">
+                    <input type="radio" name="level" value="1"
+                    data-description="Computer always fires randomly">
                         Level 1 
                 </label>
 
                 <label>
-                    <input type="radio" name="level" value="2">
+                    <input type="radio" name="level" value="2"
+                    data-description="Computer hunts lightly after a hit, but not too aggresively">
                         Level 2
                 </label>
 
                 <label>
-                    <input type="radio" name="level" value="3">
+                    <input type="radio" name="level" value="3"
+                    data-description="Computer hunts every ship efficiently until sunk">
                         Level 3 
                 </label>
 
