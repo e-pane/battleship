@@ -1,0 +1,20 @@
+.start-screen-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space4);
+}
+
+.difficulty-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space2);
+}
+
+@media (min-width: 53rem) {
+    .start-screen-container {
+        flex-direction: row;
+        align-items: center;
+        gap: var(--space5);
+    }
+}

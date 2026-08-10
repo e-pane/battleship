@@ -4,11 +4,12 @@ import { SHIP_TYPES } from "./factories.js";
 
 export function createHandlers(engine) {
     return {
-        startGame: (payload) => handleStartGame(engine, payload),
-        placeShip: (payload) => handlePlaceShip(engine, payload),
-        removeShip: (payload) => handleRemoveShip(engine, payload),
-        enterAttackMode: () => handleEnterAttackMode(engine),
-        playerAttack: (payload) => handlePlayerAttack(engine, payload),
+      startGame: (payload) => handleStartGame(engine, payload),
+      selectLevel: (payload) => handleSelectLevel(engine, payload),
+      placeShip: (payload) => handlePlaceShip(engine, payload),
+      removeShip: (payload) => handleRemoveShip(engine, payload),
+      enterAttackMode: () => handleEnterAttackMode(engine),
+      playerAttack: (payload) => handlePlayerAttack(engine, payload),
     };
 }
 
@@ -22,6 +23,11 @@ function handleStartGame(engine, payload) {
     if (state.phase === "shipPlacement") {
       renderShipPlacementScreen(viewModel);
     }
+}
+
+function handleSelectLevel(engine, payload) {
+  engine.state.level = Number(payload.value);
+  localStorage.setItem("battleship-level", payload.value);
 }
 
 function handlePlaceShip(engine, payload) {

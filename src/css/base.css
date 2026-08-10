@@ -1,0 +1,64 @@
+:root {
+    --cell-size-sm: 1.8rem;
+    --cell-size-md: 3.6rem;
+    --cell-size-lg: 5.4rem;
+
+    --font-size-sm: 1.2rem;
+    --font-size-md: 1.6rem;
+    --font-size-lg: 2.0rem;
+
+    --grn-border: 1px solid #00ff66;
+
+    --border-rad-sm: 0.75rem;
+    --border-rad-md: 1rem;
+    --border-rad-lg: 1.25rem;
+
+    --space1: 0.5rem;
+    --space2: 1rem;
+    --space3: 1.5rem;
+    --space4: 2rem;
+    --space5: 2.5rem;
+    --space6: 3rem;
+
+    --grn-text: #00ff66;
+
+    --blk-bground: #000000;
+}
+
+@keyframes pulseNeon {
+    0% {
+        box-shadow:
+            0 0 6px rgba(0, 255, 102, 0.35),
+            0 0 12px rgba(0, 255, 102, 0.25);
+    }
+
+    50% {
+        box-shadow:
+            0 0 14px rgba(0, 255, 102, 0.9),
+            0 0 28px rgba(0, 255, 102, 0.6),
+            0 0 45px rgba(0, 255, 102, 0.35);
+    }
+
+    100% {
+        box-shadow:
+            0 0 6px rgba(0, 255, 102, 0.35),
+            0 0 12px rgba(0, 255, 102, 0.25);
+    }
+}
+
+input,
+button {
+    font-family: inherit;
+}
+
+body {
+    margin: 0;
+    height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url("/images/battleship-background.jpeg");
+    background-size: cover;
+    background-position: center;
+    font-family: 'Orbitron', sans-serif;
+}

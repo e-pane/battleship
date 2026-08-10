@@ -1,0 +1,48 @@
+.start-game-btn {
+    background: var(--blk-bground);
+    border: var(--grn-border);
+
+    color: var(--grn-text);
+    cursor: pointer;
+    animation: pulseNeon 1.8s infinite;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+@media (max-width: 52.99rem) {
+    .start-game-btn {
+        padding: var(--space2);
+        font-size: var(--font-size-sm);
+        border-radius: var(--border-rad-sm);
+    }
+}
+
+/* Tablet */
+@media (min-width: 53rem) and (max-width: 63.99rem) {
+    .start-game-btn {
+        padding: var(--space2) var(--space3);
+        font-size: var(--font-size-sm);
+        border-radius: var(--border-rad-md);
+    }
+}
+
+/* Desktop */
+@media (min-width: 64rem) {
+    .start-game-btn {
+        padding: var(--space2) var(--space3);
+        font-size: var(--font-size-lg);
+        border-radius: var(--border-rad-lg);
+    }
+}
+
+.start-game-btn:hover {
+    transform: scale(1.05);
+
+    box-shadow:
+        0 0 10px rgba(0, 255, 102, 0.7),
+        0 0 25px rgba(0, 255, 102, 0.4),
+        0 0 40px rgba(0, 255, 102, 0.2);
+
+    border-color: #00ff66;
+    color: #00ff66;
+}
+

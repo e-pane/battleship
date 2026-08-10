@@ -37,7 +37,7 @@ export function createEngine() {
     computer: null,
     phase: "idle",
     turn: null,
-    level: 1, // default of 1, user will choose 1-3
+    level: 2,
     lastHitCoords: null,
     lastAttackHit: false,
     gameOver: false,

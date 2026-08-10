@@ -65,6 +65,12 @@ export function initRenderers(controller) {
                 return;
             }
         }
+
+        const levelInput = e.target.closest('input[name=level');
+        if (levelInput) {
+            controller.dispatch("selectLevel", { value: levelInput.value });
+            return;
+        }
         
         const action = e.target.dataset.action;
         if (!action) return;
@@ -128,37 +134,64 @@ export function renderGrid(container) {
   }
   return cellMap;
 }
-export function renderStartScreen() {
+export function renderStartScreen(level = 2) {
   const app = document.querySelector("#app");
 
   app.innerHTML = `
-        <section class="player-name-container">
-            <form class="start-game-form">
-                <input type="text" id="player-name" placeholder="Enter player name">
+    <section class="start-screen-container">
+        <div class="player-input">
+            <input
+                type="text"
+                id="player-name"
+                placeholder="Enter player name"
+            >
+        </div>
 
-                <label>
-                    <input type="radio" name="level" value="1"
-                    data-description="Computer always fires randomly">
-                        Level 1 
-                </label>
+        <div class="difficulty-options">
 
-                <label>
-                    <input type="radio" name="level" value="2"
-                    data-description="Computer hunts lightly after a hit, but not too aggresively">
-                        Level 2
-                </label>
+            <label data-description="____________ Computer always fires randomly">
+                <input
+                    type="radio"
+                    name="level"
+                    value="1"
+                    ${level === 1 ? "checked" : ""}
+                >
+                Level 1
+            </label>
 
-                <label>
-                    <input type="radio" name="level" value="3"
-                    data-description="Computer hunts every ship efficiently until sunk">
-                        Level 3 
-                </label>
+            <label data-description="____________ Computer hunts lightly after a hit, but not too aggressively">
+                <input
+                    type="radio"
+                    name="level"
+                    value="2"
+                    ${level === 2 ? "checked" : ""}
+                >
+                Level 2
+            </label>
 
-                <button type="button" class="btn start-game" data-action="startGame">
-                    Start Game
-                </button>
-            </form>
-        </section>
+            <label data-description="____________ Computer hunts every ship efficiently until sunk">
+                <input
+                    type="radio"
+                    name="level"
+                    value="3"
+                    ${level === 3 ? "checked" : ""}
+                >
+                Level 3
+            </label>
+
+        </div>
+
+        <div class="start-game-controls">
+            <button
+                type="button"
+                class="btn start-game-btn"
+                data-action="startGame"
+            >
+                Start Game
+            </button>
+        </div>
+            
+    </section>
     `;
 }
 export function renderShipPlacementScreen(state, uiState) {
