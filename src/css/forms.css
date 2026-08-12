@@ -11,8 +11,18 @@
     position: relative;
 }
 
-.difficulty-options label:hover::after {
+.difficulty-options input[type="radio"] {
+    transform: scale(1.5);
+}
+
+.difficulty-options label::after {
     content: attr(data-description);
+    opacity: 0;
+    transition: opacity 0.2s ease 0.3s;
+}
+
+.difficulty-options label:hover::after {
+    opacity: 1;
 }
 
 #player-name {

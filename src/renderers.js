@@ -149,7 +149,7 @@ export function renderStartScreen(level = 2) {
 
         <div class="difficulty-options">
 
-            <label data-description="____________ Computer always fires randomly">
+            <label data-description="____________ Computer fires randomly">
                 <input
                     type="radio"
                     name="level"
@@ -159,7 +159,7 @@ export function renderStartScreen(level = 2) {
                 Level 1
             </label>
 
-            <label data-description="____________ Computer hunts lightly after a hit, but not too aggressively">
+            <label data-description="____________ Computer hunts lightly after a hit">
                 <input
                     type="radio"
                     name="level"
@@ -169,7 +169,7 @@ export function renderStartScreen(level = 2) {
                 Level 2
             </label>
 
-            <label data-description="____________ Computer hunts every ship efficiently until sunk">
+            <label data-description="____________ Computer hunts ruthlessly">
                 <input
                     type="radio"
                     name="level"
@@ -200,84 +200,83 @@ export function renderShipPlacementScreen(state, uiState) {
   app.innerHTML = `
       <section class="place-ship-container">
   
-        <!-- UI MESSAGES -->
-        <div class="ui-messages">
-          <p class="message">Place your ships</p>
-        </div>
+        <h1 class="placement-header">Place Your Ships</h1>
 
         <div class="placement-main">
             <div class="placement-help">
                 <p>
-                    Select a ship icon, enter row A–J and column 1–10,
-                    choose horizontal or vertical orientation,
-                    then click PLACE SHIP.  Or select a ship icon and a starting cell for that ship.
-                    To reposition any ship, click on the ship inside the grid.  
+                    Select a ship icon, and enter row A–J and column 1–10.<br>  
+                    Choose a horizontal or vertical orientation.<br> 
+                    Or select a ship icon and a starting cell for that ship.<br> 
+                    To reposition any ship, click on the ship inside the grid.<br> 
+                    A chosen cell will be the top or left-most starting point.<br> 
                 </p>
             </div>
             <!-- GRID -->
-            <div class="board">
-                <div class="corner"></div>
-                <div class="top-labels"></div>
-                <div class="left-labels"></div>
-                <div class="grid"></div>
-            </div>
+            <div class="placement-visuals">
+                <div class="board">
+                    <div class="corner"></div>
+                    <div class="top-labels"></div>
+                    <div class="left-labels"></div>
+                    <div class="grid"></div>
+                </div>
 
-            <!-- WARNING FOR INCORRECT PLACEMENT -->
-            <div class="ui-information-display">
-                <div class="ships-placed">Ships placed</div>
-                <div class="ship-error-msg"></div>
-                <ul class="ship-list"></ul>
+                <!-- WARNING FOR INCORRECT PLACEMENT -->
+                <div class="ui-information-display">
+                    <div class="ships-placed">Ships placed</div>
+                    <div class="ship-error-msg"></div>
+                    <ul class="ship-list"></ul>
+                </div>
             </div>
         </div>
             
         <!-- CONTROLS -->
         <div class="controls">
             <div class="ship-icons">
-                <button type="button" class="ship-btn" data-ship="carrier">
-                <img src="/images/carrier.jpeg" alt="Carrier">
-                </button>
+                <div class="ship-option">    
+                    <button type="button" class="ship-btn" data-ship="carrier">Carrier
+                    </button>
 
-                <div class="ship-info">
-                    <p>carrier</p>
-                    <p>length: 5</p>
+                    <div class="ship-info">
+                        <p>Length: 5</p>
+                    </div>
+                </div>
+
+                <div class="ship-option">
+                    <button type="button" class="ship-btn" data-ship="battleship">Battleship
+                    </button>
+
+                    <div class="ship-info">
+                        <p>Length: 4</p>
+                    </div>
+                </div>
+
+                <div class="ship-option">
+                    <button type="button" class="ship-btn" data-ship="submarine">Submarine
+                    </button>
+
+                    <div class="ship-info">
+                        <p>Length: 3</p>
+                    </div>
+                </div>
+
+                <div class="ship-option">
+                    <button type="button" class="ship-btn" data-ship="cruiser">Cruiser
+                    </button>
+
+                    <div class="ship-info">
+                        <p>Length: 3</p>
+                    </div>
                 </div>
             
-                <button type="button" class="ship-btn" data-ship="battleship">
-                <img src="/images/battleship.jpeg" alt="Battleship">
-                </button>
+                <div class="ship-option">
+                    <button type="button" class="ship-btn" data-ship="destroyer">Destroyer
+                    </button>
 
-                <div class="ship-info">
-                    <p>battleship</p>
-                    <p>length: 4</p>
+                    <div class="ship-info">
+                        <p>Length: 2</p>
+                    </div>
                 </div>
-            
-                <button type="button" class="ship-btn" data-ship="submarine">
-                <img src="/images/submarine.jpeg" alt="Submarine">
-                </button>
-
-                <div class="ship-info">
-                    <p>submarine</p>
-                    <p>length: 3</p>
-                </div>
-            
-                <button type="button" class="ship-btn" data-ship="cruiser">
-                <img src="/images/cruiser.jpeg" alt="Cruiser">
-                </button>
-
-                <div class="ship-info">
-                    <p>cruiser</p>
-                    <p>length: 3</p>
-                </div>
-            
-                <button type="button" class="ship-btn" data-ship="destroyer">
-                <img src="/images/destroyer.jpeg" alt="Destroyer">
-                </button>
-
-                <div class="ship-info">
-                    <p>destroyer</p>
-                    <p>length: 2</p>
-                </div>
-        
             </div>
     
             <form class="place-ship-form">

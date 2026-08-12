@@ -1,8 +1,12 @@
+/* Start screen styling */
+
 .start-screen-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     gap: var(--space4);
+    min-height: 100dvh;
 }
 
 .difficulty-options {
@@ -17,4 +21,35 @@
         align-items: center;
         gap: var(--space5);
     }
+}
+
+/* Placement screen styling */
+
+.place-ship-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space1);
+    width: 100%;
+}
+
+.ship-icons {
+    display: flex;
+    gap: clamp(0.1rem, 1vw, var(--space3));
+}
+
+.place-ship-form {
+    display: flex;
+}
+
+.ship-option {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.placement-visuals {
+    display: flex;
+    gap: var(--space2);
 }

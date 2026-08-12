@@ -18,4 +18,5 @@ Submarine: 3 spaces
 Cruiser: 3 spaces
 Destroyer: 2 spaces 
 
+battleship rules ref: - https://gameonfamily.com/blogs/tutorials/battleship?srsltid=AfmBOooCQFySFHyZPAfQ1y_ZEkRgesSuoPzfqSL5An9zc9H06gMVRQUo
 10 x 10 grid

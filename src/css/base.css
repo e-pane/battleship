@@ -1,18 +1,27 @@
+* {
+    box-sizing: border-box;
+}
+
 :root {
     --cell-size-sm: 1.8rem;
     --cell-size-md: 3.6rem;
     --cell-size-lg: 5.4rem;
 
+    --font-size-xs: 0.8rem;
     --font-size-sm: 1.2rem;
     --font-size-md: 1.6rem;
     --font-size-lg: 2.0rem;
+    --font-size-xl: 2.4rem;
 
-    --grn-border: 1px solid #00ff66;
+    --grn-border: 2px solid #00ff66;
+    --blue-border: 2px solid #00BFFF;
+    --white-border: 1px solid #E8F1F2;
 
     --border-rad-sm: 0.75rem;
     --border-rad-md: 1rem;
     --border-rad-lg: 1.25rem;
 
+    --space0: 0.25rem;
     --space1: 0.5rem;
     --space2: 1rem;
     --space3: 1.5rem;
@@ -21,8 +30,12 @@
     --space6: 3rem;
 
     --grn-text: #00ff66;
+    --blue-text: #00BFFF;
+    --white-text: #E8F1F2;
 
     --blk-bground: #000000;
+    --dark-grn-bground: rgba(0, 40, 20, 0.9);
+    --dark-blue-bground: rgba(0, 20, 40, 0.9);
 }
 
 @keyframes pulseNeon {
@@ -47,16 +60,16 @@
 }
 
 input,
-button {
+button, .placement-header, .ship-info {
     font-family: inherit;
 }
 
 body {
     margin: 0;
-    height: 100dvh;
+    min-height: 100dvh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     background-image: url("/images/battleship-background.jpeg");
     background-size: cover;
     background-position: center;

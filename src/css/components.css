@@ -1,3 +1,5 @@
+/* Style start screen */
+
 .start-game-btn {
     background: var(--blk-bground);
     border: var(--grn-border);
@@ -45,4 +47,203 @@
     border-color: #00ff66;
     color: #00ff66;
 }
+
+/* Style placement screen */
+
+.placement-header {
+    color: var(--grn-text); 
+    background-color: var(--dark-grn-bground);
+    font-size: clamp(var(--font-size-sm), 5vw, var(--font-size-xl));
+    font-weight: 600;
+    text-align: center;
+    padding: var(--space2);
+    margin-top: var(--space3);
+    border-radius: var(--border-rad-lg);
+    box-shadow:
+        0 0 12px rgba(0,255,102,.22),
+        inset 0 0 12px rgba(0,255,102,.08);
+}
+
+.placement-help {
+    color: var(--grn-text); 
+    background-color: var(--dark-grn-bground);
+    font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-sm));
+    font-weight: 200;
+    text-align: center;
+    width: min(80vw, 40rem);
+    padding: var(--space1);
+    border-radius: var(--border-rad-lg);
+    box-shadow:
+        0 0 12px rgba(0,255,102,.22),
+        inset 0 0 12px rgba(0,255,102,.08);
+}
+
+.ui-information-display {
+    color: var(--grn-text); 
+    width: clamp(6rem, 20vw, 13rem);
+
+    min-height: 220px;
+    padding: var(--space3);
+    margin: var(--space2);
+
+    display: flex;
+    flex-direction: column;   
+    justify-content: flex-start;
+    align-items: center;
+
+    background-color: var(--dark-blue-bground);
+    border: var(--blue-border);
+    border-radius: var(--border-rad-lg);
+
+    box-shadow:
+        0 0 12px rgba(0,255,102,.22),
+        inset 0 0 12px rgba(0,255,102,.08);
+}
+
+.ship-error-msg {
+    min-height: 24px;   
+    color: #e60039;
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.ui-information-display ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;  
+    text-align: center;
+}
+
+.ui-information-display li {
+    color: var(--blue-text);
+    font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-sm));
+    line-height: 1.4;
+    text-decoration: none;
+}
+
+.ships-placed {
+    margin: 0 0 20px 0;   
+    color: var(--blue-text);
+    font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-sm));
+    font-weight: 700;
+    text-align: center;
+    text-decoration: underline; 
+}
+
+.grid-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.grid {
+    grid-column: 2 / span 10;
+    grid-row: 2 / span 10;
+
+    display: grid;
+    grid-template-columns: repeat(10, var(--cell-size-sm));
+    grid-template-rows: repeat(10, var(--cell-size-sm));
+}
+
+.computer-board,
+.player-board {
+    display: flex;
+    justify-content: center;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: 40px repeat(10, var(--cell-size-sm));
+    grid-template-rows: 40px repeat(10, var(--cell-size-sm));
+}
+
+.board .top-labels {
+    grid-column: 2 / span 10;
+    grid-row: 1;
+    margin-top: var(--space1);
+}
+
+.board .left-labels {
+    grid-column: 1;
+    grid-row: 2 / span 10;
+    margin-left: var(--space1);
+}
+
+.board .grid {
+    grid-column: 2 / span 10;
+    grid-row: 2 / span 10;
+}
+
+.board .corner {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.top-labels {
+    display: grid;
+    grid-template-columns: repeat(10, var(--cell-size-sm));
+}
+
+.left-labels {
+    display: grid;
+    grid-template-rows: repeat(10, var(--cell-size-sm));
+}
+
+.top-labels div,
+.left-labels div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: var(--space1);
+
+    transform: translateY(1px);
+}
+
+.top-labels,
+.left-labels {
+    background-color: var(--dark-grn-bground);
+    border: var(--grn-border);
+    color: var(--grn-text);
+}
+
+.corner {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.cell {
+    width: var(--cell-size-sm);
+    height: var(--cell-size-sm);
+    background-color: var(--dark-grn-bground);
+    border: var(--grn-border);
+    cursor: pointer;
+}
+
+.ship-btn {
+    background: var(--blk-bground);
+    border: var(-white-border);
+    color: var(--white-text);
+    padding: var(--space1);
+    border-radius: var(--border-rad-sm);
+    cursor: pointer;
+    font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-sm));
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ship-info {
+    color: var(--white-text);
+    background: var(--dark-grn-bground);
+    font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-sm));
+    font-weight: 300;
+    padding: var(-space1);
+    border: var(--white-border);
+    border-radius: var(--border-rad-sm);
+}
+
+
 
