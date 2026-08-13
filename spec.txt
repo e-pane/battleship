@@ -20,3 +20,22 @@ Destroyer: 2 spaces
 
 battleship rules ref: - https://gameonfamily.com/blogs/tutorials/battleship?srsltid=AfmBOooCQFySFHyZPAfQ1y_ZEkRgesSuoPzfqSL5An9zc9H06gMVRQUo
 10 x 10 grid
+
+<form class="place-ship-form">
+                <input id="ship-x" placeholder="A">
+                <input id="ship-y" placeholder="1">
+    
+                <label>
+                    <input type="radio" name="orientation" value="horizontal" checked>
+                    Horizontal
+                </label>
+    
+                <label>
+                    <input type="radio" name="orientation" value="vertical">
+                    Vertical
+                </label>
+    
+                <button type="button" data-action="placeShip">
+                    Place Ship
+                </button>
+            </form>

@@ -223,27 +223,100 @@
 
 .ship-btn {
     background: var(--blk-bground);
-    border: var(-white-border);
+    border: var(--white-border);
     color: var(--white-text);
-    padding: var(--space1);
+    padding: clamp(var(--space0), var(--space1), var(--space2));
     border-radius: var(--border-rad-sm);
     cursor: pointer;
-    font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-sm));
+    font-size: clamp(0.5rem, 2vw, var(--font-size-sm));
+    transition:
+        color 0.15s ease,
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.15s ease;
+}
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.ship-btn:hover:not(:disabled),
+.ship-btn.selected {
+    color: var(--grn-text);
+    background-color: var(--dark-grn-bground);
+    border: var(--grn-border);
+    box-shadow:
+        0 0 6px rgba(0, 255, 102, 0.7),
+        0 0 18px rgba(0, 255, 102, 0.5),
+        inset 0 0 10px rgba(0, 255, 102, 0.15);
+    transform: translateY(-2px) scale(1.03);
+}
+
+.ship-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
 }
 
 .ship-info {
     color: var(--white-text);
     background: var(--dark-grn-bground);
-    font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-sm));
+    font-size: clamp(0.5rem, 2vw, var(--font-size-sm));
     font-weight: 300;
-    padding: var(-space1);
+    padding: var(--space1);
     border: var(--white-border);
     border-radius: var(--border-rad-sm);
+    aspect-ratio: 4 / 1;
 }
+
+.place-ship-btn {
+    background: var(--blk-bground);
+    border: var(--red-border);
+    border-radius: var(--border-rad-md);
+    padding: var(--space1);
+
+    color: var(--red-text);
+    cursor: pointer;
+}
+
+.cell.selected {
+    background-color: var(--blue-text);
+}
+
+.ship {
+    background-color: #c68a2d;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.start-attack-btn {
+    background: var(--blk-bground);
+    border: var(--red-border);
+    color: var(--red-text);
+    padding: clamp(var(--space0), var(--space1), var(--space2));
+    border-radius: var(--border-rad-md);
+    cursor: pointer;
+    font-size: clamp(--font-size-sm, 3vw, var(--font-size-md));
+    transition:
+        color 0.15s ease,
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.15s ease;
+}
+
+.start-attack-btn:hover {
+    box-shadow:
+        0 0 6px rgba(0, 255, 102, 0.7),
+        0 0 18px rgba(0, 255, 102, 0.5),
+        inset 0 0 10px rgba(0, 255, 102, 0.15);
+    transform: translateY(-2px) scale(1.03);
+}
+
 
 
 

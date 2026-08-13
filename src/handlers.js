@@ -4,16 +4,16 @@ import { SHIP_TYPES } from "./factories.js";
 
 export function createHandlers(engine) {
     return {
-      startGame: (payload) => handleStartGame(engine, payload),
-      selectLevel: (payload) => handleSelectLevel(engine, payload),
-      placeShip: (payload) => handlePlaceShip(engine, payload),
-      removeShip: (payload) => handleRemoveShip(engine, payload),
+      startGame: (payload, uiState) => handleStartGame(engine, payload, uiState),
+      selectLevel: (payload, uiState) => handleSelectLevel(engine, payload, uiState),
+      placeShip: (payload, uiState) => handlePlaceShip(engine, payload, uiState),
+      removeShip: (payload, uiState) => handleRemoveShip(engine, payload, uiState),
       enterAttackMode: () => handleEnterAttackMode(engine),
-      playerAttack: (payload) => handlePlayerAttack(engine, payload),
+      playerAttack: (payload, uiState) => handlePlayerAttack(engine, payload, uiState),
     };
 }
 
-function handleStartGame(engine, payload) {
+function handleStartGame(engine, payload, uiState) {
     engine.start(payload.playerName);
   
     const state = engine.state;
@@ -21,7 +21,7 @@ function handleStartGame(engine, payload) {
     const viewModel = { ...state, ships };
     
     if (state.phase === "shipPlacement") {
-      renderShipPlacementScreen(viewModel);
+      renderShipPlacementScreen(viewModel, uiState);
     }
 }
 
@@ -30,24 +30,21 @@ function handleSelectLevel(engine, payload) {
   localStorage.setItem("battleship-level", payload.value);
 }
 
-function handlePlaceShip(engine, payload) {
+function handlePlaceShip(engine, payload, uiState) {
     const { shipType, x, y, orient } = payload;
     const result = engine.placeShip(shipType, x, y, orient);
 
     const state = engine.state;
     const ships = state.player.gameboard.getShips();
-    const viewModel = {...state, ships}
+    const viewModel = { ...state, ships };
 
-    if (result.ok) {
-        renderShipPlacementScreen(viewModel);
-        return;
-    }
-    const errorMsg = result.reason;
-    const uiState = { errorMsg };
+    uiState.orientation = orient;
+    uiState.errorMsg = result.ok ? null : result.reason;
+
     renderShipPlacementScreen(viewModel, uiState);
 }
 
-function handleRemoveShip(engine, payload) {
+function handleRemoveShip(engine, payload, uiState) {
     const { x, y } = payload;
     const result = engine.removeShipAt(x, y);
 
@@ -58,7 +55,7 @@ function handleRemoveShip(engine, payload) {
     const ships = state.player.gameboard.getShips();
     const viewModel = { ...state, ships };
 
-    renderShipPlacementScreen(viewModel);
+    renderShipPlacementScreen(viewModel, uiState);
 }
 
 function handleEnterAttackMode(engine) {

@@ -47,3 +47,11 @@
 #player-name::placeholder {
     color: var(--grn-text);
 }
+
+.place-ship-form label {
+    color: var(--grn-text);
+}
+
+.place-ship-form input[type="radio"] {
+    transform: scale(1.5);
+}

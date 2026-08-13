@@ -1,132 +1,135 @@
 const letters = "ABCDEFGHIJ";
-
 export function initRenderers(controller) {
-    let selectedShip = null;
+  let selectedShip = null;
+    let selectedCell = null;
+    let selectedOrientation = "horizontal";
 
-    const clickHandler = (e) => {
-        if (controller.getPhase() === "attack") {
-            const computerCell = e.target.closest(".computer-grid .cell");
+  const clickHandler = (e) => {
+    if (controller.getPhase() === "attack") {
+      const computerCell = e.target.closest(".computer-grid .cell");
 
-            if (computerCell && document.querySelector(".attack-layout")) {
-                const x = Number(computerCell.dataset.x);
-                const y = Number(computerCell.dataset.y);
+      if (computerCell && document.querySelector(".attack-layout")) {
+        const x = Number(computerCell.dataset.x);
+        const y = Number(computerCell.dataset.y);
 
-                controller.dispatch("playerAttack", { x, y });
-                return;
-            }
-        }    
-        if (controller.getPhase() === "shipPlacement") {
-            const shipBtn = e.target.closest(".ship-btn");
+        controller.dispatch("playerAttack", { x, y });
+        return;
+      }
+    }
+    if (controller.getPhase() === "shipPlacement") {
+      const shipBtn = e.target.closest(".ship-btn");
 
-            if (shipBtn) {
-                document.querySelectorAll(".ship-btn").forEach((btn) => {
-                    btn.classList.remove("selected");
-                });
+      if (shipBtn) {
+        document.querySelectorAll(".ship-btn").forEach((btn) => {
+          btn.classList.remove("selected");
+        });
 
-                shipBtn.classList.add("selected");
-                selectedShip = shipBtn.dataset.ship;
+        shipBtn.classList.add("selected");
+        selectedShip = shipBtn.dataset.ship;
 
-                return;
-            }
+        return;
+      }
 
-            const shipCell = e.target.closest(".cell.ship");
-        
-            if (shipCell) {
-                const x = shipCell.dataset.x;
-                const y = shipCell.dataset.y;
+      const shipCell = e.target.closest(".cell.ship");
 
-                controller.dispatch("removeShip", { x, y });
-                return;
-            }
-        
-            const emptyCell = e.target.closest(".cell");
-        
-            if (emptyCell && !emptyCell.classList.contains("ship")) {
-                const inputX = document.querySelector("#ship-x");
-                const inputY = document.querySelector("#ship-y");
+      if (shipCell) {
+        const x = shipCell.dataset.x;
+        const y = shipCell.dataset.y;
 
-                if (inputX) inputX.value = "";
-                if (inputY) inputY.value = "";
+        controller.dispatch("removeShip", { x, y });
+        return;
+      }
 
-                document.querySelectorAll('.cell.selected').
-                    forEach(c => c.classList.remove('selected'));
+      const emptyCell = e.target.closest(".cell");
 
-                emptyCell.classList.add('selected');
+      if (emptyCell && !emptyCell.classList.contains("ship")) {
+        document
+          .querySelectorAll(".cell.selected")
+          .forEach((c) => c.classList.remove("selected"));
 
-                const x = Number(emptyCell.dataset.x);
-                const y = Number(emptyCell.dataset.y);
+        emptyCell.classList.add("selected");
 
-                const uiX = letters[y];
-                const uiY = x + 1;
+        const x = Number(emptyCell.dataset.x);
+        const y = Number(emptyCell.dataset.y);
 
-                inputX.value = uiX;
-                inputY.value = uiY;
+        selectedCell = { x, y };
 
-                return;
-            }
-        }
+        return;
+      }
+    }
 
-        const levelInput = e.target.closest('input[name=level');
-        if (levelInput) {
-            controller.dispatch("selectLevel", { value: levelInput.value });
-            return;
-        }
-        
-        const action = e.target.dataset.action;
-        if (!action) return;
+    const orientationInput = e.target.closest("input[name=orientation]");
+    if (orientationInput) {
+      selectedOrientation = orientationInput.value;
+      return;
+    }
+      
+    const levelInput = e.target.closest("input[name=level]");
+    if (levelInput) {
+      controller.dispatch("selectLevel", { value: levelInput.value });
+      return;
+    }
 
-        const actions = {
-            startGame: () => {
-                const nameInput = document.querySelector("#player-name");
-                const playerName = nameInput.value.trim();
+    const action = e.target.dataset.action;
+    if (!action) return;
 
-                controller.dispatch("startGame", { playerName: playerName || "Guest" });
-            },
-            placeShip: () => {
-                if (!selectedShip) return;
-            
-                const x = document.querySelector("#ship-x").value.trim();
-                const y = document.querySelector("#ship-y").value.trim();
-            
-                const orientInput = document.querySelector("input[name=orientation]:checked");
-                if (!orientInput) return;
-            
-                controller.dispatch("placeShip", {
-                    shipType: selectedShip,
-                    x,
-                    y,
-                    orient: orientInput.value,
-                });
-            },
-            enterAttackMode: () => {
-                controller.dispatch("enterAttackMode");
-            },
-            startNewGame: () => {
-                renderStartScreen();
-            }
-        };
-        const handler = actions[action];
-        if (handler) {
-            handler();
-        }
+    const actions = {
+      startGame: () => {
+        const nameInput = document.querySelector("#player-name");
+        const playerName = nameInput.value.trim();
+
+        controller.dispatch("startGame", { playerName: playerName || "Guest" });
+      },
+      placeShip: () => {
+        if (!selectedShip) return;
+        if (!selectedCell) return;
+
+        const { x, y } = selectedCell;
+          
+        const orientInput = document.querySelector(
+          "input[name=orientation]:checked",
+        );
+        if (!orientInput) return;
+
+        controller.dispatch("placeShip", {
+          shipType: selectedShip,
+          x,
+          y,
+          orient: orientInput.value,
+        });
+          
+        selectedCell = null;
+        selectedShip = null;
+      },
+      enterAttackMode: () => {
+        controller.dispatch("enterAttackMode");
+      },
+      startNewGame: () => {
+        renderStartScreen();
+      },
     };
-    document.addEventListener("click", clickHandler);
+    const handler = actions[action];
+    if (handler) {
+      handler();
+    }
+  };
+  document.addEventListener("click", clickHandler);
 
-    return () => {
-      document.removeEventListener("click", clickHandler);
-    };
+  return () => {
+    document.removeEventListener("click", clickHandler);
+  };
 }
 export function renderGrid(container) {
-    const cellMap = new Map();
-    container.innerHTML = "";
+  const cellMap = new Map();
+  container.innerHTML = "";
 
   for (let i = 0; i < 100; i++) {
     const x = i % 10;
     const y = Math.floor(i / 10);
-      
+
     const cell = document.createElement("div");
     cell.classList.add("cell");
-    
+
     cell.dataset.x = x;
     cell.dataset.y = y;
     cellMap.set(`${x},${y}`, cell);
@@ -149,7 +152,7 @@ export function renderStartScreen(level = 2) {
 
         <div class="difficulty-options">
 
-            <label data-description="____________ Computer fires randomly">
+            <label data-description="________ Computer fires randomly">
                 <input
                     type="radio"
                     name="level"
@@ -159,7 +162,7 @@ export function renderStartScreen(level = 2) {
                 Level 1
             </label>
 
-            <label data-description="____________ Computer hunts lightly after a hit">
+            <label data-description="________ Computer hunts lightly after a hit">
                 <input
                     type="radio"
                     name="level"
@@ -169,7 +172,7 @@ export function renderStartScreen(level = 2) {
                 Level 2
             </label>
 
-            <label data-description="____________ Computer hunts ruthlessly">
+            <label data-description="________ Computer hunts ruthlessly">
                 <input
                     type="radio"
                     name="level"
@@ -195,6 +198,7 @@ export function renderStartScreen(level = 2) {
     `;
 }
 export function renderShipPlacementScreen(state, uiState) {
+    const { orientation } = uiState;
   const app = document.querySelector("#app");
 
   app.innerHTML = `
@@ -204,12 +208,12 @@ export function renderShipPlacementScreen(state, uiState) {
 
         <div class="placement-main">
             <div class="placement-help">
-                <p>
-                    Select a ship icon, and enter row A–J and column 1–10.<br>  
-                    Choose a horizontal or vertical orientation.<br> 
-                    Or select a ship icon and a starting cell for that ship.<br> 
-                    To reposition any ship, click on the ship inside the grid.<br> 
+                <p>                    
+                    Select a ship icon and a starting cell for that ship.<br>
+                    Choose a horizontal or vertical orientation.<br>
                     A chosen cell will be the top or left-most starting point.<br> 
+                    To reposition any ship, click on the ship inside the grid.<br> 
+                    
                 </p>
             </div>
             <!-- GRID -->
@@ -278,109 +282,118 @@ export function renderShipPlacementScreen(state, uiState) {
                     </div>
                 </div>
             </div>
-    
-            <form class="place-ship-form">
-                <input id="ship-x" placeholder="A">
-                <input id="ship-y" placeholder="1">
-    
+
+            <form class="place-ship-form">    
                 <label>
-                <input type="radio" name="orientation" value="horizontal" checked>
-                Horizontal
+                    <input type="radio" name="orientation" value="horizontal"
+                    ${orientation === "horizontal" ? "checked" : ""}>
+                    Horizontal
                 </label>
     
                 <label>
-                <input type="radio" name="orientation" value="vertical">
-                Vertical
+                    <input type="radio" name="orientation" value="vertical"
+                    ${orientation === "vertical" ? "checked" : ""}>
+                    Vertical
                 </label>
     
-                <button type="button" data-action="placeShip">
-                Place Ship
+                <button type="button" class="btn place-ship-btn" data-action="placeShip">
+                    Place Ship
                 </button>
             </form>
+    
+            
   
         </div>
   
       </section>
     `;
-    const grid = document.querySelector(".grid");
-    const cellMap = renderGrid(grid);
+  const grid = document.querySelector(".grid");
+  const cellMap = renderGrid(grid);
 
-    const top = document.querySelector(".top-labels");
-    const left = document.querySelector(".left-labels");
+  const top = document.querySelector(".top-labels");
+  const left = document.querySelector(".left-labels");
 
-    top.innerHTML = "";
-    left.innerHTML = "";
+  top.innerHTML = "";
+  left.innerHTML = "";
 
-    for (let i = 1; i <= 10; i++) {
-        const topCell = document.createElement("div");
-        topCell.textContent = i;
-        top.appendChild(topCell);
+  for (let i = 1; i <= 10; i++) {
+    const topCell = document.createElement("div");
+    topCell.textContent = i;
+    top.appendChild(topCell);
+  }
+
+  for (let i = 0; i < 10; i++) {
+    const cell = document.createElement("div");
+    cell.textContent = letters[i];
+    left.appendChild(cell);
+  }
+
+  //paint the grid with each ship
+  state.ships.forEach((ship) => {
+    for (const coord of ship.coords) {
+      const shipName = ship.ship.type;
+      const shipAbbreviation = shipName.slice(0, 2).toUpperCase();
+      const [x, y] = coord;
+      const cell = cellMap.get(`${x},${y}`);
+
+      if (cell) {
+        cell.classList.add("ship");
+        cell.textContent = shipAbbreviation;
+      }
     }
+  });
+  // disable the button for any already placed ships
+  document.querySelectorAll(".ship-btn").forEach((btn) => {
+    const placed = state.ships.some(
+      (ship) => ship.ship.type === btn.dataset.ship,
+    );
 
-    for (let i = 0; i < 10; i++) {
-      const cell = document.createElement("div");
-      cell.textContent = letters[i];
-      left.appendChild(cell);
-    }
-
-    //paint the grid with each ship
+    btn.disabled = placed;
+  });
+  //populate the placed ships list
+  const shipList = document.querySelector(".ship-list");
+  shipList.innerHTML = "";
+  if (state.ships) {
     state.ships.forEach((ship) => {
-        for (const coord of ship.coords) {
-            const shipName = ship.ship.type;
-            const firstLetter = shipName[0].toUpperCase();
-            const [x, y] = coord;
-            const cell = cellMap.get(`${x},${y}`);
-
-            if (cell) {
-                cell.classList.add("ship");
-                cell.textContent = `${firstLetter}`;
-            }
-        }
+      const listedShip = document.createElement("li");
+      listedShip.classList.add("listed-ship");
+      listedShip.innerText = ship.ship.type;
+      shipList.append(listedShip);
     });
-    //populate the placed ships list
-    const shipList = document.querySelector(".ship-list");
-    shipList.innerHTML = "";
-    if (state.ships) {
-        state.ships.forEach((ship) => {
-        const listedShip = document.createElement("li");
-        listedShip.classList.add("listed-ship");
-        listedShip.innerText = ship.ship.type;
-        shipList.append(listedShip);
-        });
-    }
+  }
   // update user with ongoing status of ship placement
-    if (uiState?.errorMsg) {
-        const errorBox = document.querySelector(".ship-error-msg");
+  if (uiState?.errorMsg) {
+    const errorBox = document.querySelector(".ship-error-msg");
 
-        const ERROR_TEXT = {
-            OVERLAP: "Ship overlaps another ship.",
-            OUT_OF_BOUNDS: "Ship extends off the board.",
-            INVALID_START: "Invalid starting coordinate.",
-            SHIP_ALREADY_PLACED: "That ship has already been placed",
-        };
+    const ERROR_TEXT = {
+      OVERLAP: "Ship overlaps another ship.",
+      OUT_OF_BOUNDS: "Ship extends off the board.",
+      INVALID_START: "Invalid starting coordinate.",
+      SHIP_ALREADY_PLACED: "That ship has already been placed",
+    };
 
-        errorBox.textContent = ERROR_TEXT[uiState.errorMsg] || "";
+    errorBox.textContent = ERROR_TEXT[uiState.errorMsg] || "";
 
-        setTimeout(() => {
-        errorBox.textContent = "";
-        }, 5000);
-    }
-    // sync the UI to all ships being successfully placed
-        if (!state.ships) return;
-        const placementComplete = state.ships?.length === state.requiredShips;
-        if (placementComplete) {
-            const errorBox = document.querySelector('.ship-error-msg');
-            errorBox.textContent = "All ships have been placed!!"
+    setTimeout(() => {
+      errorBox.textContent = "";
+    }, 5000);
+  }
+  // sync the UI to all ships being successfully placed
+  if (!state.ships) return;
+  const placementComplete = state.ships?.length === state.requiredShips;
+  if (placementComplete) {
+    const errorBox = document.querySelector(".ship-error-msg");
+    errorBox.textContent = "All ships have been placed!!";
 
-            const uiMessage = document.querySelector('.ui-messages');
-            uiMessage.innerHTML = "";
-            const startAttackBtn = document.createElement('button');
-            startAttackBtn.textContent = "Enter Attack Mode";
-            startAttackBtn.classList.add('start-attack-btn');
-            startAttackBtn.dataset.action = 'enterAttackMode';
+    const uiMessage = document.querySelector(".ui-information-display");
+    uiMessage.innerHTML = "";
+    const startAttackBtn = document.createElement("button");
+    startAttackBtn.textContent = "Enter Attack Mode";
+    startAttackBtn.classList.add("start-attack-btn");
+    startAttackBtn.dataset.action = "enterAttackMode";
 
-            uiMessage.append(startAttackBtn);
-        }
+    uiMessage.append(startAttackBtn);
+  }
 }
 export function renderAttackScreen(gameState, uiState) {
   const { computer, player, computerShips, playerShips } = gameState;
@@ -436,172 +449,169 @@ export function renderAttackScreen(gameState, uiState) {
     </div>
     `;
 
-    const computerGrid = document.querySelector(".computer-grid");
-    const playerGrid = document.querySelector(".player-grid");
+  const computerGrid = document.querySelector(".computer-grid");
+  const playerGrid = document.querySelector(".player-grid");
 
-    const computerCellMap = renderGrid(computerGrid);
-    const playerCellMap = renderGrid(playerGrid);
+  const computerCellMap = renderGrid(computerGrid);
+  const playerCellMap = renderGrid(playerGrid);
 
-    const computerTop = document.querySelector(".computer-top-labels");
-    const computerLeft = document.querySelector(".computer-left-labels");
+  const computerTop = document.querySelector(".computer-top-labels");
+  const computerLeft = document.querySelector(".computer-left-labels");
 
-    computerTop.innerHTML = "";
-    computerLeft.innerHTML = "";
+  computerTop.innerHTML = "";
+  computerLeft.innerHTML = "";
 
-    for (let i = 1; i <= 10; i++) {
-        const computerTopCell = document.createElement("div");
-        computerTopCell.textContent = i;
-        computerTop.appendChild(computerTopCell);
+  for (let i = 1; i <= 10; i++) {
+    const computerTopCell = document.createElement("div");
+    computerTopCell.textContent = i;
+    computerTop.appendChild(computerTopCell);
+  }
+
+  for (let i = 0; i < 10; i++) {
+    const computerCell = document.createElement("div");
+    computerCell.textContent = letters[i];
+    computerLeft.appendChild(computerCell);
+  }
+
+  const playerTop = document.querySelector(".player-top-labels");
+  const playerLeft = document.querySelector(".player-left-labels");
+
+  playerTop.innerHTML = "";
+  playerLeft.innerHTML = "";
+
+  for (let i = 1; i <= 10; i++) {
+    const playerTopCell = document.createElement("div");
+    playerTopCell.textContent = i;
+    playerTop.appendChild(playerTopCell);
+  }
+
+  for (let i = 0; i < 10; i++) {
+    const playerCell = document.createElement("div");
+    playerCell.textContent = letters[i];
+    playerLeft.appendChild(playerCell);
+  }
+
+  //paint the player's grid ONLY with each ship
+  playerShips.forEach((ship) => {
+    for (const coord of ship.coords) {
+      const shipName = ship.ship.type;
+      const firstLetter = shipName[0].toUpperCase();
+      const [x, y] = coord;
+      const cell = playerCellMap.get(`${x},${y}`);
+
+      if (cell) {
+        cell.classList.add("ship");
+        cell.textContent = `${firstLetter}`;
+      }
     }
+  });
 
-    for (let i = 0; i < 10; i++) {
-        const computerCell = document.createElement("div");
-        computerCell.textContent = letters[i];
-        computerLeft.appendChild(computerCell);
-    }
+  //populate computer's shipsSunk list
+  const compShipsSunk = document.querySelector(".computer-ships-sunk");
+  const compSunkList = document.createElement("ul");
+  compSunkList.classList.add("sunk-list", "computer-sunk-list");
 
-    const playerTop = document.querySelector(".player-top-labels");
-    const playerLeft = document.querySelector(".player-left-labels");
+  computerSunkShips.forEach((s) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = s;
+    compSunkList.append(listItem);
+  });
 
-    playerTop.innerHTML = "";
-    playerLeft.innerHTML = "";
+  compShipsSunk.append(compSunkList);
 
-    for (let i = 1; i <= 10; i++) {
-        const playerTopCell = document.createElement("div");
-        playerTopCell.textContent = i;
-        playerTop.appendChild(playerTopCell);
-    }
+  //populate player's shipsSunk list
+  const playerShipsSunk = document.querySelector(".player-ships-sunk");
+  const playerSunkList = document.createElement("ul");
+  playerSunkList.classList.add("sunk-list", "player-sunk-list");
 
-    for (let i = 0; i < 10; i++) {
-        const playerCell = document.createElement("div");
-        playerCell.textContent = letters[i];
-        playerLeft.appendChild(playerCell);
-    }
+  playerSunkShips.forEach((s) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = s;
+    playerSunkList.append(listItem);
+  });
 
-    //paint the player's grid ONLY with each ship
-    playerShips.forEach((ship) => {
-        for (const coord of ship.coords) {
-        const shipName = ship.ship.type;
-        const firstLetter = shipName[0].toUpperCase();
-        const [x, y] = coord;
-        const cell = playerCellMap.get(`${x},${y}`);
+  playerShipsSunk.append(playerSunkList);
 
-        if (cell) {
-            cell.classList.add("ship");
-            cell.textContent = `${firstLetter}`;
-        }
-        }
-    });
+  //display who's turn it is
+  const gameMessage = document.querySelector(".game-message");
 
-    //populate computer's shipsSunk list
-    const compShipsSunk = document.querySelector(".computer-ships-sunk");
-    const compSunkList = document.createElement("ul");
-    compSunkList.classList.add("sunk-list", "computer-sunk-list");
-
-    computerSunkShips.forEach((s) => {
-        const listItem = document.createElement("li");
-        listItem.textContent = s;
-        compSunkList.append(listItem);
-    });
-
-    compShipsSunk.append(compSunkList);
-
-    //populate player's shipsSunk list
-    const playerShipsSunk = document.querySelector(".player-ships-sunk");
-    const playerSunkList = document.createElement("ul");
-    playerSunkList.classList.add("sunk-list", "player-sunk-list");
-
-    playerSunkShips.forEach((s) => {
-        const listItem = document.createElement("li");
-        listItem.textContent = s;
-        playerSunkList.append(listItem);
-    });
-
-    playerShipsSunk.append(playerSunkList);
-
-    //display who's turn it is
-    const gameMessage = document.querySelector(".game-message");
-
-    if (gameMessage) {
-        gameMessage.innerHTML = `
+  if (gameMessage) {
+    gameMessage.innerHTML = `
             <p class="turn-message">${turnText}. ${turnInstruction}</p>
         `;
+  }
+
+  // guard agains attacking the same computer cell
+  if (errorMsg) {
+    const ERROR_TEXT = {
+      ALREADY_ATTACKED: "You've already attacked that cell",
+    };
+
+    const errorEl = document.createElement("p");
+    errorEl.classList.add("attack-outcome-overlay");
+    errorEl.textContent = ERROR_TEXT[errorMsg] || "";
+
+    compShipsSunk.append(errorEl);
+
+    setTimeout(() => errorEl.remove(), 2500);
+  }
+  // paint player and computer grids with hits and misses
+  if (playerAttackMap && computerAttackMap) {
+    for (const key of playerCellMap.keys()) {
+      const cell = playerCellMap.get(key);
+      const attackData = playerAttackMap.get(key);
+
+      if (attackData) {
+        cell.classList.add(attackData.outcome);
+      }
     }
 
-    // guard agains attacking the same computer cell
-    if (errorMsg) {
-        const ERROR_TEXT = {
-            ALREADY_ATTACKED: "You've already attacked that cell",
-        };
+    for (const key of computerCellMap.keys()) {
+      const cell = computerCellMap.get(key);
+      const attackData = computerAttackMap.get(key);
 
-        const errorEl = document.createElement("p");
-        errorEl.classList.add("attack-outcome-overlay");
-        errorEl.textContent = ERROR_TEXT[errorMsg] || "";
+      if (attackData) {
+        cell.classList.add(attackData.outcome);
 
-        compShipsSunk.append(errorEl);
-
-        setTimeout(() => errorEl.remove(), 2500);
-    }
-    // paint player and computer grids with hits and misses
-    if (playerAttackMap && computerAttackMap) {
-        for (const key of playerCellMap.keys()) {
-          const cell = playerCellMap.get(key);
-          const attackData = playerAttackMap.get(key);
-
-          if (attackData) {
-            cell.classList.add(attackData.outcome);
-          }
+        if (attackData.shipName) {
+          cell.classList.add("ship");
+          cell.textContent = attackData.shipName[0].toUpperCase();
         }
-
-        for (const key of computerCellMap.keys()) {
-          const cell = computerCellMap.get(key);
-          const attackData = computerAttackMap.get(key);
-
-          if (attackData) {
-            cell.classList.add(attackData.outcome);
-
-            if (attackData.shipName) {
-              cell.classList.add("ship");
-              cell.textContent = attackData.shipName[0].toUpperCase();
-            }
-          }
-        }
+      }
     }
-    
-    // add 2 sec outcome message to the area under each grid
-    if (playerAttack && playerAttack.outcome) {
-        const attackOutcomeMsg = document.createElement("div");
-        attackOutcomeMsg.classList.add("attack-outcome-overlay");
-        attackOutcomeMsg.textContent = playerAttack.outcome.toUpperCase();
+  }
 
-        compShipsSunk.append(attackOutcomeMsg);
+  // add 2 sec outcome message to the area under each grid
+  if (playerAttack && playerAttack.outcome) {
+    const attackOutcomeMsg = document.createElement("div");
+    attackOutcomeMsg.classList.add("attack-outcome-overlay");
+    attackOutcomeMsg.textContent = playerAttack.outcome.toUpperCase();
 
-        setTimeout(() => attackOutcomeMsg.remove(), 2000);
-    }
-    
-    if (computerAttack && computerAttack.outcome) {
-        const attackOutcomeMsg = document.createElement("div");
-        attackOutcomeMsg.classList.add("attack-outcome-overlay");
-        attackOutcomeMsg.textContent = computerAttack.outcome.toUpperCase();
+    compShipsSunk.append(attackOutcomeMsg);
 
-        playerShipsSunk.append(attackOutcomeMsg);
+    setTimeout(() => attackOutcomeMsg.remove(), 2000);
+  }
 
-        setTimeout(() => attackOutcomeMsg.remove(), 2000);
-    }
-    
-    if (currentPhase === 'gameOver') {
-        let displayName = winner === 'player' ?
-            player.name :
-            computer.name;
-        
-        gameMessage.innerHTML = `${displayName} Wins the Game!!!`;
+  if (computerAttack && computerAttack.outcome) {
+    const attackOutcomeMsg = document.createElement("div");
+    attackOutcomeMsg.classList.add("attack-outcome-overlay");
+    attackOutcomeMsg.textContent = computerAttack.outcome.toUpperCase();
 
-        const newGameBtn = document.createElement('button');
-        newGameBtn.textContent = "New Game";
-        newGameBtn.classList.add('new-game-btn');
-        newGameBtn.dataset.action = 'startNewGame';
+    playerShipsSunk.append(attackOutcomeMsg);
 
-        gameMessage.append(newGameBtn);
-    }
+    setTimeout(() => attackOutcomeMsg.remove(), 2000);
+  }
+
+  if (currentPhase === "gameOver") {
+    let displayName = winner === "player" ? player.name : computer.name;
+
+    gameMessage.innerHTML = `${displayName} Wins the Game!!!`;
+
+    const newGameBtn = document.createElement("button");
+    newGameBtn.textContent = "New Game";
+    newGameBtn.classList.add("new-game-btn");
+    newGameBtn.dataset.action = "startNewGame";
+
+    gameMessage.append(newGameBtn);
+  }
 }
-

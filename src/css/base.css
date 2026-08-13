@@ -16,6 +16,7 @@
     --grn-border: 2px solid #00ff66;
     --blue-border: 2px solid #00BFFF;
     --white-border: 1px solid #E8F1F2;
+    --red-border: 2px solid #e60039;
 
     --border-rad-sm: 0.75rem;
     --border-rad-md: 1rem;
@@ -32,6 +33,7 @@
     --grn-text: #00ff66;
     --blue-text: #00BFFF;
     --white-text: #E8F1F2;
+    --red-text: #e60039;
 
     --blk-bground: #000000;
     --dark-grn-bground: rgba(0, 40, 20, 0.9);
@@ -60,7 +62,7 @@
 }
 
 input,
-button, .placement-header, .ship-info {
+button, .placement-header, .ship-info, .place-ship-form label{
     font-family: inherit;
 }
 

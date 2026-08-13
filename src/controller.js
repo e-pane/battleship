@@ -1,6 +1,11 @@
 export function createController(engine, handlers) {
     const controller = Object.create(null);
 
+    const uiState = {
+      orientation: "horizontal",
+      errorMsg: null,
+    };
+
     controller.dispatch = (intent, payload) => {
             if (typeof intent !== 'string') {
                 throw new Error(`unknown action: ${intent}`);
@@ -12,7 +17,7 @@ export function createController(engine, handlers) {
                 throw new Error(`unknown action: ${intent}`);
             }
         
-            handler(payload);
+            handler(payload, uiState);
     };
 
     controller.getPhase = () => engine.state.phase;
