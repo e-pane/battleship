@@ -399,6 +399,7 @@ export function renderAttackScreen(gameState, uiState) {
   const { computer, player, computerShips, playerShips } = gameState;
   const {
     currentPhase,
+    currentLevel,
     turnText,
     turnInstruction,
     playerAttackMap,
@@ -431,6 +432,8 @@ export function renderAttackScreen(gameState, uiState) {
 
         <div class="game-messaging">
             <div class="game-message"></div>
+            <div class="outcome-error-msg"></div>
+            <div class="level-msg">Level ${currentLevel}</div>
         </div>
 
         <div class="player-side">
@@ -495,13 +498,13 @@ export function renderAttackScreen(gameState, uiState) {
   playerShips.forEach((ship) => {
     for (const coord of ship.coords) {
       const shipName = ship.ship.type;
-      const firstLetter = shipName[0].toUpperCase();
+      const shipAbbreviation = shipName.slice(0, 2).toUpperCase();
       const [x, y] = coord;
       const cell = playerCellMap.get(`${x},${y}`);
 
       if (cell) {
         cell.classList.add("ship");
-        cell.textContent = `${firstLetter}`;
+        cell.textContent = `${shipAbbreviation}`;
       }
     }
   });
@@ -546,12 +549,11 @@ export function renderAttackScreen(gameState, uiState) {
     const ERROR_TEXT = {
       ALREADY_ATTACKED: "You've already attacked that cell",
     };
+    const gameMessageContainer = document.querySelector(".game-messaging");
+    const outcomeErrorMsgContainer = document.querySelector(".outcome-error-msg");
+    outcomeErrorMsgContainer.textContent = ERROR_TEXT[errorMsg] || "";
 
-    const errorEl = document.createElement("p");
-    errorEl.classList.add("attack-outcome-overlay");
-    errorEl.textContent = ERROR_TEXT[errorMsg] || "";
-
-    compShipsSunk.append(errorEl);
+    gameMessageContainer.append(outcomeErrorMsgContainer);
 
     setTimeout(() => errorEl.remove(), 2500);
   }
@@ -562,7 +564,11 @@ export function renderAttackScreen(gameState, uiState) {
       const attackData = playerAttackMap.get(key);
 
       if (attackData) {
-        cell.classList.add(attackData.outcome);
+        if (attackData.sunk) {
+          cell.classList.add("sunk");
+        } else {
+          cell.classList.add(attackData.outcome);
+        }
       }
     }
 
@@ -571,36 +577,43 @@ export function renderAttackScreen(gameState, uiState) {
       const attackData = computerAttackMap.get(key);
 
       if (attackData) {
-        cell.classList.add(attackData.outcome);
+        if (attackData.sunk) {
+          cell.classList.add("sunk");
+        } else {
+          cell.classList.add(attackData.outcome);
+        }
 
         if (attackData.shipName) {
           cell.classList.add("ship");
-          cell.textContent = attackData.shipName[0].toUpperCase();
+          cell.textContent = attackData.shipName.slice(0, 2).toUpperCase();
         }
       }
     }
   }
 
-  // add 2 sec outcome message to the area under each grid
+    // add 2 sec outcome message to the area under each grid
+    const gameMessageContainer = document.querySelector(".game-messaging");
+    const outcomeErrorMsgContainer = document.querySelector(".outcome-error-msg");
+    const levelMsgContainer = document.querySelector(".level-msg");
+
   if (playerAttack && playerAttack.outcome) {
-    const attackOutcomeMsg = document.createElement("div");
-    attackOutcomeMsg.classList.add("attack-outcome-overlay");
-    attackOutcomeMsg.textContent = playerAttack.outcome.toUpperCase();
+    outcomeErrorMsgContainer.textContent = `A ${playerAttack.outcome.toUpperCase()} for ${player.name}`;
 
-    compShipsSunk.append(attackOutcomeMsg);
+    gameMessageContainer.append(outcomeErrorMsgContainer);
 
-    setTimeout(() => attackOutcomeMsg.remove(), 2000);
+    setTimeout(() => outcomeErrorMsgContainer.remove(), 1000);
   }
 
   if (computerAttack && computerAttack.outcome) {
-    const attackOutcomeMsg = document.createElement("div");
-    attackOutcomeMsg.classList.add("attack-outcome-overlay");
-    attackOutcomeMsg.textContent = computerAttack.outcome.toUpperCase();
+    outcomeErrorMsgContainer.textContent = `A ${computerAttack.outcome.toUpperCase()} for the computer`;
 
-    playerShipsSunk.append(attackOutcomeMsg);
+    gameMessageContainer.append(outcomeErrorMsgContainer);
 
-    setTimeout(() => attackOutcomeMsg.remove(), 2000);
+    setTimeout(() => outcomeErrorMsgContainer.remove(), 1000);
   }
+
+    levelMsgContainer.textContent = `Level ${currentLevel}`;
+    gameMessageContainer.append(levelMsgContainer)
 
   if (currentPhase === "gameOver") {
     let displayName = winner === "player" ? player.name : computer.name;

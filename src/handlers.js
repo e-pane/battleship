@@ -62,7 +62,8 @@ function handleEnterAttackMode(engine) {
     engine.enterAttackMode();
 
     let state = engine.state;
-
+    
+    const currentLevel = state.level;
     const currentPhase = state.phase;
 
     const viewModel = {
@@ -93,6 +94,7 @@ function handleEnterAttackMode(engine) {
     
     const uiState = {
         currentPhase,
+        currentLevel,
         turnText,
         turnInstruction,
         playerAttackMap,
@@ -123,6 +125,7 @@ function handlePlayerAttack(engine, payload) {
     );
 
     const currentPhase = state.phase;
+    const currentLevel = state.level;
   
     if (currentPhase === "gameOver") {
       const viewModel = {
@@ -143,6 +146,7 @@ function handlePlayerAttack(engine, payload) {
 
       const uiState = {
         currentPhase,
+        currentLevel,
         turnText: null,
         turnInstruction: null,
         playerAttackMap,
@@ -177,6 +181,7 @@ function handlePlayerAttack(engine, payload) {
 
     const uiState = {
       currentPhase,
+      currentLevel,
       turnText,
       turnInstruction,
       playerAttackMap,
@@ -228,6 +233,7 @@ function handlePlayerAttack(engine, payload) {
 
         const uiState = {
           currentPhase,
+          currentLevel,
           turnText: null,
           turnInstruction: null,
           playerAttackMap,
@@ -271,6 +277,7 @@ function handlePlayerAttack(engine, payload) {
 
         const uiState = {
           currentPhase,
+          currentLevel,
           turnText,
           turnInstruction,
           playerAttackMap,

@@ -56,3 +56,71 @@
     gap: var(--space2);
 }
 
+/* Style attack screen */
+
+.attack-layout {
+    display: grid;
+    grid-template-columns: minmax(6rem, 1fr) minmax(0, 3fr);
+    grid-template-areas:
+        "message computer"
+        "message player";
+    padding: var(--space2);
+}
+
+.game-messaging {
+    grid-area: message;
+}
+
+.computer-side {
+    grid-area: computer;
+    gap: var(--space1);
+}
+
+.player-side {
+    grid-area: player;
+    gap: var(--space1);
+}
+
+.computer-side,
+.player-side {
+    display: flex;
+    flex-direction: column;
+}
+
+.game-messaging {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space2);
+
+    padding: var(--space1);
+    margin: var(--space2);
+    max-height: 12rem;
+
+    background-color: var(--dark-blue-bground);
+    border: var(--blue-border);
+    border-radius: var(--border-rad-lg);
+
+    box-shadow:
+        0 0 12px rgba(0,255,102,.22),
+        inset 0 0 12px rgba(0,255,102,.08);
+}
+
+.computer-ships-sunk,
+.player-ships-sunk {
+    display: flex;
+    align-items: center;
+    gap: var(--space2);
+    background-color: var(--dark-blue-bground);
+}
+
+.computer-ships-sunk ul,
+.player-ships-sunk ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    gap: var(--space1);
+    font-size: clamp(0.4rem, 2vw, var(--font-size-sm));
+    color: var(--blue-text);
+    text-decoration: underline;
+}

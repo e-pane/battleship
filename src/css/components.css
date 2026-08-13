@@ -50,13 +50,21 @@
 
 /* Style placement screen */
 
+.level-msg {
+    color: var(--grn-text);
+    font-weight: 400;
+    font-size: clamp(0.5rem, 2vw, var(--font-size-sm));
+    text-align: center;
+    margin-top: auto;
+}
+
 .placement-header {
     color: var(--grn-text); 
     background-color: var(--dark-grn-bground);
     font-size: clamp(var(--font-size-sm), 5vw, var(--font-size-xl));
     font-weight: 600;
     text-align: center;
-    padding: var(--space2);
+    padding: var(--space1);
     margin-top: var(--space3);
     border-radius: var(--border-rad-lg);
     box-shadow:
@@ -147,31 +155,39 @@
     grid-template-rows: repeat(10, var(--cell-size-sm));
 }
 
-.computer-board,
-.player-board {
-    display: flex;
-    justify-content: center;
+.computer-grid .cell:hover {
+    transform: scale(0.95);
+    outline: 5px solid #00ff66;
+    outline-offset: -2px;
+    cursor: pointer;
 }
 
-.board {
+.board, .computer-board,
+.player-board {
     display: grid;
     grid-template-columns: 40px repeat(10, var(--cell-size-sm));
     grid-template-rows: 40px repeat(10, var(--cell-size-sm));
 }
 
-.board .top-labels {
+.board .top-labels,
+.computer-board .computer-top-labels,
+.player-board .player-top-labels{
     grid-column: 2 / span 10;
     grid-row: 1;
     margin-top: var(--space1);
 }
 
-.board .left-labels {
+.board .left-labels,
+.computer-board .computer-left-labels,
+.player-board .player-left-labels  {
     grid-column: 1;
     grid-row: 2 / span 10;
     margin-left: var(--space1);
 }
 
-.board .grid {
+.board .grid,
+.computer-board .computer-grid,
+.player-board .player-grid {
     grid-column: 2 / span 10;
     grid-row: 2 / span 10;
 }
@@ -181,18 +197,19 @@
     grid-row: 1;
 }
 
-.top-labels {
+.top-labels, .computer-top-labels, .player-top-labels {
     display: grid;
     grid-template-columns: repeat(10, var(--cell-size-sm));
 }
 
-.left-labels {
+.left-labels, .computer-left-labels, .player-left-labels {
     display: grid;
     grid-template-rows: repeat(10, var(--cell-size-sm));
 }
 
-.top-labels div,
-.left-labels div {
+.top-labels div, .computer-top-labels div,
+.left-labels div, .computer-left-labels div, .player-top-labels div,
+.player-left-labels div{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -201,7 +218,7 @@
     transform: translateY(1px);
 }
 
-.top-labels,
+.top-labels, .computer-top-labels, .computer-left-labels, .player-top-labels, .player-left-labels,
 .left-labels {
     background-color: var(--dark-grn-bground);
     border: var(--grn-border);
@@ -293,7 +310,7 @@
     cursor: pointer;
 }
 
-.start-attack-btn {
+.start-attack-btn, .new-game-btn {
     background: var(--blk-bground);
     border: var(--red-border);
     color: var(--red-text);
@@ -309,13 +326,70 @@
         transform 0.15s ease;
 }
 
-.start-attack-btn:hover {
+.start-attack-btn:hover, .new-game-btn:hover {
     box-shadow:
         0 0 6px rgba(0, 255, 102, 0.7),
         0 0 18px rgba(0, 255, 102, 0.5),
         inset 0 0 10px rgba(0, 255, 102, 0.15);
     transform: translateY(-2px) scale(1.03);
 }
+
+/* Style attack screen */
+
+.game-message {
+    color: var(--blue-text);
+    font-size: clamp(0.6rem, 2vw, var(--font-size-sm));
+    font-weight: 500;
+    text-align: center;
+}
+
+.computer-side h3, .player-side h3 {
+    color: var(--blue-text);
+    font-size: clamp(0.6rem, 2vw, var(--font-size-sm));
+    font-weight: 500;
+    margin: 0;
+}
+
+.outcome-error-msg {
+    color: var(--red-text);
+    font-size: clamp(0.6rem, 2vw, var(--font-size-sm));
+    text-align: center;
+}
+
+.miss {
+    background: linear-gradient(
+      135deg,
+      #08306b 0%,
+      #2171b5 30%,
+      #4292c6 60%,
+      #1c7ed6 100%
+    );
+  
+    box-shadow:
+      inset 0 0 10px rgba(255, 255, 255, 0.12),
+      inset 0 0 14px rgba(0, 0, 50, 0.35);
+}
+
+.hit {
+background: linear-gradient(
+    135deg,
+    #32130a 0%,
+    #6f2d14 20%,
+    #a94f1c 45%,
+    #d66a24 70%,
+    #f3b15c 100%
+);
+
+box-shadow:
+    inset 0 0 10px rgba(255, 190, 110, 0.18),
+    inset 0 0 14px rgba(70, 20, 0, 0.45);
+}
+
+.sunk {
+    background-color: #ff3d00;  
+}
+
+
 
 
 

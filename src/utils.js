@@ -10,6 +10,7 @@ export function buildAttackMap(attacks, ships) {
     attackMap.set(key, {
       outcome: hitShip ? "hit" : "miss",
       shipName: hitShip ? hitShip.ship.type : null,
+      sunk: hitShip ? hitShip.ship.isSunk() : false,
     });
   }
   return attackMap;

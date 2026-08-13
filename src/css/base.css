@@ -13,7 +13,7 @@
     --font-size-lg: 2.0rem;
     --font-size-xl: 2.4rem;
 
-    --grn-border: 2px solid #00ff66;
+    --grn-border: 1px solid #00ff66;
     --blue-border: 2px solid #00BFFF;
     --white-border: 1px solid #E8F1F2;
     --red-border: 2px solid #e60039;
@@ -62,7 +62,7 @@
 }
 
 input,
-button, .placement-header, .ship-info, .place-ship-form label{
+button, .placement-header, .ship-info, .place-ship-form label, .level-msg {
     font-family: inherit;
 }
 
