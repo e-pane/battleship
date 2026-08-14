@@ -138,7 +138,9 @@ export function renderGrid(container) {
   return cellMap;
 }
 export function renderStartScreen(level = 2) {
-  const app = document.querySelector("#app");
+    const app = document.querySelector("#app");
+    
+    const savedName = localStorage.getItem("battleship-player-name");
 
   app.innerHTML = `
     <section class="start-screen-container">
@@ -147,6 +149,7 @@ export function renderStartScreen(level = 2) {
                 type="text"
                 id="player-name"
                 placeholder="Enter player name"
+                value="${savedName ?? ""}"
             >
         </div>
 
@@ -162,7 +165,7 @@ export function renderStartScreen(level = 2) {
                 Level 1
             </label>
 
-            <label data-description="________ Computer hunts lightly after a hit">
+            <label data-description="________ Computer hunts lightly">
                 <input
                     type="radio"
                     name="level"
@@ -183,6 +186,12 @@ export function renderStartScreen(level = 2) {
             </label>
 
         </div>
+
+        <a class="battleship-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://gameonfamily.com/blogs/tutorials/battleship?srsltid=AfmBOoqKDgaLP3Fwtm9Ig9UF4CBqonT2ozgMsa6GsZ4f6kNydOakSk3B"
+            >Want to know more about Battleship?</a>
 
         <div class="start-game-controls">
             <button
@@ -210,9 +219,10 @@ export function renderShipPlacementScreen(state, uiState) {
             <div class="placement-help">
                 <p>                    
                     Select a ship icon and a starting cell for that ship.<br>
-                    Choose a horizontal or vertical orientation.<br>
-                    A chosen cell will be the top or left-most starting point.<br> 
-                    To reposition any ship, click on the ship inside the grid.<br> 
+                    Choose horizontal or vertical orientation.<br>
+                    Click "Place Ship"<br>
+                    Chosen cell will be the top or left-most starting point.<br> 
+                    To reposition a ship, click on the ship inside the grid.<br> 
                     
                 </p>
             </div>
@@ -601,7 +611,7 @@ export function renderAttackScreen(gameState, uiState) {
 
     gameMessageContainer.append(outcomeErrorMsgContainer);
 
-    setTimeout(() => outcomeErrorMsgContainer.remove(), 1000);
+    setTimeout(() => outcomeErrorMsgContainer.remove(), 2000);
   }
 
   if (computerAttack && computerAttack.outcome) {
@@ -609,7 +619,7 @@ export function renderAttackScreen(gameState, uiState) {
 
     gameMessageContainer.append(outcomeErrorMsgContainer);
 
-    setTimeout(() => outcomeErrorMsgContainer.remove(), 1000);
+    setTimeout(() => outcomeErrorMsgContainer.remove(), 2000);
   }
 
     levelMsgContainer.textContent = `Level ${currentLevel}`;
@@ -625,6 +635,6 @@ export function renderAttackScreen(gameState, uiState) {
     newGameBtn.classList.add("new-game-btn");
     newGameBtn.dataset.action = "startNewGame";
 
-    gameMessage.append(newGameBtn);
+    outcomeErrorMsgContainer.append(newGameBtn);
   }
 }

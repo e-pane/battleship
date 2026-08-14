@@ -1,8 +1,10 @@
 /* Style start screen */
 
-.start-game-btn {
+.start-game-btn, .new-game-btn {
     background: var(--blk-bground);
     border: var(--grn-border);
+    border-radius: var(--border-rad-md);
+    padding: var(--space2);
 
     color: var(--grn-text);
     cursor: pointer;
@@ -36,7 +38,16 @@
     }
 }
 
-.start-game-btn:hover {
+.battleship-link {
+    color: var(--grn-text);
+    background-color: var(--dark-grn-bground);
+    border: var(--grn-border);
+    border-radius: var(--border-rad-md);
+    padding: var(--space2);
+    font-size: clamp(1rem, 2vw, var(--font-size-sm));
+}
+
+.start-game-btn:hover, .new-game-btn:hover {
     transform: scale(1.05);
 
     box-shadow:
@@ -50,22 +61,15 @@
 
 /* Style placement screen */
 
-.level-msg {
-    color: var(--grn-text);
-    font-weight: 400;
-    font-size: clamp(0.5rem, 2vw, var(--font-size-sm));
-    text-align: center;
-    margin-top: auto;
-}
-
 .placement-header {
     color: var(--grn-text); 
     background-color: var(--dark-grn-bground);
     font-size: clamp(var(--font-size-sm), 5vw, var(--font-size-xl));
     font-weight: 600;
+    width: fit-content;
     text-align: center;
     padding: var(--space1);
-    margin-top: var(--space3);
+    margin: var(--space1) auto 0;
     border-radius: var(--border-rad-lg);
     box-shadow:
         0 0 12px rgba(0,255,102,.22),
@@ -77,8 +81,10 @@
     background-color: var(--dark-grn-bground);
     font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-sm));
     font-weight: 200;
-    text-align: center;
-    width: min(80vw, 40rem);
+    line-height: 2.0;
+    width: min(90vw, 45rem);
+    box-sizing: border-box;
+    margin-top: 0.2rem;
     padding: var(--space1);
     border-radius: var(--border-rad-lg);
     box-shadow:
@@ -90,7 +96,7 @@
     color: var(--grn-text); 
     width: clamp(6rem, 20vw, 13rem);
 
-    min-height: 220px;
+    min-height: 16rem;
     padding: var(--space3);
     margin: var(--space2);
 
@@ -132,7 +138,7 @@
 }
 
 .ships-placed {
-    margin: 0 0 20px 0;   
+    margin: 0 0 10px 0;   
     color: var(--blue-text);
     font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-sm));
     font-weight: 700;
@@ -151,8 +157,8 @@
     grid-row: 2 / span 10;
 
     display: grid;
-    grid-template-columns: repeat(10, var(--cell-size-sm));
-    grid-template-rows: repeat(10, var(--cell-size-sm));
+    grid-template-columns: repeat(10, var(--cell-size));
+    grid-template-rows: repeat(10, var(--cell-size));
 }
 
 .computer-grid .cell:hover {
@@ -165,8 +171,8 @@
 .board, .computer-board,
 .player-board {
     display: grid;
-    grid-template-columns: 40px repeat(10, var(--cell-size-sm));
-    grid-template-rows: 40px repeat(10, var(--cell-size-sm));
+    grid-template-columns: 40px repeat(10, var(--cell-size));
+    grid-template-rows: 40px repeat(10, var(--cell-size));
 }
 
 .board .top-labels,
@@ -199,12 +205,12 @@
 
 .top-labels, .computer-top-labels, .player-top-labels {
     display: grid;
-    grid-template-columns: repeat(10, var(--cell-size-sm));
+    grid-template-columns: repeat(10, var(--cell-size));
 }
 
 .left-labels, .computer-left-labels, .player-left-labels {
     display: grid;
-    grid-template-rows: repeat(10, var(--cell-size-sm));
+    grid-template-rows: repeat(10, var(--cell-size));
 }
 
 .top-labels div, .computer-top-labels div,
@@ -231,8 +237,8 @@
 }
 
 .cell {
-    width: var(--cell-size-sm);
-    height: var(--cell-size-sm);
+    width: var(--cell-size);
+    height: var(--cell-size);
     background-color: var(--dark-grn-bground);
     border: var(--grn-border);
     cursor: pointer;
@@ -242,10 +248,11 @@
     background: var(--blk-bground);
     border: var(--white-border);
     color: var(--white-text);
-    padding: clamp(var(--space0), var(--space1), var(--space2));
+    padding: 0.35rem 0.6rem;
+    line-height: 2.5;
     border-radius: var(--border-rad-sm);
     cursor: pointer;
-    font-size: clamp(0.5rem, 2vw, var(--font-size-sm));
+    font-size: clamp(0.8rem, 2vw, var(--font-size-sm));
     transition:
         color 0.15s ease,
         background-color 0.15s ease,
@@ -276,26 +283,40 @@
 .ship-info {
     color: var(--white-text);
     background: var(--dark-grn-bground);
-    font-size: clamp(0.5rem, 2vw, var(--font-size-sm));
+    font-size: clamp(0.75rem, 2vw, var(--font-size-sm));
     font-weight: 300;
-    padding: var(--space1);
+    padding: 0.2rem;
     border: var(--white-border);
     border-radius: var(--border-rad-sm);
-    aspect-ratio: 4 / 1;
+    line-height: 2.5;
+}
+
+.ship-info p {
+    margin: 0;
 }
 
 .place-ship-btn {
     background: var(--blk-bground);
     border: var(--red-border);
     border-radius: var(--border-rad-md);
-    padding: var(--space1);
+    padding: var(--space0);
 
     color: var(--red-text);
     cursor: pointer;
 }
 
 .cell.selected {
-    background-color: var(--blue-text);
+    background: linear-gradient(
+      135deg,
+      #08306b 0%,
+      #2171b5 30%,
+      #4292c6 60%,
+      #1c7ed6 100%
+    );
+  
+    box-shadow:
+      inset 0 0 10px rgba(255, 255, 255, 0.12),
+      inset 0 0 14px rgba(0, 0, 50, 0.35);
 }
 
 .ship {
@@ -310,7 +331,7 @@
     cursor: pointer;
 }
 
-.start-attack-btn, .new-game-btn {
+.start-attack-btn {
     background: var(--blk-bground);
     border: var(--red-border);
     color: var(--red-text);
@@ -338,21 +359,29 @@
 
 .game-message {
     color: var(--blue-text);
-    font-size: clamp(0.6rem, 2vw, var(--font-size-sm));
+    font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-sm));
     font-weight: 500;
     text-align: center;
 }
 
+.level-msg {
+    color: var(--grn-text);
+    font-weight: 400;
+    font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-sm));
+    text-align: center;
+    margin-top: auto;
+}
+
 .computer-side h3, .player-side h3 {
     color: var(--blue-text);
-    font-size: clamp(0.6rem, 2vw, var(--font-size-sm));
+    font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-sm));
     font-weight: 500;
     margin: 0;
 }
 
 .outcome-error-msg {
     color: var(--red-text);
-    font-size: clamp(0.6rem, 2vw, var(--font-size-sm));
+    font-size: clamp(0.75rem, 2vw, var(--font-size-sm));
     text-align: center;
 }
 

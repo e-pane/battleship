@@ -14,6 +14,7 @@ export function createHandlers(engine) {
 }
 
 function handleStartGame(engine, payload, uiState) {
+    localStorage.setItem("battleship-player-name", payload.playerName);
     engine.start(payload.playerName);
   
     const state = engine.state;
@@ -79,7 +80,7 @@ function handleEnterAttackMode(engine) {
         : "The computer is choosing a target";
     
     const turnInstruction = isPlayerTurn
-        ? "Click on a cell in the computer's grid to attack"
+        ? "Click on a cell in the computer grid to attack"
       : "";
 
     const playerAttackMap = buildAttackMap(
@@ -176,7 +177,7 @@ function handlePlayerAttack(engine, payload) {
       : "The computer is choosing a target";
 
     const turnInstruction = isPlayerTurn
-      ? "Click on a cell in the computer's grid to attack"
+      ? "Click on a cell in computer grid to attack"
       : "";
 
     const uiState = {
@@ -262,7 +263,7 @@ function handlePlayerAttack(engine, payload) {
           : "The computer is choosing a target";
 
         const turnInstruction = isPlayerTurn
-          ? "Click on a cell in the computer's grid to attack"
+          ? "Click on a cell in the computer grid to attack"
           : "";
       
           const playerAttackMap = buildAttackMap(

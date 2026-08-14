@@ -9,10 +9,11 @@
     cursor: pointer;
     width: min(20dvh, 20rem);
     position: relative;
+    font-size: clamp(1rem, 2vw, var(--font-size-sm));
 }
 
 .difficulty-options input[type="radio"] {
-    transform: scale(1.5);
+    transform: scale(1.35);
 }
 
 .difficulty-options label::after {
@@ -53,5 +54,5 @@
 }
 
 .place-ship-form input[type="radio"] {
-    transform: scale(1.5);
+    transform: scale(1.35);
 }
