@@ -7,7 +7,7 @@
     margin-bottom: var(--space1);
     border-radius: var(--space2);
     cursor: pointer;
-    width: min(20dvh, 20rem);
+    width: min(50dvw, 20rem);
     position: relative;
     font-size: clamp(1rem, 2vw, var(--font-size-sm));
 }
@@ -30,6 +30,8 @@
     font-size: var(--font-size-md);
     padding: var(--space2);
     margin-bottom: var(--space2);
+
+    width: min(50dvw, 25rem);
     
     border-radius: var(--border-rad-md);
     background-color: var(--blk-bground);

@@ -1,4 +1,5 @@
 const letters = "ABCDEFGHIJ";
+
 export function initRenderers(controller) {
   let selectedShip = null;
     let selectedCell = null;
@@ -105,7 +106,7 @@ export function initRenderers(controller) {
         controller.dispatch("enterAttackMode");
       },
       startNewGame: () => {
-        renderStartScreen();
+        renderStartScreen(engine.state.level);
       },
     };
     const handler = actions[action];
@@ -155,7 +156,7 @@ export function renderStartScreen(level = 2) {
 
         <div class="difficulty-options">
 
-            <label data-description="________ Computer fires randomly">
+            <label data-description="________ Your enemy fires randomly">
                 <input
                     type="radio"
                     name="level"
@@ -165,7 +166,7 @@ export function renderStartScreen(level = 2) {
                 Level 1
             </label>
 
-            <label data-description="________ Computer hunts lightly">
+            <label data-description="________ Your enemy hunts lightly">
                 <input
                     type="radio"
                     name="level"
@@ -175,7 +176,7 @@ export function renderStartScreen(level = 2) {
                 Level 2
             </label>
 
-            <label data-description="________ Computer hunts ruthlessly">
+            <label data-description="________ Your enemy hunts ruthlessly">
                 <input
                     type="radio"
                     name="level"
@@ -367,7 +368,8 @@ export function renderShipPlacementScreen(state, uiState) {
     state.ships.forEach((ship) => {
       const listedShip = document.createElement("li");
       listedShip.classList.add("listed-ship");
-      listedShip.innerText = ship.ship.type;
+      listedShip.innerText =
+        ship.ship.type.charAt(0).toUpperCase() + ship.ship.type.slice(1);
       shipList.append(listedShip);
     });
   }
@@ -436,7 +438,7 @@ export function renderAttackScreen(gameState, uiState) {
             </div>
 
             <div class="computer-ships-sunk">
-                <h3>Computer's Ships Sunk:</h3>
+                <h3>Enemy's Ships Sunk:</h3>
             </div>
         </div>
 
@@ -526,7 +528,7 @@ export function renderAttackScreen(gameState, uiState) {
 
   computerSunkShips.forEach((s) => {
     const listItem = document.createElement("li");
-    listItem.textContent = s;
+    listItem.textContent = s.charAt(0).toUpperCase() + s.slice(1);;
     compSunkList.append(listItem);
   });
 
@@ -539,7 +541,7 @@ export function renderAttackScreen(gameState, uiState) {
 
   playerSunkShips.forEach((s) => {
     const listItem = document.createElement("li");
-    listItem.textContent = s;
+    listItem.textContent = s.charAt(0).toUpperCase() + s.slice(1);
     playerSunkList.append(listItem);
   });
 
@@ -565,7 +567,7 @@ export function renderAttackScreen(gameState, uiState) {
 
     gameMessageContainer.append(outcomeErrorMsgContainer);
 
-    setTimeout(() => errorEl.remove(), 2500);
+    setTimeout(() => outcomeErrorMsgContainer.remove(), 2500);
   }
   // paint player and computer grids with hits and misses
   if (playerAttackMap && computerAttackMap) {
@@ -606,27 +608,37 @@ export function renderAttackScreen(gameState, uiState) {
     const outcomeErrorMsgContainer = document.querySelector(".outcome-error-msg");
     const levelMsgContainer = document.querySelector(".level-msg");
 
-  if (playerAttack && playerAttack.outcome) {
-    outcomeErrorMsgContainer.textContent = `A ${playerAttack.outcome.toUpperCase()} for ${player.name}`;
+    if (playerAttack && playerAttack.outcome) {
+        if (playerAttack.outcome === "hit") {
+            outcomeErrorMsgContainer.classList.add("good-news");
+        } else {
+            outcomeErrorMsgContainer.classList.add("bad-news");
+        }
+        outcomeErrorMsgContainer.textContent = `A ${playerAttack.outcome.toUpperCase()} for ${player.name}`;
 
-    gameMessageContainer.append(outcomeErrorMsgContainer);
-
-    setTimeout(() => outcomeErrorMsgContainer.remove(), 2000);
-  }
-
-  if (computerAttack && computerAttack.outcome) {
-    outcomeErrorMsgContainer.textContent = `A ${computerAttack.outcome.toUpperCase()} for the computer`;
-
-    gameMessageContainer.append(outcomeErrorMsgContainer);
+        gameMessageContainer.append(outcomeErrorMsgContainer);
+    }
 
     setTimeout(() => outcomeErrorMsgContainer.remove(), 2000);
+
+    if (computerAttack && computerAttack.outcome) {
+        if (computerAttack.outcome === "hit") {
+          outcomeErrorMsgContainer.classList.add("bad-news");
+        } else {
+          outcomeErrorMsgContainer.classList.add("good-news");
+        }
+        outcomeErrorMsgContainer.textContent = `A ${computerAttack.outcome.toUpperCase()} for the enemy`;
+
+        gameMessageContainer.append(outcomeErrorMsgContainer);
+
+        setTimeout(() => outcomeErrorMsgContainer.remove(), 2000);
   }
 
     levelMsgContainer.textContent = `Level ${currentLevel}`;
     gameMessageContainer.append(levelMsgContainer)
 
   if (currentPhase === "gameOver") {
-    let displayName = winner === "player" ? player.name : computer.name;
+    let displayName = winner === "player" ? player.name : "The Enemy";
 
     gameMessage.innerHTML = `${displayName} Wins the Game!!!`;
 
@@ -635,6 +647,6 @@ export function renderAttackScreen(gameState, uiState) {
     newGameBtn.classList.add("new-game-btn");
     newGameBtn.dataset.action = "startNewGame";
 
-    outcomeErrorMsgContainer.append(newGameBtn);
+    gameMessageContainer.append(newGameBtn);
   }
 }

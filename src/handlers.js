@@ -77,10 +77,10 @@ function handleEnterAttackMode(engine) {
 
     const turnText = isPlayerTurn
         ? `It's ${engine.state.player.name}'s turn`
-        : "The computer is choosing a target";
+        : "The enemy is choosing a target";
     
     const turnInstruction = isPlayerTurn
-        ? "Click on a cell in the computer grid to attack"
+        ? "Click on a cell in the enemy's grid to attack"
       : "";
 
     const playerAttackMap = buildAttackMap(
@@ -174,10 +174,10 @@ function handlePlayerAttack(engine, payload) {
 
     const turnText = isPlayerTurn
       ? `It's ${engine.state.player.name}'s turn`
-      : "The computer is choosing a target";
+      : "The enemy is choosing a target";
 
     const turnInstruction = isPlayerTurn
-      ? "Click on a cell in computer grid to attack"
+      ? "Click on a cell in enemy's grid to attack"
       : "";
 
     const uiState = {
@@ -260,10 +260,10 @@ function handlePlayerAttack(engine, payload) {
 
         const turnText = isPlayerTurn
           ? `It's ${engine.state.player.name}'s turn`
-          : "The computer is choosing a target";
+          : "The enemy is choosing a target";
 
         const turnInstruction = isPlayerTurn
-          ? "Click on a cell in the computer grid to attack"
+          ? "Click on a cell in enemy's grid to attack"
           : "";
       
           const playerAttackMap = buildAttackMap(

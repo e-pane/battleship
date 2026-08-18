@@ -1,5 +1,5 @@
 import { createShip, createPlayer, createGameboard } from "./factories.js";
-import { chooseComputerAttackCoords, getRandomCandidate } from "./ai.js";
+import { getLevel1Candidate, getLevel2Candidate, getLevel3Candidate } from "./ai.js";
 
 // helper to creat the computer's fleet of ships
 export function generateFleet(gameboard) {
@@ -39,7 +39,7 @@ export function createEngine() {
     turn: null,
     level: 2,
     lastHitCoords: null,
-    lastAttackHit: false,
+    lastAttackHit: null,
     gameOver: false,
     winner: null,
     requiredShips: 5,
@@ -114,10 +114,28 @@ export function createEngine() {
   };
 
   engine.computerAttack = () => {
-    let computerMove = chooseComputerAttackCoords(engine.state);
+    let computerMove;
 
-    if (!computerMove) {
-      computerMove = getRandomCandidate(engine.state.player.gameboard);
+    if (engine.state.level === 1) {
+      computerMove = getLevel1Candidate(engine.state.player.gameboard);
+    }
+
+    if (engine.state.level === 2) {
+      computerMove = getLevel2Candidate(
+        engine.state.player.gameboard,
+        engine.state.lastAttackHit,
+      );
+      if (!computerMove) {
+        engine.state.lastAttackHit = null;
+        computerMove = getLevel1Candidate(engine.state.player.gameboard);
+      }
+    }
+
+    if (engine.state.level === 3) {
+      computerMove = getLevel3Candidate(
+        engine.state.player.gameboard,
+        engine.state.lastAttackHit,
+      );
     }
 
     if (
@@ -126,9 +144,8 @@ export function createEngine() {
       computerMove.some((coord) => coord === undefined)
     ) {
       console.error("BAD COMPUTER MOVE", computerMove);
+      return;
     }
-
-    if (!computerMove) return;
 
     const [x, y] = computerMove;
 
@@ -138,12 +155,13 @@ export function createEngine() {
 
     if (result.outcome === "hit") {
       engine.state.lastAttackHit = result.lastHitCoords;
+    } else {
+      engine.state.lastAttackHit = null;
     }
-    else { engine.state.lastAttackHit = null };
-    
+
     engine.state.turn = "player";
 
-    return { ...result, x, y, };
+    return { ...result, x, y };
   };
 
   return engine;

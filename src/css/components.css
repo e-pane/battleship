@@ -379,7 +379,13 @@
     margin: 0;
 }
 
-.outcome-error-msg {
+.good-news {
+    color: var(--grn-text);
+    font-size: clamp(0.75rem, 2vw, var(--font-size-sm));
+    text-align: center;
+}
+
+.bad-news {
     color: var(--red-text);
     font-size: clamp(0.75rem, 2vw, var(--font-size-sm));
     text-align: center;

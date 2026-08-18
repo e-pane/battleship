@@ -8,18 +8,26 @@ export const SHIP_TYPES = {
 
 export function createShip(shipType) {
     let timesHit = 0;
+    const hitCoords = [];
     const length = SHIP_TYPES[shipType];
 
     return {
-        type: shipType,
-        length,
-        hit() {
+      type: shipType,
+      length,
+      get timesHit() {
+        return timesHit;
+      },
+      hit(x, y) {
         timesHit++;
-        },
-        isSunk() {
+        hitCoords.push([x, y]);
+      },
+      getHitCoords() {
+        return hitCoords;
+      },
+      isSunk() {
         return timesHit >= length;
-        },
-  };
+      },
+    };
 }
 // gameboard factory helper
 export function getShipCoords(ship, x, y, orient) {
@@ -191,11 +199,12 @@ export function createGameboard() {
     for (const el of ships) {
       for (const coord of el.coords) {
         if (coord[0] === x && coord[1] === y) {
-          el.ship.hit();
+          el.ship.hit(x,y);
           return {
             ok: true,
             outcome: "hit",
             lastHitCoords: { x, y },
+            sunk: el.ship.isSunk(),
           };
         }
       }

@@ -69,11 +69,21 @@ button, .placement-header, .ship-info, .place-ship-form label, .level-msg, .batt
 
 body {
     margin: 0;
-    min-height: 100dvh;
+    min-height: 100svh;
 
-    background-image: url("/images/battleship-background.jpeg");
+    /* background-image: url("/images/battleship-background.jpeg");
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
+    background-repeat: no-repeat; */
     font-family: 'Orbitron', sans-serif;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+
+    background: url("/images/battleship-background.jpeg")
+        center / cover no-repeat;
 }

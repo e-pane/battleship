@@ -6,7 +6,18 @@
     justify-content: center;
     align-items: center;
     gap: var(--space2);
-    min-height: 100dvh;
+    min-height: 100svh;
+}
+
+@media (orientation: landscape) {
+    .start-screen-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: var(--space2);
+        min-height: 100dvh;
+    }
 }
 
 .difficulty-options {
