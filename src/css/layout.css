@@ -1,5 +1,6 @@
 /* Start screen styling */
 
+/* Base: vertical */
 .start-screen-container {
     display: flex;
     flex-direction: column;
@@ -9,13 +10,46 @@
     min-height: 100svh;
 }
 
+/* Desktop: horizontal */
+/* Desktop: move only Start Game into a second column */
+
+@media (min-width: 74rem), (orientation: landscape) {
+
+    .start-screen-container {
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-rows: auto auto auto;
+        align-items: center;
+        column-gap: var(--space3);
+        row-gap: var(--space2);
+        padding: var(--space1);
+    }
+
+    .player-input {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .difficulty-options {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .battleship-link {
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    .start-game-controls {
+        grid-column: 2;
+        grid-row: 1 / span 3;
+    }
+
+}
+
+/* Landscape height handling */
 @media (orientation: landscape) {
     .start-screen-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: var(--space2);
         min-height: 100dvh;
     }
 }
@@ -24,16 +58,30 @@
     display: flex;
     flex-direction: column;
     gap: var(--space1);
+    width: clamp(6rem, 10vw, 10rem);
+    align-items: center;
 }
 
-@media (min-width: 53rem) {
+.difficulty-options > button {
+    width: 100%;
+    box-sizing: border-box;
+    white-space: normal;
+}
+
+.difficulty-options > label {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* @media (min-width: 53rem) {
     .start-screen-container {
         flex-direction: row;
         align-items: center;
         gap: var(--space3);
         padding: var(--space1);
     }
-}
+} */
 
 /* Placement screen styling */
 
@@ -71,7 +119,8 @@
 }
 
 /* Style attack screen */
-
+/* BASE
+   Small grids + vertical */
 .attack-layout {
     display: grid;
     grid-template-columns: minmax(6.25rem, 1fr) minmax(0, 3fr);
@@ -83,7 +132,179 @@
     box-sizing: border-box;
 }
 
-@media (min-width: 70rem) {
+.computer-side,
+.player-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.game-messaging {
+    grid-area: message;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--space2);
+
+    padding: var(--space1);
+    margin: var(--space1);
+    max-height: 20rem;
+
+    background-color: var(--dark-blue-bground);
+    border: var(--blue-border);
+    border-radius: var(--border-rad-lg);
+
+    box-shadow:
+        0 0 12px rgba(0,255,102,.22),
+        inset 0 0 12px rgba(0,255,102,.08);
+}
+
+.computer-side {
+    grid-area: computer;
+    gap: var(--space1);
+}
+
+.player-side {
+    grid-area: player;
+    gap: var(--space1);
+}
+
+
+/* MOBILE LANDSCAPE
+   Small grids, horizontal layout */
+@media (orientation: landscape) and (max-height: 600px) {
+    .attack-layout {
+        grid-template-columns:
+            minmax(2.5rem, 0.4fr)
+            minmax(0, 1fr)
+            minmax(0, 1fr);
+
+        grid-template-areas:
+            "message computer player";
+
+        gap: var(--space1);
+    }
+}
+
+
+/* MEDIUM DESKTOP
+   Small grids, horizontal layout */
+@media (min-width: 975px) {
+    .attack-layout {
+        grid-template-columns:
+            14rem
+            minmax(0, 1fr)
+            minmax(0, 1fr);
+
+        grid-template-areas:
+            "message computer player";
+
+        gap: var(--space2);
+    }
+}
+
+
+/* LARGE DESKTOP
+   Big grids, horizontal layout */
+@media (min-width: 1200px) {
+    :root {
+        --cell-size: var(--cell-size-md);
+    }
+
+    .attack-layout {
+        grid-template-columns:
+            20rem
+            minmax(0, 1fr)
+            minmax(0, 1fr);
+
+        gap: var(--space3);
+    }
+}
+
+.computer-ships-sunk,
+.player-ships-sunk {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space2);
+    padding: var(--space0);
+    background-color: var(--dark-blue-bground);
+    border-radius: 0.25rem;
+}
+
+.computer-ships-sunk ul,
+.player-ships-sunk ul {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    line-height: 0.9;
+    list-style: none;
+    gap: var(--space1);
+    font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-sm));
+    color: var(--blue-text);
+    text-decoration: underline;
+}
+
+/* .attack-layout {
+    display: grid;
+    grid-template-columns: minmax(6.25rem, 1fr) minmax(0, 3fr);
+    grid-template-areas:
+        "message computer"
+        "message player";
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.computer-side,
+.player-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.game-messaging {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space2);
+
+    padding: var(--space1);
+    margin: var(--space1);
+    max-height: 20rem;
+
+    background-color: var(--dark-blue-bground);
+    border: var(--blue-border);
+    border-radius: var(--border-rad-lg);
+
+    box-shadow:
+        0 0 12px rgba(0,255,102,.22),
+        inset 0 0 12px rgba(0,255,102,.08);
+} */
+
+/* .game-messaging {
+    grid-area: message;
+} */
+
+/* .computer-side {
+    grid-area: computer;
+    gap: var(--space1);
+}
+
+.player-side {
+    grid-area: player;
+    gap: var(--space1);
+} */
+
+/* @media (orientation: landscape) and (max-width: 932px) {
+    .attack-layout {
+        grid-template-columns: minmax(6rem, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-areas:
+            "message computer player";
+        gap: var(--space1);
+    }
+} */
+
+/* @media (min-width: 1200px) {
     :root {
         --cell-size: var(--cell-size-md);
     }
@@ -139,67 +360,5 @@
         padding: var(--space3);
         border-radius: 2rem;
     }
-}
+} */
 
-.game-messaging {
-    grid-area: message;
-}
-
-.computer-side {
-    grid-area: computer;
-    gap: var(--space1);
-}
-
-.player-side {
-    grid-area: player;
-    gap: var(--space1);
-}
-
-.computer-side,
-.player-side {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.game-messaging {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space2);
-
-    padding: var(--space1);
-    margin: var(--space1);
-    max-height: 20rem;
-
-    background-color: var(--dark-blue-bground);
-    border: var(--blue-border);
-    border-radius: var(--border-rad-lg);
-
-    box-shadow:
-        0 0 12px rgba(0,255,102,.22),
-        inset 0 0 12px rgba(0,255,102,.08);
-}
-
-.computer-ships-sunk,
-.player-ships-sunk {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space2);
-    padding: var(--space0);
-    background-color: var(--dark-blue-bground);
-    border-radius: 0.25rem;
-}
-
-.computer-ships-sunk ul,
-.player-ships-sunk ul {
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
-    line-height: 0.9;
-    list-style: none;
-    gap: var(--space1);
-    font-size: clamp(var(--font-size-xs), 2vw, var(--font-size-sm));
-    color: var(--blue-text);
-    text-decoration: underline;
-}

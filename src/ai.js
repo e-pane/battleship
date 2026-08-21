@@ -191,8 +191,6 @@ export function getLevel3Candidate(playerGameboard) {
     unHitUnsunkCandidates.forEach((candidate) => {
       const totalScore = candidate.score.northSouth + candidate.score.eastWest;
       candidate.totalScore = totalScore;
-      console.log(unHitUnsunkCandidates);
-      console.log(totalScore)
     });
 
     const bestCandidate = unHitUnsunkCandidates.reduce((best, candidate) => {
@@ -350,34 +348,3 @@ function huntTargetHelper(playerGameboard, ship) {
   }
 }
 
-  //     ship: {
-  //       type: "carrier",
-  //       length: 5,
-  //       hit(),
-  //       isSunk()
-  //     },
-  //     coords: [
-  //       [x, y],
-  //       [x, y],
-  //       [x, y],
-  //       [x, y],
-  //       [x, y]
-  //     ]
-  //   },
-
-// ship.isSunk()
-// ship.length
-
-// const ships = [];
-// const occupied = new Set();
-// const missedAttacks = [];
-// const attacked = new Set();
-// const lastHitCoords = null;
-
-// gameboard.getShips 
-// gameboard.hasBeenAttacked 
-// gameboard.getAttacks 
-// gameboard.getMissedAttacks 
-// gameboard.hasShipAt 
-// gameboard.receiveAttack 
-// gameboard.allShipsSunk 

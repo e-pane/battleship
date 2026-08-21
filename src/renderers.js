@@ -392,13 +392,16 @@ export function renderShipPlacementScreen(state, uiState) {
   }
   // sync the UI to all ships being successfully placed
   if (!state.ships) return;
+    
   const placementComplete = state.ships?.length === state.requiredShips;
+  
   if (placementComplete) {
     const errorBox = document.querySelector(".ship-error-msg");
     errorBox.textContent = "All ships have been placed!!";
+    errorBox.classList.add("placement-complete");
 
     const uiMessage = document.querySelector(".ui-information-display");
-    uiMessage.innerHTML = "";
+
     const startAttackBtn = document.createElement("button");
     startAttackBtn.textContent = "Enter Attack Mode";
     startAttackBtn.classList.add("start-attack-btn");

@@ -12,7 +12,7 @@
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-@media (max-width: 52.99rem) {
+@media (max-width: 63.99rem) {
     .start-game-btn {
         padding: var(--space2);
         font-size: var(--font-size-sm);
@@ -92,6 +92,75 @@
         inset 0 0 12px rgba(0,255,102,.08);
 }
 
+.ship-btn {
+    background: var(--blk-bground);
+    border: var(--white-border);
+    color: var(--white-text);
+    padding: 0.35rem 0.6rem;
+    line-height: 2.5;
+    border-radius: var(--border-rad-sm);
+    cursor: pointer;
+    font-size: clamp(0.8rem, 2vw, var(--font-size-sm));
+    transition:
+        color 0.15s ease,
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.15s ease;
+}
+
+.ship-info {
+    color: var(--white-text);
+    background: var(--dark-grn-bground);
+    font-size: clamp(0.75rem, 2vw, var(--font-size-sm));
+    font-weight: 300;
+    padding: 0.2rem;
+    border: var(--white-border);
+    border-radius: var(--border-rad-sm);
+    line-height: 2.5;
+}
+
+@media (orientation: landscape) and (max-width: 50rem) {
+    .placement-header {
+        font-size: var(--font-size-xs);
+        padding: var(--space0) var(--space1);
+        margin-top: var(--space0);
+    }
+
+    .placement-help {
+        width: fit-content;
+        font-size: var(--font-size-xs);
+        line-height: 1.2;
+        padding: var(--space0);
+        margin-top: 0;
+    }
+
+    /* .ship-icons {
+        flex-direction: column;
+        gap: var(--space0);
+    }
+
+    .ship-option {
+        flex-direction: row;
+        align-items: center;
+        gap: var(--space0);
+    } */
+
+    .ship-info {
+        line-height: 1.2;
+        padding: var(--space0);
+    }
+
+    .ship-btn {
+        line-height: 1.2;
+    }
+
+    .place-ship-form {
+        gap: var(--space1);
+        margin: var(--space1);
+    }
+}
+
 .ui-information-display {
     color: var(--grn-text); 
     width: clamp(6rem, 20vw, 13rem);
@@ -121,6 +190,10 @@
     font-weight: 700;
     text-align: center;
     margin-bottom: 8px;
+}
+
+.ship-error-msg.placement-complete {
+    color: var(--grn-text);
 }
 
 .ui-information-display ul {
@@ -244,22 +317,7 @@
     cursor: pointer;
 }
 
-.ship-btn {
-    background: var(--blk-bground);
-    border: var(--white-border);
-    color: var(--white-text);
-    padding: 0.35rem 0.6rem;
-    line-height: 2.5;
-    border-radius: var(--border-rad-sm);
-    cursor: pointer;
-    font-size: clamp(0.8rem, 2vw, var(--font-size-sm));
-    transition:
-        color 0.15s ease,
-        background-color 0.15s ease,
-        border-color 0.15s ease,
-        box-shadow 0.15s ease,
-        transform 0.15s ease;
-}
+
 
 .ship-btn:hover:not(:disabled),
 .ship-btn.selected {
@@ -278,17 +336,6 @@
     cursor: not-allowed;
     box-shadow: none;
     transform: none;
-}
-
-.ship-info {
-    color: var(--white-text);
-    background: var(--dark-grn-bground);
-    font-size: clamp(0.75rem, 2vw, var(--font-size-sm));
-    font-weight: 300;
-    padding: 0.2rem;
-    border: var(--white-border);
-    border-radius: var(--border-rad-sm);
-    line-height: 2.5;
 }
 
 .ship-info p {
@@ -338,7 +385,7 @@
     padding: clamp(var(--space0), var(--space1), var(--space2));
     border-radius: var(--border-rad-md);
     cursor: pointer;
-    font-size: clamp(--font-size-sm, 3vw, var(--font-size-md));
+    font-size: clamp(var(--font-size-sm), 3vw, var(--font-size-md));
     transition:
         color 0.15s ease,
         background-color 0.15s ease,
